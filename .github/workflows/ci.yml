@@ -3,9 +3,9 @@ name: CI
 # Trigger on push or pull request
 on: 
   push:
-    branches: [ main ]
+    branches: [ master ]
   pull_request:
-    branches: [ main ]
+    branches: [ mqster ]
 
 jobs:
   build-test:
