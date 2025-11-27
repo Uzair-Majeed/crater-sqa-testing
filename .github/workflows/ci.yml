@@ -1,11 +1,11 @@
 name: CI
 
-# Trigger on push or pull request
+# Trigger on push or pull request to main/master branch
 on: 
   push:
-    branches: [ master ]
+    branches: [ main, master ]
   pull_request:
-    branches: [ master ]
+    branches: [ main, master ]
 
 jobs:
   build-test:
@@ -13,35 +13,39 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['7.4', '8.0']
+        php: ['7.4', '8.0', '8.1']
 
     name: PHP ${{ matrix.php }}
 
     steps:
-    # Step 1: Checkout code
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      # Step 1: Checkout code
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-    # Step 2: Set up PHP
-    - name: Set up PHP
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: ${{ matrix.php }}
-        extensions: exif
+      # Step 2: Set up PHP
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: exif, fileinfo, zip, mbstring, pdo_mysql
+          ini-values: post_max_size=256M, upload_max_filesize=256M
 
-    # Step 3: Install dependencies
-    - name: Install dependencies
-      run: |
-        if [ ${{ matrix.php }} < "8" ]; then
-          composer update --no-interaction --no-progress
-        else
-          composer update --ignore-platform-req=php --no-interaction --no-progress
-        fi
+      # Step 3: Validate Composer
+      - name: Install Composer
+        run: |
+          php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+          php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+          composer --version
 
-    # Step 4: Check coding style
-    - name: PHP-CS-Fixer Check
-      run: ./vendor/bin/php-cs-fixer fix -v --dry-run --using-cache=no --config=.php-cs-fixer.dist.php
+      # Step 4: Install dependencies
+      - name: Install PHP dependencies
+        run: |
+          composer install --no-interaction --no-progress --ignore-platform-reqs
 
-    # Step 5: Run backend unit tests
-    - name: Run Unit Tests
-      run: php ./vendor/bin/pest
+      # Step 5: Check coding style
+      - name: PHP-CS-Fixer Check
+        run: ./vendor/bin/php-cs-fixer fix -v --dry-run --using-cache=no --config=.php-cs-fixer.dist.php
+
+      # Step 6: Run backend unit tests
+      - name: Run Unit Tests
+        run: php ./vendor/bin/pest
