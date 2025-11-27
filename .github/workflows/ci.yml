@@ -5,7 +5,7 @@ on:
   push:
     branches: [ master ]
   pull_request:
-    branches: [ mqster ]
+    branches: [ master ]
 
 jobs:
   build-test:
