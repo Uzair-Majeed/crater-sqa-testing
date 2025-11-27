@@ -7,7 +7,7 @@ pipeline {
     }
 
     environment {
-        GITHUB_CREDENTIALS = 'JenkinsPAT'
+        GITHUB_CREDENTIALS = 'Jenkins-Token'
     }
 
     stages {
