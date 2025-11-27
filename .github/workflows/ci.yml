@@ -1,0 +1,47 @@
+name: CI
+
+# Trigger on push or pull request
+on: 
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['7.4', '8.0']
+
+    name: PHP ${{ matrix.php }}
+
+    steps:
+    # Step 1: Checkout code
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    # Step 2: Set up PHP
+    - name: Set up PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php }}
+        extensions: exif
+
+    # Step 3: Install dependencies
+    - name: Install dependencies
+      run: |
+        if [ ${{ matrix.php }} < "8" ]; then
+          composer update --no-interaction --no-progress
+        else
+          composer update --ignore-platform-req=php --no-interaction --no-progress
+        fi
+
+    # Step 4: Check coding style
+    - name: PHP-CS-Fixer Check
+      run: ./vendor/bin/php-cs-fixer fix -v --dry-run --using-cache=no --config=.php-cs-fixer.dist.php
+
+    # Step 5: Run backend unit tests
+    - name: Run Unit Tests
+      run: php ./vendor/bin/pest
