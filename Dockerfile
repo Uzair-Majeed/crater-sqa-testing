@@ -1,87 +1,51 @@
 FROM php:8.1-fpm
 
 # ---------- Build arguments ----------
-# Set the user and group IDs for the application user
 ARG user=laravel
 ARG uid=1000
 ARG gid=1000
 
-# ---------- System dependencies and PHP extensions (Run as root) ----------
+# ---------- Install system dependencies ----------
 RUN apt-get update && apt-get install -y \
-    git curl libpng-dev libonig-dev libxml2-dev zip unzip libzip-dev \
-    libmagickwand-dev mariadb-client \
-    # Clean up APT caches to reduce image size
+    git curl libpng-dev libonig-dev libxml2-dev zip unzip libzip-dev libmagickwand-dev mariadb-client \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Install ImageMagick for PDF and image processing
+# ---------- PHP extensions ----------
 RUN pecl install imagick && docker-php-ext-enable imagick
-
-# Install required PHP extensions
 RUN docker-php-ext-install pdo_mysql mbstring zip exif pcntl bcmath gd
 
-# ---------- Composer installation ----------
-# Copy Composer from the official dedicated image
+# ---------- Composer ----------
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# ---------- Create system user (The 'laravel' user) ----------
+# ---------- Create system user ----------
 RUN groupadd -g $gid $user || true
 RUN useradd -u $uid -g $gid -m -s /bin/bash $user || true
 RUN mkdir -p /home/$user/.composer && chown -R $user:$user /home/$user
 
-# ---------- Set application working directory and copy code ----------
+# ---------- Working directory ----------
 WORKDIR /var/www
 
-# Copy the entire application source code into the container
+# ---------- Copy application code ----------
 COPY . /var/www
 
-# ---------- CRITICAL: Set environment for production build ----------
-# This ensures that dev-only service providers (like IdeHelper) are skipped
-# when running 'php artisan' commands during the build process.
-ENV APP_ENV=production
+# ---------- Install PHP dependencies ----------
+RUN composer install --no-dev --optimize-autoloader --ignore-platform-reqs
 
-# =======================================================
-# 🚀 CRITICAL LARAVEL SETUP FIXES (Build-Time Execution) 🚀
-# =======================================================
+# ---------- Generate APP_KEY if missing ----------
+RUN php artisan key:generate --ansi || true
 
-# 1. Ensure .env file exists for Composer/Artisan (must be done first)
-RUN cp .env.example .env
-
-# 2. Fix permissions before running Composer and Artisan.
-# This prevents permission errors when Composer attempts to write cache/vendor files.
+# ---------- Fix permissions ----------
 RUN chown -R $user:$user /var/www
 RUN chmod -R 775 /var/www/storage /var/www/bootstrap/cache
 
-# 3. Install PHP dependencies
-# Use --prefer-dist for faster builds and --no-dev for production.
-# --no-scripts prevents Laravel's post-autoload hooks from running.
-RUN composer install --optimize-autoloader --no-dev --prefer-dist --no-scripts
-
-# 4. Generate Application Key (Requires dependencies to be installed)
-# --force is used to confirm key generation in non-interactive mode
-RUN php artisan key:generate --force
-
-# 5. Run Database Migrations
-# This command requires DB environment variables to be set on Railway
-RUN php artisan migrate --force
-
-# 6. Optimize and Cache
+# ---------- Clear caches ----------
 RUN php artisan config:cache
 RUN php artisan route:cache
 RUN php artisan view:cache
 
-# 7. Storage Link (Essential for file uploads/avatars)
-RUN php artisan storage:link
-
-# =======================================================
-
-# ---------- Switch to the non-root user for security ----------
+# ---------- Switch to non-root user ----------
 USER $user
 
-# ---------- Runtime Settings (Crater uses a simple PHP web server) ----------
-# Railway will inject the PORT variable. Use 8080 as a standard default.
+# ---------- Railway settings ----------
 ENV PORT=8080
-EXPOSE ${PORT}
-
-# CMD uses the exec form, which is best practice for Docker to handle signals correctly.
-# This command starts the PHP built-in web server serving the 'public' directory.
-CMD ["php", "-S", "0.0.0.0:8080", "-t", "public"]
+CMD php -S 0.0.0.0:$PORT -t public
