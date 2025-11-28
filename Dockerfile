@@ -1,46 +1,48 @@
-# ---------- base image ----------
-FROM php:8.1-fpm  # or whichever version you use
+FROM php:8.1-fpm
 
-# install system dependencies (example, adjust as needed)
+# ---------- Build arguments ----------
+ARG user=laravel
+ARG uid=1000
+ARG gid=1000  # optional, for group
+
+# ---------- Install system dependencies ----------
 RUN apt-get update && apt-get install -y \
     git \
+    curl \
+    libpng-dev \
+    libonig-dev \
+    libxml2-dev \
+    zip \
     unzip \
     libzip-dev \
-    zip \
-    curl \
-    && docker-php-ext-install zip pdo pdo_mysql \
+    libmagickwand-dev \
+    mariadb-client \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# ---------- Create a non-root user ----------
-ARG APP_USER=laravel
-ARG APP_UID=1000
-ARG APP_GID=1000
+# Install PHP extensions
+RUN pecl install imagick \
+    && docker-php-ext-enable imagick
 
-RUN groupadd -g $APP_GID $APP_USER \
-    && useradd -u $APP_UID -g $APP_GID -m -s /bin/bash $APP_USER
+RUN docker-php-ext-install pdo_mysql mbstring zip exif pcntl bcmath gd
 
-# ensure composer/cache dirs are owned
-RUN mkdir -p /home/$APP_USER/.composer \
-    && chown -R $APP_USER:$APP_USER /home/$APP_USER
+# Get latest Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# set working directory
-WORKDIR /var/www/html
+# ---------- Create system user ----------
+# Create group first
+RUN groupadd -g $gid $user || true
+# Create user with home directory
+RUN useradd -u $uid -g $gid -m -s /bin/bash $user || true
 
-# copy project files
-COPY . /var/www/html
+# Ensure Composer cache directory exists
+RUN mkdir -p /home/$user/.composer \
+    && chown -R $user:$user /home/$user
 
-# run composer as non-root
-USER $APP_USER
+# ---------- Set working directory ----------
+WORKDIR /var/www
 
-RUN composer install --no-dev --optimize-autoloader
+# Switch to non-root user
+USER $user
 
-# change back to root if you need to set permissions or do other root tasks
-USER root
-
-# e.g. permissions for storage
-RUN chown -R $APP_USER:$APP_USER /var/www/html/storage /var/www/html/bootstrap/cache
-
-# switch to non-root again for running
-USER $APP_USER
-
-CMD ["php-fpm"]
+# Optionally, copy project files later:
+# COPY . /var/www
