@@ -31,17 +31,9 @@ COPY . /var/www
 # ---------- Install PHP dependencies ----------
 RUN composer install --no-dev --optimize-autoloader --ignore-platform-reqs
 
-# ---------- Generate APP_KEY if missing ----------
-RUN php artisan key:generate --ansi || true
-
 # ---------- Fix permissions ----------
 RUN chown -R $user:$user /var/www
 RUN chmod -R 775 /var/www/storage /var/www/bootstrap/cache
-
-# ---------- Clear caches ----------
-RUN php artisan config:cache
-RUN php artisan route:cache
-RUN php artisan view:cache
 
 # ---------- Switch to non-root user ----------
 USER $user
