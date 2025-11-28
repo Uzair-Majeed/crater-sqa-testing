@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y \
     git curl libpng-dev libonig-dev libxml2-dev zip unzip libzip-dev libmagickwand-dev mariadb-client \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# ---------- PHP extensions ----------
+# ---------- Install PHP extensions ----------
 RUN pecl install imagick && docker-php-ext-enable imagick
 RUN docker-php-ext-install pdo_mysql mbstring zip exif pcntl bcmath gd
 
@@ -22,7 +22,7 @@ RUN groupadd -g $gid $user || true
 RUN useradd -u $uid -g $gid -m -s /bin/bash $user || true
 RUN mkdir -p /home/$user/.composer && chown -R $user:$user /home/$user
 
-# ---------- Working directory ----------
+# ---------- Set working directory ----------
 WORKDIR /var/www
 
 # ---------- Copy application code ----------
@@ -31,13 +31,20 @@ COPY . /var/www
 # ---------- Install PHP dependencies ----------
 RUN composer install --no-dev --optimize-autoloader --ignore-platform-reqs
 
-# ---------- Fix permissions ----------
+# ---------- Set permissions ----------
 RUN chown -R $user:$user /var/www
 RUN chmod -R 775 /var/www/storage /var/www/bootstrap/cache
 
 # ---------- Switch to non-root user ----------
 USER $user
 
-# ---------- Railway settings ----------
+# ---------- Railway runtime environment ----------
 ENV PORT=8080
-CMD php -S 0.0.0.0:$PORT -t public
+
+# ---------- Entrypoint: run migrations, caches, then start server ----------
+CMD php artisan key:generate --ansi && \
+    php artisan migrate --force && \
+    php artisan config:cache && \
+    php artisan route:cache && \
+    php artisan view:cache && \
+    php -S 0.0.0.0:$PORT -t public
