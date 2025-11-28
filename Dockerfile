@@ -29,7 +29,7 @@ WORKDIR /var/www
 COPY . /var/www
 
 # ---------- Install PHP dependencies ----------
-RUN composer install --no-dev --optimize-autoloader
+RUN composer install --optimize-autoloader
 
 # ---------- Fix permissions ----------
 RUN chown -R $user:$user /var/www
