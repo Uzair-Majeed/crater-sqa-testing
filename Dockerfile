@@ -47,4 +47,4 @@ USER $user
 ENV PORT=8080
 
 # ---------- Run server and migrations at container start ----------
-CMD php artisan migrate --force && php -S 0.0.0.0:$PORT -t public
+CMD php -S 0.0.0.0:$PORT -t public
