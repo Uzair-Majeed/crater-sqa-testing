@@ -47,8 +47,10 @@ RUN chown -R $user:$user /var/www
 RUN chmod -R 775 /var/www/storage /var/www/bootstrap/cache
 
 # 3. Install PHP dependencies
-# Use --prefer-dist for faster builds and --no-dev for production
-RUN composer install --optimize-autoloader --no-dev --prefer-dist
+# Use --prefer-dist for faster builds and --no-dev for production.
+# --no-scripts prevents Laravel's post-autoload hooks from running, which fail
+# when development dependencies (like IDE Helper) are not installed due to --no-dev.
+RUN composer install --optimize-autoloader --no-dev --prefer-dist --no-scripts
 
 # 4. Generate Application Key (Requires dependencies to be installed)
 # --force is used to confirm key generation in non-interactive mode
