@@ -29,7 +29,6 @@ WORKDIR /var/www
 COPY . /var/www
 
 # ---------- Ensure .env exists and is writable ----------
-# Make sure you have committed a proper .env with MySQL credentials
 RUN touch /var/www/.env \
     && chown $user:$user /var/www/.env \
     && chmod 664 /var/www/.env
@@ -41,11 +40,11 @@ RUN composer install --no-dev --optimize-autoloader --ignore-platform-reqs
 RUN chown -R $user:$user /var/www \
     && chmod -R 775 /var/www/storage /var/www/bootstrap/cache
 
-# ---------- Run migrations and seed if needed ----------
-# These run as non-root user
+# ---------- Switch to non-root user ----------
 USER $user
-RUN php artisan migrate --force
 
 # ---------- Railway settings ----------
 ENV PORT=8080
-CMD php -S 0.0.0.0:$PORT -t public
+
+# ---------- Run server and migrations at container start ----------
+CMD php artisan migrate --force && php -S 0.0.0.0:$PORT -t public
