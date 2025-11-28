@@ -46,3 +46,8 @@ USER $user
 
 # Optionally, copy project files later:
 # COPY . /var/www
+
+
+# For Railway, listen on port 8080
+ENV PORT=8080
+CMD php -S 0.0.0.0:$PORT -t public
