@@ -28,15 +28,23 @@ WORKDIR /var/www
 # ---------- Copy application code ----------
 COPY . /var/www
 
+# ---------- Ensure .env exists and is writable ----------
+# Make sure you have committed a proper .env with MySQL credentials
+RUN touch /var/www/.env \
+    && chown $user:$user /var/www/.env \
+    && chmod 664 /var/www/.env
+
 # ---------- Install PHP dependencies ----------
 RUN composer install --no-dev --optimize-autoloader --ignore-platform-reqs
 
 # ---------- Fix permissions ----------
-RUN chown -R $user:$user /var/www
-RUN chmod -R 775 /var/www/storage /var/www/bootstrap/cache
+RUN chown -R $user:$user /var/www \
+    && chmod -R 775 /var/www/storage /var/www/bootstrap/cache
 
-# ---------- Switch to non-root user ----------
+# ---------- Run migrations and seed if needed ----------
+# These run as non-root user
 USER $user
+RUN php artisan migrate --force
 
 # ---------- Railway settings ----------
 ENV PORT=8080
