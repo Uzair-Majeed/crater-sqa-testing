@@ -28,15 +28,44 @@ WORKDIR /var/www
 # ---------- Copy application code ----------
 COPY . /var/www
 
-# ---------- Install PHP dependencies ----------
-RUN composer install --optimize-autoloader
+# =======================================================
+# 🚀 CRITICAL LARAVEL SETUP FIXES (Causes 500 Errors) 🚀
+# =======================================================
+
+# 1. Create the .env file from the example
+RUN cp .env.example .env
+
+# 2. Install PHP dependencies
+RUN composer install --optimize-autoloader --no-dev
+
+# 3. Generate Application Key (Essential for encryption and security)
+RUN php artisan key:generate
+
+# 4. Run Database Migrations
+# This command applies the database schema defined in the app.
+# It requires the DB environment variables to be set on Railway BEFORE the build finishes.
+RUN php artisan migrate --force
+
+# 5. Clear Caches (Optional, but good practice)
+RUN php artisan config:cache
+RUN php artisan route:cache
+
+# 6. Storage Link (Essential for file uploads/avatars)
+RUN php artisan storage:link
+
+# =======================================================
 
 # ---------- Fix permissions ----------
+# Ensure the user has permission to write to necessary directories
 RUN chown -R $user:$user /var/www
+# Grant write permissions to storage and bootstrap/cache directories
+RUN chmod -R 775 /var/www/storage /var/www/bootstrap/cache
 
 # ---------- Switch to non-root user ----------
 USER $user
 
-# ---------- Railway settings ----------
+# ---------- Railway/Runtime Settings (Already Correct for Public Access) ----------
+# Binds to 0.0.0.0 and uses the PORT variable Railway injects.
 ENV PORT=8080
+EXPOSE ${PORT}
 CMD php -S 0.0.0.0:$PORT -t public
