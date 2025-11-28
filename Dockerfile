@@ -28,7 +28,7 @@ WORKDIR /var/www
 # ---------- Copy application code ----------
 COPY . /var/www
 
-# ---------- Ensure .env exists and is writable ----------
+# ---------- Ensure .env exists and writable ----------
 RUN touch /var/www/.env \
     && chown $user:$user /var/www/.env \
     && chmod 664 /var/www/.env
@@ -40,11 +40,15 @@ RUN composer install --no-dev --optimize-autoloader --ignore-platform-reqs
 RUN chown -R $user:$user /var/www \
     && chmod -R 775 /var/www/storage /var/www/bootstrap/cache
 
+# ---------- Copy entrypoint ----------
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
 # ---------- Switch to non-root user ----------
 USER $user
 
 # ---------- Railway settings ----------
 ENV PORT=8080
 
-# ---------- Run server and migrations at container start ----------
-CMD php -S 0.0.0.0:$PORT -t public
+# ---------- Use entrypoint ----------
+ENTRYPOINT ["docker-entrypoint.sh"]
