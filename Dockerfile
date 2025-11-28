@@ -34,6 +34,11 @@ WORKDIR /var/www
 # Copy the entire application source code into the container
 COPY . /var/www
 
+# ---------- CRITICAL: Set environment for production build ----------
+# This ensures that dev-only service providers (like IdeHelper) are skipped
+# when running 'php artisan' commands during the build process.
+ENV APP_ENV=production
+
 # =======================================================
 # 🚀 CRITICAL LARAVEL SETUP FIXES (Build-Time Execution) 🚀
 # =======================================================
@@ -48,8 +53,7 @@ RUN chmod -R 775 /var/www/storage /var/www/bootstrap/cache
 
 # 3. Install PHP dependencies
 # Use --prefer-dist for faster builds and --no-dev for production.
-# --no-scripts prevents Laravel's post-autoload hooks from running, which fail
-# when development dependencies (like IDE Helper) are not installed due to --no-dev.
+# --no-scripts prevents Laravel's post-autoload hooks from running.
 RUN composer install --optimize-autoloader --no-dev --prefer-dist --no-scripts
 
 # 4. Generate Application Key (Requires dependencies to be installed)
