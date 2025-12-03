@@ -6,9 +6,6 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Mockery\MockInterface;
 
 // This block ensures Mockery expectations are verified and mocks are torn down after each test.
-afterEach(function () {
-    Mockery::close();
-});
 
 test('it successfully copies module files when user is authorized', function () {
     // Arrange
@@ -155,4 +152,9 @@ test('it passes empty string module and path parameters to ModuleInstaller::copy
     // Assert
     $response->assertSuccessful();
     $response->assertJson(['success' => false]);
+});
+ 
+
+afterEach(function () {
+    Mockery::close();
 });

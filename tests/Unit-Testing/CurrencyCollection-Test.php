@@ -115,3 +115,9 @@ class TestCurrencyResource extends JsonResource
             ->toHaveCount(1)
             ->toEqual([$currencyData]);
     });
+
+ 
+
+afterEach(function () {
+    Mockery::close();
+});

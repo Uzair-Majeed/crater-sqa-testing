@@ -60,3 +60,10 @@ test('ModuleEnabledEvent uses the SerializesModels trait', function () {
     $uses = class_uses(ModuleEnabledEvent::class);
     expect($uses)->toContain(SerializesModels::class);
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

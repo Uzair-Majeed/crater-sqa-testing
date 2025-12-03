@@ -46,3 +46,10 @@ it('provides the correct validation rules for attachment_receipt', function () {
         $this->fail("Failed to access 'mimes' property of Base64Mime. Ensure Base64Mime has a private/protected property named 'mimes' that stores the allowed mimes, or provide a public getter for it. Original exception: {$e->getMessage()}");
     }
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

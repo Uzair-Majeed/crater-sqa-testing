@@ -129,3 +129,10 @@ test('it handles unzip failure gracefully when user is owner and path is provide
             'error' => $errorMessage,
         ]);
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

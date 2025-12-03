@@ -1,6 +1,5 @@
 <?php
 
-uses(\Mockery::class);
 use Crater\Http\Resources\UserResource;
 use Crater\Http\Resources\CurrencyResource;
 use Crater\Http\Resources\CompanyResource;
@@ -380,4 +379,11 @@ test('user resource reflects the return value of isOwner method', function () {
     $result = $resource->toArray($request);
 
     expect($result['is_owner'])->toBeFalse();
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

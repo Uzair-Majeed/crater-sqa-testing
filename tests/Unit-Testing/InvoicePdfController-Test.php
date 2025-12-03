@@ -68,3 +68,10 @@ test('it returns generated PDF stream when the request does not have a preview p
     // The result should be the stream returned by getGeneratedPDFOrStream.
     expect($result)->toBe($expectedPdfStream);
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

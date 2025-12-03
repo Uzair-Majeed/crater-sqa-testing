@@ -308,3 +308,6 @@ test('it handles cases where all models return the same currency ID', function (
     expect(json_decode($response->getContent(), true)['currencies'])->toHaveCount(1);
     expect(json_decode($response->getContent(), true)['currencies'])->toEqual([$expectedCurrency]);
 });
+
+
+

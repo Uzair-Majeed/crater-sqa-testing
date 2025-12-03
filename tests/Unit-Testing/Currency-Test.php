@@ -58,3 +58,9 @@ test('currency model can be instantiated via factory make method', function () {
     expect($currency->name)->not->toBeNull(); // Factory should generate a value for name
     expect($currency->code)->not->toBeNull(); // Factory should generate a value for code
 });
+
+ 
+
+afterEach(function () {
+    Mockery::close();
+});

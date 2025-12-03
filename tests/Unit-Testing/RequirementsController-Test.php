@@ -4,9 +4,7 @@ use Crater\Http\Controllers\V1\Installation\RequirementsController;
 use Crater\Space\RequirementsChecker;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Config;
-uses(\Mockery::class);
 
-uses(Tests\TestCase::class);
 
 beforeEach(function () {
     // Mock the RequirementsChecker dependency
@@ -16,9 +14,6 @@ beforeEach(function () {
     $this->controller = new RequirementsController($this->requirementsChecker);
 });
 
-afterEach(function () {
-    Mockery::close();
-});
 
 test('constructor correctly injects and sets the requirements checker', function () {
     // Assert that the 'requirements' protected property is set with the mocked instance
@@ -222,4 +217,11 @@ test('requirements method propagates different system requirements outcomes', fu
         'phpSupportInfo' => $mockPhpSupportInfo,
         'requirements' => $mockSystemRequirements,
     ]);
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

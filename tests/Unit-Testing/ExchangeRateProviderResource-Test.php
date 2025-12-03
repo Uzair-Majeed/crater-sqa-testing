@@ -1,13 +1,9 @@
 <?php
 
-uses(\Mockery::class);
 use Illuminate\Http\Request;
 use Crater\Http\Resources\CompanyResource;
 use Crater\Http\Resources\ExchangeRateProviderResource;
 
-afterEach(function () {
-        Mockery::close();
-    });
 
     // Test case 1: Basic properties are transformed correctly, and the company relationship does not exist.
     test('it transforms basic properties and omits company when the relationship does not exist', function () {
@@ -146,3 +142,6 @@ afterEach(function () {
 
         // Mockery::close() in afterEach will verify all expectations set above
     });
+
+
+

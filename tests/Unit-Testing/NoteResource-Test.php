@@ -1,13 +1,9 @@
 <?php
 
-uses(\Mockery::class);
 use Illuminate\Http\Request;
 use Crater\Http\Resources\NoteResource;
 use Crater\Http\Resources\CompanyResource; // Make sure this class is available for the test environment to resolve
 
-afterEach(function () {
-        Mockery::close();
-    });
 
     test('it transforms note data correctly when an associated company exists', function () {
         // 1. Mock the underlying Company model for the CompanyResource
@@ -161,3 +157,9 @@ afterEach(function () {
             'notes' => null,
         ]);
     });
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

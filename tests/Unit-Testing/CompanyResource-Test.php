@@ -5,7 +5,6 @@ use Crater\Http\Resources\CompanyResource;
 use Crater\Http\Resources\RoleResource;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Collection;
-uses(\Mockery::class);
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 beforeEach(function () {
@@ -309,4 +308,11 @@ test('toArray does not include address if relationship does not exist even if ad
     $transformed = $resource->toArray($request);
 
     expect($transformed)->not->toHaveKey('address');
+});
+
+ 
+
+
+afterEach(function () {
+    Mockery::close();
 });

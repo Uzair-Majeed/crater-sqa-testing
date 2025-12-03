@@ -864,3 +864,10 @@ test('createExpense propagates FileCannotBeAdded exception if media upload fails
     $this->expectException(FileCannotBeAdded::class);
     Expense::createExpense($request);
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

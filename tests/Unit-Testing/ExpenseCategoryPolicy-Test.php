@@ -187,3 +187,10 @@ beforeEach(function () {
 
         expect($this->policy->forceDelete($this->user, $this->expenseCategory))->toBeFalse();
     });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

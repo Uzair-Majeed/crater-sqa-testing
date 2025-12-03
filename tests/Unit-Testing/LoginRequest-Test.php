@@ -21,3 +21,10 @@ test('authorize method always returns true', function () {
         // Assert that no other unexpected rules are present (white-box specific)
         expect(count($rules))->toBe(3);
     });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

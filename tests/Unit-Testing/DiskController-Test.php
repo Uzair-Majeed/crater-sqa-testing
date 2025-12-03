@@ -6,7 +6,6 @@ use Crater\Models\FileDisk;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
-uses(\Mockery::class);
 
 // Mock the global respondJson helper function as it's used in the controller
 if (! function_exists('respondJson')) {
@@ -732,4 +731,11 @@ test('getDiskDrivers method authorizes and returns list of drivers and default',
         'drivers' => $expectedDrivers,
         'default' => $defaultDisk,
     ]);
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

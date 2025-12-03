@@ -4,7 +4,6 @@ use Crater\Events\UpdateFinished;
 use Crater\Listeners\Updates\v1\Version110;
 use Crater\Models\Currency;
 use Crater\Models\Setting;
-uses(\Mockery::class);
 
 // Ensure Mockery expectations are closed after each test to prevent interference.
 beforeEach(function () {
@@ -157,3 +156,10 @@ test('it does not add currencies or update version if the listener has already f
 
             // Mockery::close() in beforeEach will verify all expectations.
         });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

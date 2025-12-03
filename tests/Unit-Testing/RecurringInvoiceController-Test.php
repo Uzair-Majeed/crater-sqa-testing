@@ -15,9 +15,6 @@ beforeEach(function () {
     $this->controller = Mockery::spy(new RecurringInvoiceController());
 });
 
-afterEach(function () {
-    Mockery::close();
-});
 
 test('index displays a listing of recurring invoices with default limit', function () {
     // Arrange
@@ -215,4 +212,11 @@ test('delete handles no recurring invoices to remove', function () {
     // Verify mocks
     $this->controller->shouldHaveReceived('authorize')->once();
     RecurringInvoice::shouldHaveReceived('deleteRecurringInvoice')->once();
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

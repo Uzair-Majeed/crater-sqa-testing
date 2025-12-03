@@ -1,6 +1,5 @@
 <?php
 
-uses(Tests\TestCase::class);
 
 beforeEach(function () {
     // Ensure Mockery expectations are cleared between tests
@@ -190,4 +189,11 @@ test('it handles empty mail markdown configuration gracefully', function () {
 
     // Assert
     expect($result)->toBe($expectedRenderResult);
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

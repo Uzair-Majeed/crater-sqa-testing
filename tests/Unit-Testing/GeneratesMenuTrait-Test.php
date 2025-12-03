@@ -1,6 +1,5 @@
 <?php
 
-uses(\Mockery::class);
 use Illuminate\Support\Facades\Facade;
 
 // Dummy class to use the trait for testing
@@ -45,9 +44,6 @@ beforeEach(function () {
 });
 
 // Clean up Mockery after each test
-afterEach(function () {
-    Mockery::close();
-});
 
 test('generateMenu returns an empty array when no menu items exist', function () {
     $generator = new DummyMenuGeneratorClass();
@@ -311,4 +307,11 @@ test('generateMenu handles different menu keys correctly', function () {
     $result2 = $generator->generateMenu($key2, $userMock);
     expect($result2)->toHaveCount(1);
     expect($result2[0]['link'])->toBe('/settings/profile');
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

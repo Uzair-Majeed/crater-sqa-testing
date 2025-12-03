@@ -105,3 +105,9 @@ test('constructor correctly assigns payment and deleteExistingFile properties', 
         expect($result)->toBe(0);
         Mockery::close();
     });
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

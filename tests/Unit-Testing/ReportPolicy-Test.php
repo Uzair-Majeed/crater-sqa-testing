@@ -72,3 +72,10 @@ test('viewReport returns false when user can view financial reports but does not
 
     expect($result)->toBeFalse();
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

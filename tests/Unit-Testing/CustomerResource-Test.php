@@ -324,3 +324,9 @@ test('customer resource excludes currency when it does not exist', function () {
 
     expect($result)->not->toHaveKey('currency');
 });
+
+ 
+
+afterEach(function () {
+    Mockery::close();
+});

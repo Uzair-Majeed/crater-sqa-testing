@@ -105,3 +105,10 @@ test('the request object does not influence the returned abilities', function ()
         ->toBe($jsonResponse2->getData(true)['abilities'])
         ->toBe($mockAbilities);
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

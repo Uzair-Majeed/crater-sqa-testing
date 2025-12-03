@@ -463,3 +463,10 @@ test('databaseChanges handles empty payment and item collections gracefully', fu
     $listener->databaseChanges();
     // The test passes if no exceptions are thrown and no unexpected mock calls are made.
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

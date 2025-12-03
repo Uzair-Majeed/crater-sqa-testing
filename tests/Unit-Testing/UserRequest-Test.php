@@ -151,3 +151,10 @@ test('getUserPayload method returns validated data merged with creator id', func
     // Assert that the return type is an array
     expect($payload)->toBeArray();
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

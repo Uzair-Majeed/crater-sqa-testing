@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-uses(\Mockery::class);
 
 test('setTimeAnswerAttribute correctly formats time', function () {
     $model = new CustomField();
@@ -331,4 +330,10 @@ test('updateCustomField updates existing custom field with correct data', functi
     $result = $customField->updateCustomField($mockRequest);
 
     expect($result)->toBe($customField);
+});
+
+ 
+
+afterEach(function () {
+    Mockery::close();
 });

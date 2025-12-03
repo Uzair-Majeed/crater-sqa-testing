@@ -11,9 +11,6 @@ beforeEach(function () {
     \Mockery::mock('alias:' . CompanySetting::class);
 });
 
-afterEach(function () {
-    \Mockery::close();
-});
 
 function createExpenseRequestWithData(array $data = [], array $headers = [])
 {
@@ -413,4 +410,11 @@ test('getExpensePayload includes all validated data in payload', function () {
     expect($payload)->toHaveKey('exchange_rate');
     expect($payload)->toHaveKey('base_amount');
     expect($payload)->toHaveKey('currency_id');
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

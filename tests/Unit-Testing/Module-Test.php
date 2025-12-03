@@ -4,7 +4,6 @@ use Crater\Models\Module;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-uses(\Mockery::class);
 
 beforeEach(function () {
     // Ensure Mockery is closed after each test to prevent test pollution
@@ -65,4 +64,11 @@ test('Module model factory method returns a Factory instance for the correct mod
     expect($factory)->toBeInstanceOf(Factory::class);
     // Assert that the factory is configured for the Module model
     expect($factory->modelName())->toBe(Module::class);
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

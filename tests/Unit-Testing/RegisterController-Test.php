@@ -212,3 +212,6 @@ test('create method creates a user instance when all expected fields are missing
     expect($result->email)->toBeNull();
     expect($result->password)->toBeNull();
 });
+
+
+

@@ -3,7 +3,6 @@
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\JsonResponse;
 
-uses(\Mockery::class);
 
 test('respondSuccess returns a JsonResponse with success set to true', function () {
     // Arrange
@@ -44,5 +43,11 @@ test('respondSuccess returns a JsonResponse with success set to true', function 
     expect($response->getStatusCode())->toBe(200);
 
     // Close Mockery to ensure all expectations set on mocks are met.
+    Mockery::close();
+});
+
+
+
+afterEach(function () {
     Mockery::close();
 });

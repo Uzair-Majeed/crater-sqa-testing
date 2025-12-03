@@ -1,6 +1,5 @@
 <?php
 
-uses(\Mockery::class);
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Crater\Models\Estimate;
@@ -76,5 +75,12 @@ test('it handles authorization and returns an empty array when no templates exis
     expect($response)->toBeInstanceOf(JsonResponse::class);
     expect($response->getData(true))->toEqual(['estimateTemplates' => []]);
 
+    Mockery::close();
+});
+
+
+
+
+afterEach(function () {
     Mockery::close();
 });

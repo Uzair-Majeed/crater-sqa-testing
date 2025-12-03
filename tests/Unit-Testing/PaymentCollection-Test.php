@@ -177,3 +177,10 @@ test('toArray passes the request object to the underlying resources', function (
 // No private or protected methods defined directly in PaymentCollection to test.
 // The class itself contains no complex logic or branches beyond delegating to its parent.
 // All tests focus on verifying this delegation behaves as expected under various input conditions.
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

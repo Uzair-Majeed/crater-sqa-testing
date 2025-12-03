@@ -124,3 +124,10 @@ test('toArray handles complex nested array data structures', function () {
     expect($result)->toBeArray()
                    ->toEqual($data);
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

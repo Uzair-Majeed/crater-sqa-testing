@@ -1,6 +1,5 @@
 <?php
 
-uses(\Mockery::class);
 use Illuminate\Validation\Rules\Unique;
 use Illuminate\Support\Collection;
 
@@ -206,4 +205,11 @@ test('getUnitPayload overwrites company_id if present in validated data', functi
     expect($payload)->toBeArray()
         ->and($payload)->toHaveKey('name', 'Unit with old company')
         ->and($payload)->toHaveKey('company_id', $companyId); // Should be the one from header
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

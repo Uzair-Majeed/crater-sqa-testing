@@ -26,12 +26,9 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
-uses(\Mockery::class);
 use Silber\Bouncer\BouncerFacade;
 use Spatie\MediaLibrary\MediaCollections\FileCollections\FileCollection;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
-
-uses(Tests\TestCase::class, RefreshDatabase::class)->group('UserTests');
 
 beforeEach(function () {
     // Reset mocks before each test
@@ -1147,4 +1144,11 @@ test('deleteUsers handles non-existent users gracefully', function () {
     expect($result)->toBeTrue();
     $mockUser1->shouldHaveReceived('delete')->once();
     // No calls for user 999 as find returned null
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

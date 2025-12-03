@@ -13,7 +13,6 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Response;
-uses(\Mockery::class);
 
 beforeEach(function () {
     Mockery::close();
@@ -273,6 +272,9 @@ test('delete method authorizes, deletes items and returns success', function () 
     expect($response)->toBeInstanceOf(JsonResponse::class);
     expect($response->getData(true)['success'])->toBeTrue();
 });
+
+
+
 
 afterEach(function () {
     Mockery::close();

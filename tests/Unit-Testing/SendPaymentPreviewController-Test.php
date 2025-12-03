@@ -1,6 +1,5 @@
 <?php
 
-uses(\Mockery::class);
 use Crater\Http\Controllers\V1\Admin\Payment\SendPaymentPreviewController;
 use Crater\Models\Payment;
 use Illuminate\Http\Request;
@@ -210,3 +209,9 @@ beforeEach(function () {
         expect(fn () => $controller->__invoke($mockRequest, $mockPayment))
             ->toThrow(AuthorizationException::class, 'User not authorized to send payment.');
     });
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

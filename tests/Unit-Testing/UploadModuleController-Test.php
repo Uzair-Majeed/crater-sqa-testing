@@ -11,9 +11,6 @@ beforeEach(function () {
     Mockery::mock('alias:' . ModuleInstaller::class);
 });
 
-afterEach(function () {
-    Mockery::close();
-});
 
 test('invoke method successfully uploads module and returns json response', function () {
     // Arrange
@@ -174,4 +171,11 @@ test('invoke method handles null response from module installer by returning a n
     expect($response)->toBeInstanceOf(JsonResponse::class);
     expect($response->getContent())->toBe('null'); // Laravel's json() helper serializes null to the string "null"
     expect($response->getStatusCode())->toBe(200);
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

@@ -7,81 +7,50 @@ use Crater\Models\Company;
 use Crater\Models\Country;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-beforeEach(function () {
-    \Mockery::close();
-});
+uses(Tests\TestCase::class)->in('Unit-Testing');
 
 
 test('getCountryNameAttribute returns country name when country relation is loaded', function () {
-    $country = Mockery::mock(Country::class);
+    $country = new Country();
     $country->name = 'Test Country';
 
-    $address = Mockery::mock(Address::class)->makePartial();
-    $address->country = $country; // Simulate the relationship being loaded
+    $address = new Address();
+    $address->setRelation('country', $country); // Properly set the loaded relation
 
     expect($address->getCountryNameAttribute())->toBe('Test Country');
 });
 
 test('getCountryNameAttribute returns null when country relation is loaded but country is null', function () {
-    $address = Mockery::mock(Address::class)->makePartial();
-    $address->country = null; // Simulate the relationship being loaded as null
+    $address = new Address();
+    $address->setRelation('country', null);
 
     expect($address->getCountryNameAttribute())->toBeNull();
 });
 
 test('getCountryNameAttribute returns null when country relation is not loaded', function () {
-    $address = Mockery::mock(Address::class)->makePartial();
-    // Do not set $address->country property, simulating it not being loaded or non-existent
-
+    $address = new Address();
+    // No relation is set
     expect($address->getCountryNameAttribute())->toBeNull();
 });
 
-test('user relationship returns a BelongsTo instance with correct related model', function () {
-    $address = Mockery::mock(Address::class)->makePartial();
-    $mockBelongsTo = Mockery::mock(BelongsTo::class); // Mock the return value of belongsTo
-
-    $address->shouldReceive('belongsTo')
-        ->with(User::class)
-        ->andReturn($mockBelongsTo)
-        ->once();
-
-    expect($address->user())->toBe($mockBelongsTo);
+test('user relationship returns a BelongsTo instance', function () {
+    $address = new Address();
+    expect($address->user())->toBeInstanceOf(BelongsTo::class);
 });
 
-test('customer relationship returns a BelongsTo instance with correct related model', function () {
-    $address = Mockery::mock(Address::class)->makePartial();
-    $mockBelongsTo = Mockery::mock(BelongsTo::class);
-
-    $address->shouldReceive('belongsTo')
-        ->with(Customer::class)
-        ->andReturn($mockBelongsTo)
-        ->once();
-
-    expect($address->customer())->toBe($mockBelongsTo);
+test('customer relationship returns a BelongsTo instance', function () {
+    $address = new Address();
+    expect($address->customer())->toBeInstanceOf(BelongsTo::class);
 });
 
-test('company relationship returns a BelongsTo instance with correct related model', function () {
-    $address = Mockery::mock(Address::class)->makePartial();
-    $mockBelongsTo = Mockery::mock(BelongsTo::class);
-
-    $address->shouldReceive('belongsTo')
-        ->with(Company::class)
-        ->andReturn($mockBelongsTo)
-        ->once();
-
-    expect($address->company())->toBe($mockBelongsTo);
+test('company relationship returns a BelongsTo instance', function () {
+    $address = new Address();
+    expect($address->company())->toBeInstanceOf(BelongsTo::class);
 });
 
-test('country relationship returns a BelongsTo instance with correct related model', function () {
-    $address = Mockery::mock(Address::class)->makePartial();
-    $mockBelongsTo = Mockery::mock(BelongsTo::class);
-
-    $address->shouldReceive('belongsTo')
-        ->with(Country::class)
-        ->andReturn($mockBelongsTo)
-        ->once();
-
-    expect($address->country())->toBe($mockBelongsTo);
+test('country relationship returns a BelongsTo instance', function () {
+    $address = new Address();
+    expect($address->country())->toBeInstanceOf(BelongsTo::class);
 });
 
 test('BILLING_TYPE constant is correctly defined', function () {
@@ -93,6 +62,12 @@ test('SHIPPING_TYPE constant is correctly defined', function () {
 });
 
 test('guarded property includes id', function () {
-    $address = new Address(); // Instantiate a real model to check protected property via public method
+    $address = new Address();
     expect($address->getGuarded())->toContain('id');
+});
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

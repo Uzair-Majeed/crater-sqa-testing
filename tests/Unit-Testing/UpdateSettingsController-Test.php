@@ -1,6 +1,5 @@
 <?php
 
-uses(\Mockery::class);
 use Crater\Http\Controllers\V1\Admin\Settings\UpdateSettingsController;
 use Crater\Http\Requests\SettingRequest;
 use Crater\Models\Setting;
@@ -154,4 +153,11 @@ test('it correctly processes settings containing various data types including bo
         'success' => true,
         0 => $mockSettings
     ]);
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

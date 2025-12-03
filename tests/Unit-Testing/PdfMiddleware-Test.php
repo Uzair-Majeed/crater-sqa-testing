@@ -5,7 +5,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
-uses(\Mockery::class);
 
 // Helper function to mock an authentication guard's 'check' method
 function mockGuard(bool $checkResult)
@@ -22,10 +21,6 @@ beforeEach(function () {
     $this->next = fn ($request) => $this->response;
 });
 
-afterEach(function () {
-    // Close Mockery expectations and ensure mocks are cleaned up after each test
-    Mockery::close();
-});
 
 test('it calls next closure if authenticated via web guard', function () {
     // Mock Auth::guard('web')->check() to return true
@@ -80,4 +75,11 @@ test('it redirects to login if not authenticated via any guard', function () {
     // and its target URL to be '/login'
     expect($result)->toBeInstanceOf(RedirectResponse::class)
         ->and($result->getTargetUrl())->toBe('/login');
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

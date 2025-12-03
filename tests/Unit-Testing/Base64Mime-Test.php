@@ -163,3 +163,10 @@ test('passes handles multiple extensions for multi-part mime types and successfu
     $value = json_encode(['data' => 'data:application/x-zip-compressed;base64,' . $emptyZip]);
     expect($rule->passes('file', $value))->toBeTrue();
 });
+
+ 
+
+
+afterEach(function () {
+    Mockery::close();
+});

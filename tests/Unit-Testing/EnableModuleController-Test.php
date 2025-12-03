@@ -3,7 +3,6 @@
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Event;
-uses(\Mockery::class);
 use Nwidart\Modules\Facades\Module as ModuleFacade;
 use Crater\Events\ModuleEnabledEvent;
 use Crater\Models\Module as ModelsModule;
@@ -193,5 +192,12 @@ test('it throws an error if the installed module is not found via Nwidart facade
     // Assert that no event was dispatched since the process failed before event dispatch
     Event::assertNotDispatched(ModuleEnabledEvent::class);
 
+    Mockery::close();
+});
+
+
+
+
+afterEach(function () {
     Mockery::close();
 });

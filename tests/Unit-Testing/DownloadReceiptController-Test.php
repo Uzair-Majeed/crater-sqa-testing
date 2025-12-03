@@ -6,15 +6,10 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Response as ResponseFacade;
 use Illuminate\Auth\Access\AuthorizationException;
-uses(\Mockery::class);
 use phpmock\phpunit\GlobalFunctionMocker;
 
-uses(Tests\TestCase::class); // Assuming tests are within the standard Laravel `Tests` namespace. Adjust if necessary.
 
 // Reset Mockery after each test
-afterEach(function () {
-    Mockery::close();
-});
 
 it('downloads the receipt when found and no output buffering exists', function () {
     // Arrange
@@ -128,4 +123,11 @@ it('throws authorization exception when user is not authorized to view expense',
 
     // Act
     $controller($expense);
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

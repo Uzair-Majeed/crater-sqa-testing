@@ -82,3 +82,9 @@ test('passes works with different types of values in configured disks if applica
     expect($rule->passes('disk_attribute', '123'))->toBeFalse(); // String '123' does not strictly match integer 123 in in_array without true as third param
     expect($rule->passes('disk_attribute', 'disk3'))->toBeFalse();
 });
+
+ 
+
+afterEach(function () {
+    Mockery::close();
+});

@@ -203,3 +203,10 @@ test('show method returns 404 error if expense not found', function () {
     expect($response->getStatusCode())->toBe(404);
     expect($response->getContent())->toBe(json_encode(['error' => 'expense_not_found']));
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

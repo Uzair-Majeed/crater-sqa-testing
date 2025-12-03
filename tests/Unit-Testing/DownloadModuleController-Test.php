@@ -3,7 +3,6 @@
 use Illuminate\Http\Request;
 use Crater\Space\ModuleInstaller;
 use Illuminate\Auth\Access\AuthorizationException;
-uses(\Mockery::class);
 
 beforeEach(function () {
     Mockery::close();
@@ -159,4 +158,11 @@ test('it handles empty string module or version parameters gracefully', function
         ->toBeInstanceOf(\Illuminate\Http\JsonResponse::class);
     expect($response->getData(true))
         ->toEqual($downloadResponse);
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

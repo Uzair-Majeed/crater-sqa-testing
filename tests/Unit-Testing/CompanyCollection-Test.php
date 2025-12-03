@@ -101,3 +101,9 @@ test('it correctly transforms collection items that are already JsonResource ins
             ['transformed_id' => 102, 'transformed_name' => 'Mock Company B'],
         ]);
 });
+
+ 
+
+afterEach(function () {
+    Mockery::close();
+});

@@ -304,3 +304,10 @@ test('addFileAndSetErrors sets errors to true and keeps it true on subsequent ca
     expect($updatedResults['permissions'])->toHaveCount(2)
         ->and($updatedResults['errors'])->toBeTrue();
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

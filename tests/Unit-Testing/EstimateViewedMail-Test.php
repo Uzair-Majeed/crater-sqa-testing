@@ -1,7 +1,6 @@
 <?php
 
 use Crater\Mail\EstimateViewedMail;
-uses(\Mockery::class);
 
 test('constructor correctly assigns data property', function () {
     $dummyData = ['name' => 'John Doe', 'amount' => 100.50];
@@ -101,4 +100,11 @@ test('build method uses different config values for mail settings', function () 
 
     $mail->shouldHaveReceived('from');
     $mail->shouldHaveReceived('markdown');
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

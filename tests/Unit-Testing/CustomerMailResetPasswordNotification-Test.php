@@ -3,7 +3,6 @@
 use Crater\Notifications\CustomerMailResetPasswordNotification;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Support\Facades\Config;
-uses(\Mockery::class);
 
 // Mock URL generator for url() helper and config repository for config() helper
 beforeEach(function () {
@@ -27,12 +26,6 @@ beforeEach(function () {
         ->byDefault();
 });
 
-afterEach(function () {
-    // Close Mockery expectations after each test to prevent interference.
-    Mockery::close();
-    // Clear resolved instances for facades like Config to ensure fresh mocks for subsequent tests.
-    Config::clearResolvedInstances();
-});
 
 test('constructor correctly sets the token via the parent class', function () {
     $token = 'test-token-123';
@@ -192,4 +185,11 @@ test('toArray method consistently returns an empty array', function () {
     $notifiable = Mockery::mock();
 
     expect($notification->toArray($notifiable))->toEqual([]);
+});
+
+ 
+
+
+afterEach(function () {
+    Mockery::close();
 });

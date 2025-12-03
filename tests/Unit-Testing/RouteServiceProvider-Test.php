@@ -210,3 +210,10 @@ test('boot method calls group with string paths for api and web routes', functio
     $provider->boot();
     $capturedRoutesClosure();
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

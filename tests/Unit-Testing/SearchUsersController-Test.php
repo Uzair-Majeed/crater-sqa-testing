@@ -2,7 +2,6 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
-uses(\Mockery::class);
 
 // Define the test suite for SearchUsersController
 test('it authorizes, searches users by email, and returns them paginated', function () {
@@ -204,4 +203,11 @@ test('it does not query users if authorization fails', function () {
 
     // Assert that authorize was indeed called before the exception was thrown
     expect($controller->authorizeCalled)->toBeTrue();
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

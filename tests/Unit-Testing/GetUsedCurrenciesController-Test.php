@@ -1,6 +1,5 @@
 <?php
 
-uses(\Mockery::class);
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
@@ -316,4 +315,11 @@ test('it handles empty currency arrays correctly', function () {
         'allUsedCurrencies' => ['JPY', 'GBP'],
         'activeUsedCurrencies' => ['USD', 'EUR'],
     ]);
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Http\JsonResponse;
-uses(\Mockery::class);
 use Crater\Http\Controllers\V1\Admin\Settings\GetCompanySettingsController;
 use Crater\Http\Requests\GetSettingsRequest;
 use Crater\Models\CompanySetting;
@@ -180,5 +179,12 @@ test('it handles an empty array of requested settings keys', function () {
     expect($response->getData(true))->toEqual($expectedSettings);
     expect($response->getStatusCode())->toBe(200);
 
+    Mockery::close();
+});
+
+
+
+
+afterEach(function () {
     Mockery::close();
 });

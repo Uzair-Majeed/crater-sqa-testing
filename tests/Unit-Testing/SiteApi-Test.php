@@ -54,9 +54,6 @@ beforeEach(function () {
     app()->instance(Client::class, $this->clientMock);
 });
 
-afterEach(function () {
-    Mockery::close();
-});
 
 test('it sends a GET request successfully with all parameters', function () {
     $url = 'some-endpoint';
@@ -228,4 +225,11 @@ test('it constructs Guzzle client with correct base_uri and verify option', func
 
     // Mockery will verify the `__construct` and `get` method calls. If expectations are not met,
     // Mockery will throw an exception, failing the test.
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

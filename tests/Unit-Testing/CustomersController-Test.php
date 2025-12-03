@@ -220,3 +220,9 @@ test('delete method removes customers successfully', function () {
     expect($response)->toBeInstanceOf(JsonResponse::class);
     expect($response->getData(true))->toEqual(['success' => true]);
 });
+
+ 
+
+afterEach(function () {
+    Mockery::close();
+});

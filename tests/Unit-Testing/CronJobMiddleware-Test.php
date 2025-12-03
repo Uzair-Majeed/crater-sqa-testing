@@ -4,7 +4,6 @@ use Crater\Http\Middleware\CronJobMiddleware;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Config;
-uses(\Mockery::class);
 
 beforeEach(function () {
     Mockery::close();
@@ -171,4 +170,9 @@ test('it denies access if config key is not set at all', function () {
     expect($response)->toBeInstanceOf(JsonResponse::class)
         ->and($response->getStatusCode())->toBe(401)
         ->and($response->getContent())->toBe(json_encode(['unauthorized']));
+});
+ 
+
+afterEach(function () {
+    Mockery::close();
 });

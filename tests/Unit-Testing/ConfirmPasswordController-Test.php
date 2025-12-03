@@ -50,3 +50,9 @@ test('ConfirmPasswordController applies the auth middleware in its constructor',
     // Assert that no additional options were passed.
     expect($controllerInstance->middlewareCalls[0]['options'])->toBe([]);
 });
+
+ 
+
+afterEach(function () {
+    Mockery::close();
+});

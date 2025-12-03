@@ -3,16 +3,12 @@
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Database\Eloquent\Collection; // To simulate Eloquent collections
-uses(\Mockery::class); // For mocking
 
 // Set up for Mockery
 beforeEach(function () {
     Mockery::close(); // Ensure no mocks from previous tests are lingering
 });
 
-afterEach(function () {
-    Mockery::close(); // Clean up mocks after each test
-});
 
 test('toArray returns an empty array when initialized with an empty collection', function () {
     $request = Mockery::mock(Request::class);
@@ -150,3 +146,9 @@ test('toArray handles an empty but valid request object', function () {
 
 // No other public, protected, or private methods exist in CustomerCollection.
 // The constructor is implicitly tested by successful instantiation in other tests.
+
+ 
+
+afterEach(function () {
+    Mockery::close();
+});

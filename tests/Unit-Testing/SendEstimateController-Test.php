@@ -5,7 +5,6 @@ use Crater\Http\Requests\SendEstimatesRequest;
 use Crater\Models\Estimate;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Auth\Access\AuthorizationException;
-uses(\Mockery::class);
 
 test('it successfully sends an estimate and returns a json response', function () {
     // Arrange
@@ -150,4 +149,11 @@ test('it passes all request data, even if unexpected, to the estimate send metho
     expect($response)->toBeInstanceOf(JsonResponse::class);
     expect($response->getData(true))->toEqual($sendResponse);
     expect($response->getStatusCode())->toBe(200);
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

@@ -4,7 +4,6 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Crater\Http\Middleware\RedirectIfUnauthorized;
-uses(\Mockery::class);
 use Illuminate\Routing\Redirector;
 use Illuminate\Http\RedirectResponse;
 
@@ -14,9 +13,6 @@ beforeEach(function () {
 });
 
 // This will be called after each test to verify and close mocks
-afterEach(function () {
-    Mockery::close(); // Verify remaining expectations and close mocks
-});
 
 test('it calls the next middleware if the user is authenticated with the default guard', function () {
     $request = Request::create('/dashboard', 'GET');
@@ -136,4 +132,11 @@ test('it redirects to login if the user is unauthenticated with a specific guard
     $response = $middleware->handle($request, $next, $guard);
 
     expect($response)->toBe($mockRedirectResponse);
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

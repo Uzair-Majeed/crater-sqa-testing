@@ -529,3 +529,10 @@ $companyId = 'test-company-id';
         expect(fn () => $request->getInvoicePayload())
             ->throws(TypeError::class);
     });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

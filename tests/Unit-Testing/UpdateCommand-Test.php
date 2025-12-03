@@ -597,3 +597,6 @@ test('handle successfully updates when deleted_files key is not present', functi
 
     $this->command->handle();
 });
+
+
+

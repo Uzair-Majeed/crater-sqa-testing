@@ -4,12 +4,8 @@ use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Response;
 use Crater\Models\Payment;
 use Crater\Http\Controllers\V1\PDF\DownloadPaymentPdfController;
-uses(\Mockery::class);
 
 // Set up a group for PDF related tests and ensure Mockery is closed after each test
-uses()->group('pdf')->afterEach(function () {
-    Mockery::close();
-});
 
 test('it successfully downloads a payment PDF with the correct path for a given payment ID', function () {
     // Arrange
@@ -108,3 +104,10 @@ test('it correctly constructs the path for a payment ID of 1 (edge case for smal
 // - File system permissions or errors related to actual file downloading.
 // These concerns would typically be covered by feature/integration tests or higher-level system tests.
 // The method itself contains no conditional logic or branches to test.
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

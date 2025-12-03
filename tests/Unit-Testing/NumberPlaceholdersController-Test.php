@@ -126,3 +126,10 @@ test('__invoke gracefully handles non-array return from SerialNumberFormatter (d
         'placeholders' => $unexpectedReturnValue,
     ]);
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

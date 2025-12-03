@@ -64,3 +64,9 @@ test('rules method returns the correct validation rules', function () {
 //     $result = $reflection->invoke($request);
 //     expect($result)->toEqual(['some_rule']);
 // });
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

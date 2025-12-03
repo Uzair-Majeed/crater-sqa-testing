@@ -11,7 +11,6 @@ use Crater\Http\Resources\UserResource;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-uses(\Mockery::class);
 
 // Helper function to create a mock Eloquent relation that responds to the `exists()` method.
 // This simulates the return value of an Eloquent model's relationship method (e.g., $invoice->items()).
@@ -551,6 +550,9 @@ beforeEach(function () {
     });
 
     // Cleans up Mockery mocks after each test.
-    afterEach(function () {
-        Mockery::close();
-    });
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

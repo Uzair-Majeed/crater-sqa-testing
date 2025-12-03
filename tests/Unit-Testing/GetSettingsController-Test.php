@@ -1,6 +1,5 @@
 <?php
 
-uses(\Mockery::class);
 use Crater\Http\Controllers\V1\Admin\Settings\GetSettingsController;
 use Crater\Http\Requests\GetSettingRequest;
 use Crater\Models\Setting;
@@ -140,4 +139,11 @@ test('it ensures authorization is called', function () {
     // If authorize was not called, Mockery would throw an error at the end of the test.
     // No explicit expect() call is strictly necessary here for this specific assertion.
     $this->assertTrue(true); // Placeholder to satisfy Pest's expectation of an assertion
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

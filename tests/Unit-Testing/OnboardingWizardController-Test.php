@@ -180,3 +180,10 @@ test('updateStep handles missing profile_complete in request when not completed'
         'profile_complete' => $newStatus,
     ]);
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

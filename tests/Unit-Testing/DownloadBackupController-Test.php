@@ -9,7 +9,6 @@ use Spatie\Backup\BackupDestination\Backup;
 use Spatie\Backup\BackupDestination\BackupDestination;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
-uses(\Mockery::class);
 
 // Setup for Pest tests.
 beforeEach(function () {
@@ -28,9 +27,6 @@ beforeEach(function () {
 });
 
 // Cleanup Mockery mocks after each test.
-afterEach(function () {
-    Mockery::close();
-});
 
 test('it authorizes access to manage backups', function () {
     $validatedPath = 'backups/some-backup.zip';
@@ -278,4 +274,11 @@ test('respondWithBackupStream generates correct headers and streams content', fu
 
     // Verify that the stream resource was closed.
     expect(is_resource($streamResource))->toBeFalse();
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

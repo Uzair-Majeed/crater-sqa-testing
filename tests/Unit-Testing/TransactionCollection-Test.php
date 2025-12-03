@@ -4,7 +4,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Collection;
 use Crater\Http\Resources\TransactionCollection;
-uses(\Mockery::class);
 
 test('toArray delegates to parent and transforms an empty collection correctly', function () {
     $request = Mockery::mock(Request::class);
@@ -109,5 +108,12 @@ test('toArray handles a collection with a single item', function () {
 
     expect($result)->toBeArray()
                    ->toEqual([$singleResourceData]);
+    Mockery::close();
+});
+
+
+
+
+afterEach(function () {
     Mockery::close();
 });

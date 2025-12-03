@@ -158,3 +158,9 @@ test('validation fails when multiple currency items have issues', function () {
     expect($validator->errors()->has('currencies.1.exchange_rate'))->toBeTrue();
     expect($validator->errors()->has('currencies.2.id'))->toBeTrue();
 });
+
+ 
+
+afterEach(function () {
+    Mockery::close();
+});

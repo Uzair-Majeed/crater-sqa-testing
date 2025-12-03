@@ -59,3 +59,10 @@ test('rules method returns the correct validation rules', function () {
     expect($existsRule->getTable())->toBe('estimates')
         ->and($existsRule->getColumn())->toBe('id');
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

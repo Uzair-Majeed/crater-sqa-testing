@@ -157,3 +157,10 @@ test('boot method handles invalid dropbox token values (null or empty string)', 
     'null token' => [['token' => null], 'Dropbox token cannot be null'],
     'empty string token' => [['token' => ''], 'Dropbox token cannot be an empty string'],
 ]);
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

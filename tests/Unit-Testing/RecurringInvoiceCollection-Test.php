@@ -3,7 +3,6 @@
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Collection;
-uses(\Mockery::class);
 use Crater\Http\Resources\RecurringInvoiceCollection;
 
 beforeEach(function () {
@@ -133,4 +132,11 @@ test('toArray correctly handles constructor input provided as a plain array of r
 
     $this->assertEquals(['product_id' => 101, 'quantity' => 2], $result['data'][0]);
     $this->assertEquals(['product_id' => 102, 'quantity' => 1], $result['data'][1]);
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

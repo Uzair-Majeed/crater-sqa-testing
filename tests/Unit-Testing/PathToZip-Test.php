@@ -51,3 +51,10 @@ test('message returns the correct validation error message', function () {
     $rule = new \Crater\Rules\Backup\PathToZip();
     expect($rule->message())->toBe('The given value must be a path to a zip file.');
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

@@ -691,3 +691,9 @@ test('toArray handles case where installed_module is not found (null result from
 
     expect($result)->toEqual($expected);
 });
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

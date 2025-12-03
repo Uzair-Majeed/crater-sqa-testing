@@ -15,3 +15,10 @@ test('getFacadeAccessor returns the correct Module class name string', function 
     // Assert that the returned string precisely matches the expected class name.
     expect($actualAccessor)->toBe($expectedAccessor);
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

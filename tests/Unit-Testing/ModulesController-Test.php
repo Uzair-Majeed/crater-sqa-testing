@@ -1,6 +1,5 @@
 <?php
 
-uses(\Mockery::class);
 use Crater\Http\Controllers\V1\Admin\Modules\ModulesController;
 use Crater\Space\ModuleInstaller;
 use Illuminate\Http\Request;
@@ -89,4 +88,11 @@ test('invoke throws AuthorizationException if user is not authorized', function 
     $controller->__invoke($request);
 
     // Assertions are handled by expectException
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

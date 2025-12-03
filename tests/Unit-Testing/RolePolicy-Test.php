@@ -3,13 +3,7 @@
 use Crater\Policies\RolePolicy;
 use Crater\Models\User;
 use Silber\Bouncer\Database\Role;
-uses(\Mockery::class);
 
-uses(\Tests\TestCase::class); // Assuming a TestCase is available for common setup/tear down, or just for Mockery cleanup.
-
-afterEach(function () {
-    Mockery::close();
-});
 
 // Test cases for viewAny method
 test('viewAny returns true if user is an owner', function () {
@@ -138,4 +132,11 @@ test('forceDelete returns false if user is not an owner', function () {
 
     $policy = new RolePolicy();
     expect($policy->forceDelete($user, $role))->toBeFalse();
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

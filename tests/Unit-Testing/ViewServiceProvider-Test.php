@@ -20,9 +20,6 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\View;
 use Mockery\MockInterface;
 
-afterEach(function () {
-    \Mockery::close();
-});
 
 test('register method does nothing', function () {
     $provider = new ViewServiceProvider(app());
@@ -172,4 +169,11 @@ test('boot method does not share view data when both conditions are false', func
     $provider->boot();
 
     $getAppSettingMockCallback = null;
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

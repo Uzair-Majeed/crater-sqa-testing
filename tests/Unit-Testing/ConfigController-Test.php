@@ -140,3 +140,9 @@ test('it returns a complex data structure config value', function () {
 
     Config::offsetUnset("crater.$key");
 });
+
+ 
+
+afterEach(function () {
+    Mockery::close();
+});

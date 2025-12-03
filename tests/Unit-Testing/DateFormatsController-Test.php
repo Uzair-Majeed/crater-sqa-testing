@@ -3,7 +3,6 @@
 use Crater\Http\Controllers\V1\Admin\General\DateFormatsController;
 use Crater\Space\DateFormatter;
 use Illuminate\Http\Request;
-uses(\Mockery::class);
 
 // Ensure Mockery is closed after each test to verify expectations and clean up.
 afterEach(fn () => Mockery::close());
@@ -60,3 +59,6 @@ test('it returns an empty list when DateFormatter::get_list returns an empty arr
         'date_formats' => $emptyDateFormats,
     ]);
 });
+
+
+

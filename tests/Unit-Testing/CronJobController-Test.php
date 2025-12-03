@@ -1,6 +1,5 @@
 <?php
 
-uses(\Mockery::class);
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Crater\Http\Controllers\V1\Webhook\CronJobController;
@@ -13,10 +12,6 @@ beforeEach(function () {
     $this->artisanMock = $artisanMock;
 });
 
-afterEach(function () {
-    // Close Mockery to ensure all expectations are met and to clean up mocks.
-    Mockery::close();
-});
 
 test('it calls artisan schedule:run and returns a success json response', function () {
     // Arrange
@@ -52,4 +47,9 @@ test('it calls artisan schedule:run and returns a success json response', functi
 
     // Decode the JSON content and assert it matches the expected array.
     expect(json_decode($response->getContent(), true))->toEqual(['success' => true]);
+});
+ 
+
+afterEach(function () {
+    Mockery::close();
 });

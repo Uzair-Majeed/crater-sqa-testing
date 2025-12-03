@@ -30,8 +30,6 @@ use Mockery\MockInterface;
 use Vinkla\Hashids\Facades\Hashids;
 use Barryvdh\DomPDF\Facade as PDF;
 
-uses(Tests\TestCase::class)->group('estimate');
-
 beforeEach(function () {
     // Clear mocks before each test
     Mockery::close();
@@ -1822,4 +1820,11 @@ test('checkForEstimateConvertAction does nothing if setting is other value', fun
 
     expect($estimate->checkForEstimateConvertAction())->toBeTrue();
     expect($estimate->status)->toBe(Estimate::STATUS_SENT); // Status unchanged
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

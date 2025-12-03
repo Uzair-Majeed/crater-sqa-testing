@@ -1,8 +1,24 @@
 <?php
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Mockery as m;
 
-uses(TestCase::class, RefreshDatabase::class)->in('Feature');
-uses(TestCase::class, RefreshDatabase::class)->in('Unit');
-uses(TestCase::class, RefreshDatabase::class)->in('Unit-Testing');
+//
+// Boot Laravel for ALL tests (Feature + Unit)
+//
+uses(TestCase::class)->in(__DIR__);
+
+//
+// Enable RefreshDatabase ONLY for Feature tests (NOT Unit)
+//
+uses(RefreshDatabase::class)->in('Feature');
+
+//
+// Close Mockery cleanly
+//
+afterEach(function () {
+    if (class_exists(m::class)) {
+        m::close();
+    }
+});

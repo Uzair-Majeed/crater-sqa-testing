@@ -80,3 +80,10 @@ test('rules method fails validation when the key is not a string (null)', functi
     // Laravel's required rule often treats null as missing
     expect($validator->errors()->first('key'))->toBe('The key field is required.');
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

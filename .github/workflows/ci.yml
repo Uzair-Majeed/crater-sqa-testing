@@ -1,6 +1,5 @@
 name: CI
 
-# Trigger on push or pull request to main/master branch
 on: 
   push:
     branches: [ main, master ]
@@ -18,34 +17,34 @@ jobs:
     name: PHP ${{ matrix.php }}
 
     steps:
-      # Step 1: Checkout code
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      # Step 2: Set up PHP
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: exif, fileinfo, zip, mbstring, pdo_mysql
+          extensions: exif, fileinfo, zip, mbstring, pdo_mysql, sqlite3
           ini-values: post_max_size=256M, upload_max_filesize=256M
 
-      # Step 3: Validate Composer
       - name: Install Composer
         run: |
           php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
           php composer-setup.php --install-dir=/usr/local/bin --filename=composer
           composer --version
 
-      # Step 4: Install dependencies
       - name: Install PHP dependencies
-        run: |
-          composer install --no-interaction --no-progress --ignore-platform-reqs
+        run: composer install --no-interaction --no-progress
 
-      # Step 5: Check coding style
+      - name: Generate app key
+        run: php artisan key:generate
+
       - name: PHP-CS-Fixer Check
+        if: hashFiles('**/.php-cs-fixer.dist.php') != ''
         run: ./vendor/bin/php-cs-fixer fix -v --dry-run --using-cache=no --config=.php-cs-fixer.dist.php
 
-      # Step 6: Run backend unit tests
       - name: Run Unit Tests
-        run: php ./vendor/bin/pest
+        run: php -d memory_limit=2000M vendor/bin/pest tests/Unit
+
+      - name : Run Feature/Integration Tests
+        run: php -d memory_limit=2000M vendor/bin/pest tests/Feature

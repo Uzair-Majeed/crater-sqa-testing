@@ -16,11 +16,6 @@ beforeEach(function () {
     Carbon::setTestNow(Carbon::create(2023, 1, 15, 12, 0, 0));
 });
 
-// Clean up mocks after each test
-afterEach(function () {
-    Carbon::setTestNow(null);
-    Mockery::close();
-});
 
 test('it clones an invoice successfully with automatic due date and all relations', function () {
     // Arrange
@@ -643,4 +638,10 @@ test('it throws authorization exception when user cannot create invoice', functi
     // Act & Assert
     $this->expectException(AuthorizationException::class);
     $controller($request, $originalInvoice);
+});
+// Clean up mocks after each test
+
+
+afterEach(function () {
+    Mockery::close();
 });

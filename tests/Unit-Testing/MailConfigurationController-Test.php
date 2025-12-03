@@ -9,7 +9,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Mail;
-uses(\Mockery::class);
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\MessageBag;
 use Illuminate\Contracts\Validation\Validator;
@@ -282,4 +281,11 @@ test('testEmailConfig throws validation exception if request is invalid', functi
     $this->expectException(ValidationException::class);
 
     $controller->testEmailConfig($request);
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

@@ -1,6 +1,5 @@
 <?php
 
-uses(\Mockery::class);
 use Illuminate\Support\Facades\Artisan;
 use org\bovigo\vfs\vfsStream;
 use Brain\Monkey\Functions;
@@ -12,10 +11,6 @@ beforeEach(function () {
 });
 
 // Teardown for Mockery and Brain\Monkey
-afterEach(function () {
-    Mockery::close(); // Close Mockery expectations
-    Functions\tearDown(); // Tear down Brain Monkey mocks
-});
 
 test('constructor initializes parent command and properties', function () {
     $command = new \Crater\Console\Commands\ResetApp();
@@ -190,4 +185,11 @@ test('handle method does not alter .env if APP_DEBUG=true is not found', functio
 
     // Assert that the .env file content was NOT effectively altered
     expect(file_get_contents($envFilePath))->toBe($originalContent);
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

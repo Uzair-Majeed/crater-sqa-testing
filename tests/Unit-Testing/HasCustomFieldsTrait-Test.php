@@ -565,3 +565,10 @@ test('getCustomFieldValueBySlug returns null when custom field value is not foun
 
     expect($result)->toBeNull();
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

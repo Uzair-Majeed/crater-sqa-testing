@@ -162,3 +162,10 @@ test('it calls exchange rate provider methods with correct arguments when no act
     $mockQueryBuilder->shouldHaveReceived('where')->with('active', true)->once();
     $mockQueryBuilder->shouldHaveReceived('get')->once();
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

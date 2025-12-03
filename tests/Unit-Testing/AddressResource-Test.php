@@ -59,10 +59,6 @@ function createMockAddressModel($data = [], $relations = [])
 
 // Test suite for the AddressResource class
 
-    // Ensures Mockery expectations are closed after each test to prevent interference
-    afterEach(function () {
-        m::close();
-    });
 
     // Test case: Verifies that all direct properties are mapped correctly from the model.
     // This test ensures that the basic data transformation occurs as expected.
@@ -343,3 +339,9 @@ function createMockAddressModel($data = [], $relations = [])
         expect($result)->not->toHaveKey('user');
     });
 
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

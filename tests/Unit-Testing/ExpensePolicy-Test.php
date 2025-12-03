@@ -4,7 +4,6 @@ use Crater\Policies\ExpensePolicy;
 use Crater\Models\Expense;
 use Crater\Models\User;
 use Silber\Bouncer\BouncerFacade;
-uses(\Mockery::class);
 
 beforeEach(function () {
     $this->policy = new ExpensePolicy();
@@ -421,4 +420,11 @@ test('deleteMultiple returns false if user cannot delete multiple expenses', fun
     $result = $this->policy->deleteMultiple($user);
 
     expect($result)->toBeFalse();
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

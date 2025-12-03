@@ -43,3 +43,10 @@ test('ModuleDisabledEvent public module property is accessible after constructio
     expect($reflectionProperty->isPublic())->toBeTrue();
     expect($event->module)->toBe($moduleValue);
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

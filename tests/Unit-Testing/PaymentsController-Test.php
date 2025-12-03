@@ -7,7 +7,6 @@ use Crater\Models\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
-uses(\Mockery::class);
 use Illuminate\Pagination\LengthAwarePaginator;
 
 // Mock Auth facade for all tests in this file
@@ -192,4 +191,11 @@ test('show method returns 404 error response when payment is not found', functio
     expect($response)->toBeInstanceOf(JsonResponse::class)
         ->and($response->getStatusCode())->toBe(404)
         ->and($response->getData(true))->toBe(['error' => 'payment_not_found']);
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

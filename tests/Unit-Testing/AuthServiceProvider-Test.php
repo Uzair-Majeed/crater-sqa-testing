@@ -3,7 +3,6 @@
 use Crater\Providers\AuthServiceProvider;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Facades\Gate;
-uses(\Mockery::class);
 
 beforeEach(function () {
     Mockery::close(); // Ensure a clean slate for mocks
@@ -15,10 +14,6 @@ beforeEach(function () {
     // The parent ServiceProvider expects an Application instance.
     $this->appMock = Mockery::mock(Application::class);
     $this->provider = new AuthServiceProvider($this->appMock);
-});
-
-afterEach(function () {
-    Mockery::close(); // Clean up mocks after each test
 });
 
 test('it registers policies and defines all abilities correctly in the boot method', function () {
@@ -85,4 +80,10 @@ test('it registers policies and defines all abilities correctly in the boot meth
 
     // --- Execute the method under test ---
     $this->provider->boot();
+});
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

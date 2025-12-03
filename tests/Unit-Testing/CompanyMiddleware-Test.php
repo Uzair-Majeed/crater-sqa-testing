@@ -1,7 +1,6 @@
 <?php
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
-uses(\Mockery::class);
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 beforeEach(function () {
@@ -150,4 +149,10 @@ test('it does not modify the company header if a valid company header is present
 
     // Assert
     expect($response)->toBe('response_from_next');
+});
+
+ 
+
+afterEach(function () {
+    Mockery::close();
 });

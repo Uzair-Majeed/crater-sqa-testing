@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\View;
-uses(\Mockery::class);
 
 // Helper function to simplify mocking Eloquent query builder chains
 function mockQueryBuilderChain(...$methods) {
@@ -623,3 +622,10 @@ test('it handles empty color settings gracefully', function () {
     // Assert
     expect($response)->toEqual('PDF Stream Content');
 })->group('profit_loss_controller');
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

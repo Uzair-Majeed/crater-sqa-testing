@@ -187,3 +187,9 @@ test('toArray handles null values for all fields gracefully, with existing compa
         'company' => Mockery::type(\Crater\Http\Resources\CompanyResource::class),
     ]);
 });
+
+ 
+
+afterEach(function () {
+    Mockery::close();
+});

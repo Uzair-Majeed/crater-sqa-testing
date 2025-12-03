@@ -110,3 +110,9 @@ test('it ensures all expected keys are present in the output array', function ()
         $this->assertArrayHasKey($key, $result);
     }
 });
+
+ 
+
+afterEach(function () {
+    Mockery::close();
+});

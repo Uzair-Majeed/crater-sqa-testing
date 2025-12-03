@@ -181,3 +181,10 @@ test('it throws TypeError if Nwidart module cannot be found, even if database mo
 
     Mockery::close();
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

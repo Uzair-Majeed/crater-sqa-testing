@@ -8,7 +8,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Validation\ValidationException;
-uses(\Mockery::class);
 
 beforeEach(function () {
     // Mock static classes used in the controller
@@ -16,9 +15,6 @@ beforeEach(function () {
     Mockery::mock('alias:' . Setting::class);
 });
 
-afterEach(function () {
-    Mockery::close();
-});
 
 test('download method authorizes, validates, calls updater, and returns success json', function () {
     // Arrange
@@ -388,4 +384,11 @@ test('authorization failure for any method throws AuthorizationException', funct
     $controller->download($request);
 
     // Assert - exception is caught by expectException
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

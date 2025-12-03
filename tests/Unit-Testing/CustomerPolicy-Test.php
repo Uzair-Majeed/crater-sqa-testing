@@ -1,6 +1,5 @@
 <?php
 
-uses(\Mockery::class);
 use Silber\Bouncer\BouncerFacade;
 use Crater\Models\User;
 use Crater\Models\Customer;
@@ -344,4 +343,10 @@ test('deleteMultiple returns false when user cannot delete multiple customers', 
 
     // Assert
     expect($result)->toBeFalse();
+});
+
+ 
+
+afterEach(function () {
+    Mockery::close();
 });

@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Storage;
 
-uses(\Mockery::class);
 
 beforeEach(function () {
     // Ensure mocks are cleaned up before each test
@@ -118,4 +117,11 @@ test('it redirects to login if installed and profile is complete', function () {
         ->toBeInstanceOf(RedirectResponse::class)
         ->and($response->getTargetUrl())->toBe('login');
     $next->shouldNotHaveReceived('__invoke');
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

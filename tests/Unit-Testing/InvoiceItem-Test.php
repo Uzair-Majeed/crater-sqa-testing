@@ -184,3 +184,6 @@ test('scopeItemAttributes applies select with DB::raw and groupBy clauses', func
 
     InvoiceItem::scopeItemAttributes($query);
 });
+
+
+

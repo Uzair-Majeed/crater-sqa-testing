@@ -1,7 +1,6 @@
 <?php
 
 use org\bovigo\vfs\vfsStream;
-uses(\Mockery::class);
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -119,3 +118,10 @@ test('it aborts with 404 if the path from allScripts is explicitly null for the 
 
     $controller->__invoke($request, $scriptName);
 })->group('script-controller');
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

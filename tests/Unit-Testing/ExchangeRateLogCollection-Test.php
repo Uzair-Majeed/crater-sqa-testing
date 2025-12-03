@@ -4,7 +4,6 @@ use Crater\Http\Resources\ExchangeRateLogCollection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Http\Resources\Json\JsonResource;
-uses(\Mockery::class);
 
 beforeEach(function () {
     // This ensures Mockery expectations are cleared before each test
@@ -134,4 +133,11 @@ test('toArray handles JsonResource returning null or empty array', function () {
     $result = $resourceCollection->toArray($request);
 
     expect($result)->toEqual([null, []]);
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

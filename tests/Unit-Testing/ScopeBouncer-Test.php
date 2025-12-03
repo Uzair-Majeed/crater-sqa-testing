@@ -196,3 +196,10 @@ test('handle throws TypeError if user has no companies and no company header is 
 
     m::close();
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

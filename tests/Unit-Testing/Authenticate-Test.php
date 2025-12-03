@@ -2,7 +2,6 @@
 
 use Crater\Http\Middleware\Authenticate;
 use Illuminate\Http\Request;
-uses(\Mockery::class);
 use function Pest\Mock\Functions\expect;
 
 beforeEach(function () {
@@ -104,4 +103,10 @@ test('redirectTo handles multiple calls correctly for mixed JSON and non-JSON re
     expect($middleware->redirectTo($mockRequest1))->toBe('/mocked-login-url'); // Non-JSON
     expect($middleware->redirectTo($mockRequest2))->toBeNull(); // JSON
     expect($middleware->redirectTo($mockRequest3))->toBe('/mocked-login-url'); // Non-JSON
+});
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

@@ -48,3 +48,10 @@ test('rules method returns correct validation rules', function () {
     $columnProperty->setAccessible(true);
     expect($columnProperty->getValue($existsRule))->toBe('id');
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

@@ -7,7 +7,6 @@ use Crater\Models\CompanySetting;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Arr;
-uses(\Mockery::class);
 
 beforeEach(function () {
     // Ensure Mockery is closed before each test to prevent mock expectation leaks
@@ -292,4 +291,11 @@ test('it throws an AuthorizationException if user is not authorized to manage th
     // Act & Assert
     $this->expectException(AuthorizationException::class);
     $mockController->__invoke($mockRequest);
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

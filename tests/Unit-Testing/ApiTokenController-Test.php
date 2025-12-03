@@ -162,3 +162,9 @@ test('authorize method is called with correct capability', function () {
     // The explicit 'once()' and 'with()' on 'shouldReceive' handles the assertion.
     Mockery::close();
 });
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

@@ -175,3 +175,10 @@ function createPayloadRequestMock(array $validatedData, ?string $companyId = nul
             'type' => PaymentMethod::TYPE_GENERAL,
         ]));
     });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

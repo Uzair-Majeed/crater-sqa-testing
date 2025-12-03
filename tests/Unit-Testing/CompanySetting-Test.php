@@ -5,7 +5,6 @@ use Crater\Models\CompanySetting;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
-uses(\Mockery::class);
 
 // Helper function to create a mock company setting instance
 function createMockCompanySetting(array $attributes = [])
@@ -305,4 +304,10 @@ test('getSetting returns null if the specific setting does not exist for a compa
     $result = CompanySetting::getSetting($key, $companyId);
 
     expect($result)->toBeNull();
+});
+
+ 
+
+afterEach(function () {
+    Mockery::close();
 });

@@ -11,7 +11,6 @@ use Exception;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
-uses(\Mockery::class);
 use Pest\Support\Reflection;
 use Pest\Facades\Mocks;
 
@@ -123,12 +122,6 @@ beforeEach(function () {
     $this->manager = new EnvironmentManager();
 });
 
-afterEach(function () {
-    Mockery::close();
-    if (file_exists($this->envPath)) {
-        unlink($this->envPath);
-    }
-});
 
 test('constructor sets envPath correctly', function () {
     expect(Reflection::getProperty($this->manager, 'envPath'))
@@ -1421,4 +1414,11 @@ test('getDiskData returns correct data for dropbox driver with existing credenti
         'default_driver' => "\nFILESYSTEM_DRIVER=dropbox\n",
         'old_default_driver' => "\nFILESYSTEM_DRIVER=local\n",
     ]);
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

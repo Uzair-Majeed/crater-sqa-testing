@@ -143,3 +143,10 @@ test('middleware priority list is correctly defined', function () {
             Authorize::class,
         ]);
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

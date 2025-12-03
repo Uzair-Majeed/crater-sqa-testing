@@ -2,7 +2,6 @@
 
 use Crater\Policies\UserPolicy;
 use Crater\Models\User;
-uses(\Mockery::class);
 
 beforeEach(function () {
         $this->policy = new UserPolicy();
@@ -154,3 +153,10 @@ beforeEach(function () {
 
         expect($this->policy->deleteMultiple($user))->toBeFalse();
     });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

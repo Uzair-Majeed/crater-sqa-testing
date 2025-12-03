@@ -5,7 +5,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Collection;
-uses(\Mockery::class);
 
 // The `ModuleCollection` only overrides `toArray` to call `parent::toArray`.
 // Therefore, the primary goal of these tests is to ensure that `ModuleCollection::toArray`
@@ -122,6 +121,10 @@ test('module collection constructor accepts various traversable collections', fu
 ]);
 
 // Clean up Mockery expectations after each test to prevent interfering with subsequent tests.
+
+
+
+
 afterEach(function () {
     Mockery::close();
 });

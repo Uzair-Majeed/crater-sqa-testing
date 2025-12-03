@@ -1,7 +1,6 @@
 <?php
 
 use Crater\Mail\TestMail;
-uses(\Mockery::class);
 
 test('TestMail can be instantiated and properties are set correctly', function () {
     $subject = 'Test Subject Line';
@@ -115,5 +114,12 @@ test('TestMail build method uses correct view name regardless of input content',
 
     $mailMock->build();
 
+    Mockery::close();
+});
+
+
+
+
+afterEach(function () {
     Mockery::close();
 });

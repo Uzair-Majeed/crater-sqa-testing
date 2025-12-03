@@ -47,9 +47,6 @@ beforeEach(function () {
 });
 
 // Clean up mocks after each test
-afterEach(function () {
-    Mockery::close();
-});
 
 // Use a common test data structure
 $commonTestData = [
@@ -305,3 +302,6 @@ test('build method throws error if essential data like "from" is missing', funct
 
     expect(fn() => $mail->build())->toThrow(\Exception::class, 'Simulated database error for missing sender');
 });
+
+
+

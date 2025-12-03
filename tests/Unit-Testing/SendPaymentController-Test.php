@@ -1,6 +1,5 @@
 <?php
 
-uses(\Mockery::class);
 use Crater\Http\Controllers\V1\Admin\Payment\SendPaymentController;
 use Crater\Http\Requests\SendPaymentRequest;
 use Crater\Models\Payment;
@@ -12,9 +11,6 @@ beforeEach(function () {
     $this->paymentMock = Mockery::mock(Payment::class);
 });
 
-afterEach(function () {
-    Mockery::close();
-});
 
 test('it successfully sends a payment and returns a json response', function () {
     $requestData = ['amount' => 100.00, 'currency' => 'USD', 'notes' => 'Test Payment'];
@@ -170,4 +166,11 @@ test('it passes all request data to payment send method', function () {
     $response = $controller->__invoke($this->requestMock, $this->paymentMock);
 
     expect($response->getData(true))->toEqual($paymentResponseData);
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

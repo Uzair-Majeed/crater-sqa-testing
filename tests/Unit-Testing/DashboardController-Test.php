@@ -230,3 +230,10 @@ test('it throws an error if authenticated customer is null', function () {
     expect(fn () => $controller($request))
         ->toThrow(\Error::class, 'Attempt to read property "id" on null');
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

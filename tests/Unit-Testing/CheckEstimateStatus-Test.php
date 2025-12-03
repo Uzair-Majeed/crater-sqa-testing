@@ -3,7 +3,6 @@ use Carbon\Carbon;
 use Crater\Console\Commands\CheckEstimateStatus;
 use Crater\Models\Estimate;
 use Illuminate\Database\Eloquent\Collection;
-uses(\Mockery::class);
 
 beforeEach(function () {
     Mockery::close();
@@ -203,4 +202,10 @@ test('handle does not process estimates with already excluded statuses', functio
     ob_end_clean();
 
     expect(true)->toBeTrue();
+});
+
+ 
+
+afterEach(function () {
+    Mockery::close();
 });

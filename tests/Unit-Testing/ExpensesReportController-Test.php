@@ -85,9 +85,6 @@ beforeEach(function () {
     \PDF::shouldReceive('loadView')->zeroOrMoreTimes()->andReturn($this->mockPdfObject);
 });
 
-afterEach(function () {
-    Mockery::close(); // Cleanup mocks after each test
-});
 
 test('it streams the PDF by default', function () {
     // Request setup
@@ -416,4 +413,11 @@ test('it sets the correct locale from company settings', function () {
 
     expect($response)->toBe('PDF Stream Content');
     // The App::setLocale assertion is implicitly covered by `->once()` call in App mock.
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

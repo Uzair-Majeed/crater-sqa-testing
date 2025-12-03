@@ -1,6 +1,5 @@
 <?php
 
-uses(\Mockery::class);
 use Crater\Models\User;
 use Crater\Models\ExchangeRateProvider;
 use Silber\Bouncer\BouncerFacade;
@@ -266,4 +265,11 @@ test('forceDelete method returns null as it is not implemented', function () {
     $result = $policy->forceDelete($user, $exchangeRateProvider);
 
     expect($result)->toBeNull();
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

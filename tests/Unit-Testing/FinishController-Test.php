@@ -4,7 +4,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
 use Crater\Http\Controllers\V1\Installation\FinishController;
-uses(\Mockery::class);
 
 test('it successfully creates the database_created file and returns a success response', function () {
     // Arrange: Mock the Storage facade and its chained methods
@@ -59,5 +58,12 @@ test('it returns success even if storage put operation fails (current implementa
     expect($response->getData(true))->toEqual(['success' => true]);
 
     // Ensure Mockery expectations are met
+    Mockery::close();
+});
+
+
+
+
+afterEach(function () {
     Mockery::close();
 });

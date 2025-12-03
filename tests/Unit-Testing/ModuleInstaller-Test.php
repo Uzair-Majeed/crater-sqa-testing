@@ -13,7 +13,6 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\File;
 use Nwidart\Modules\Facades\Module;
-uses(\Mockery::class);
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 // Mock global helpers and facades for all tests
@@ -908,4 +907,11 @@ test('checkToken returns invalid token response for null getRemote response', fu
     $result = ModuleInstaller::checkToken($token);
 
     expect($result->getData())->toEqual((object)['error' => 'invalid_token']);
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

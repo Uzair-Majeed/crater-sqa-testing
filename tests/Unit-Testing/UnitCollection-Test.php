@@ -4,7 +4,6 @@ use Crater\Http\Resources\UnitCollection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Collection;
-uses(\Mockery::class);
 
 // Define a dummy class to represent a simple model for testing purposes
 class TestModel extends stdClass
@@ -210,4 +209,11 @@ test('toArray with a complex nested collection ensures all items are processed',
                 'source_request' => 'nested_test',
             ],
         ]);
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

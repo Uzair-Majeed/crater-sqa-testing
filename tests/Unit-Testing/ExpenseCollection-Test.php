@@ -3,7 +3,6 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Http\Resources\Json\JsonResource;
-uses(\Mockery::class);
 
 // Ensure Mockery mocks are closed after each test to prevent test pollution
 beforeEach(function () {
@@ -147,4 +146,11 @@ test('toArray handles different types of collection items correctly', function (
             $arrayItem,
             ['transformed_key' => 'transformed_value'],
         ]);
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

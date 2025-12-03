@@ -6,7 +6,6 @@ use Crater\Space\EnvironmentManager;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
-uses(\Mockery::class);
 use Illuminate\Support\Arr; // For array_key_exists check for `Arr` alternative if needed, but not directly used in controller logic.
 
 // Use a common setup for all tests in this file
@@ -205,4 +204,11 @@ test('getDatabaseEnvironment returns empty config when connection is an empty st
         'config' => (object)[],
         'success' => true,
     ]);
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

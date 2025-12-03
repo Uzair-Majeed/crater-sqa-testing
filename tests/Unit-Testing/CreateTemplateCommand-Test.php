@@ -230,3 +230,10 @@ test('handle successfully creates template for invoice type with special charact
     expect($command->infoMessages[0])->toContain(ucfirst($type) . ' Template created successfully at');
     expect($command->infoMessages[0])->toContain("views/app/pdf/{$type}/{$templateName}.blade.php");
 })->group('CreateTemplateCommand');
+
+ 
+
+
+afterEach(function () {
+    Mockery::close();
+});

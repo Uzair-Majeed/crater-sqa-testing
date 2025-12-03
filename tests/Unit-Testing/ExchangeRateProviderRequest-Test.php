@@ -130,3 +130,10 @@ test('getExchangeRateProviderPayload handles complete validated data and null co
 
     m::close();
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

@@ -7,7 +7,6 @@ use Crater\Models\Payment;
 use Crater\Services\SerialNumberFormatter;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-uses(\Mockery::class);
 
 // Ensure Mockery is closed after each test to prevent conflicts, especially with 'overload' mocks.
 beforeEach(function () {
@@ -481,4 +480,11 @@ test('it passes null for model object when model_id is missing', function () {
         'success' => true,
         'nextNumber' => $expectedNextNumber,
     ]);
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

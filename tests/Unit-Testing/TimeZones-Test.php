@@ -450,3 +450,10 @@ test('get_list returns a complete and correct array of timezones', function () {
     // Check the very last entry
     expect(last($timezones))->toEqual(['value' => 'Pacific/Kiritimati', 'key' => '(UTC+14:00) Kiritimati']);
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

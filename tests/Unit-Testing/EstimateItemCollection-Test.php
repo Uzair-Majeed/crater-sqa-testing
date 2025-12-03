@@ -98,3 +98,10 @@ test('toArray throws a TypeError if a non-Request object is passed as request pa
     $this->expectException(TypeError::class);
     $estimateItemCollection->toArray('this is a string, not a request');
 })->throws(TypeError::class);
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

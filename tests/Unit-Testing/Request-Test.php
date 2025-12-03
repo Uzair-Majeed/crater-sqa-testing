@@ -12,3 +12,10 @@ test('the Request class extends Illuminate\\Foundation\\Http\\FormRequest', func
     $reflection = new ReflectionClass(Request::class);
     expect($reflection->getParentClass()->getName())->toBe(FormRequest::class);
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

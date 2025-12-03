@@ -202,3 +202,10 @@ test('invoke returns module resource on module installer success with empty modu
     expect($response)->toBeInstanceOf(ModuleResource::class);
     expect($response)->toBe($mockModuleResourceInstance);
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

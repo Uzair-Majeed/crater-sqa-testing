@@ -4,7 +4,6 @@ use Crater\Http\Controllers\V1\Admin\Update\MigrateUpdateController;
 use Crater\Space\Updater;
 use Illuminate\Http\Request;
 use Illuminate\Contracts\Auth\Authenticatable;
-uses(\Mockery::class);
 
 beforeEach(function () {
     // Ensures Mockery expectations are verified and mocks are cleaned up after each test.
@@ -84,4 +83,11 @@ test('it calls Updater::migrateUpdate and returns a success response if the user
             'success' => true,
         ]);
     // Mockery::close() (in beforeEach) will verify the `once()` expectation.
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

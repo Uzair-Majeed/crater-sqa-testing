@@ -1,6 +1,5 @@
 <?php
 use Crater\Http\Requests\DiskEnvironmentRequest;
-uses(\Mockery::class);
 
 test('authorize method always returns true', function () {
     $request = new DiskEnvironmentRequest();
@@ -133,4 +132,11 @@ test('rules method returns dropbox specific rules when driver is dropbox', funct
     expect($rules['credentials.secret'])->toEqual(['required', 'string']);
     expect($rules['credentials.app'])->toEqual(['required', 'string']);
     expect($rules['credentials.root'])->toEqual(['required', 'string']);
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

@@ -5,7 +5,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
-uses(\Mockery::class);
 
 beforeEach(function () {
     // Ensure mocks are closed after each test to prevent interference
@@ -97,4 +96,10 @@ test('it successfully copies files and returns the path', function () {
         ->status()->toBe(200)
         ->original['success']->toBeTrue()
         ->original['path']->toBe($copiedPath);
+});
+
+ 
+
+afterEach(function () {
+    Mockery::close();
 });

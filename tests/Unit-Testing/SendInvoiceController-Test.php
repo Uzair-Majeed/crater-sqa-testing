@@ -1,6 +1,5 @@
 <?php
 
-uses(\Mockery::class);
 use Illuminate\Http\JsonResponse;
 use Crater\Http\Controllers\V1\Admin\Invoice\SendInvoiceController;
 use Crater\Http\Requests\SendInvoiceRequest;
@@ -139,4 +138,11 @@ test('it prevents invoice from being sent if authorization fails', function () {
     $controller->shouldHaveReceived('authorize');
     // And confirm that `invoice->send()` was NOT called.
     $invoice->shouldNotHaveReceived('send');
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

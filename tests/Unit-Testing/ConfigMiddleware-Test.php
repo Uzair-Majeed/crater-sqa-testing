@@ -233,3 +233,9 @@ test('it calls next and tries to find default file disk but does not call setCon
     // Assert
     expect($response)->toBe('response_from_next');
 });
+
+ 
+
+afterEach(function () {
+    Mockery::close();
+});

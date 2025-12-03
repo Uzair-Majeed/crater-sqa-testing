@@ -4,7 +4,6 @@ uses(Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration::class);
 use Crater\Models\TaxType;
 use Crater\Http\Requests\TaxTypeRequest;
 use Illuminate\Validation\Rules\Unique;
-uses(\Mockery::class);
 
 test('authorize method always returns true', function () {
     $request = new TaxTypeRequest();
@@ -261,4 +260,11 @@ test('getTaxTypePayload handles both empty validated data and null company heade
                 'type' => TaxType::TYPE_GENERAL
             ]
         );
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

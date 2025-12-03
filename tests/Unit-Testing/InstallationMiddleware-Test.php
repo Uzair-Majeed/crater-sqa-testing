@@ -1,6 +1,5 @@
 <?php
 
-uses(\Mockery::class);
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Storage;
@@ -155,4 +154,11 @@ test('it redirects to installation if profile_complete setting is an empty strin
 
     expect($response)->toBeInstanceOf(RedirectResponse::class);
     expect($response->getTargetUrl())->toBe('/installation');
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

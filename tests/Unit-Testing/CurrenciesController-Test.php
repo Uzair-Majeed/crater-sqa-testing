@@ -6,7 +6,6 @@ use Crater\Models\Currency;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-uses(\Mockery::class);
 
 beforeEach(function () {
     // Ensure mocks are cleared before each test to prevent interference
@@ -96,4 +95,9 @@ test('it returns a collection of currency resources when currencies exist', func
     // Assert: Verify the response
     expect($response)->toBeInstanceOf(AnonymousResourceCollection::class);
     expect($response->jsonSerialize())->toBe($expectedResourceData);
+});
+ 
+
+afterEach(function () {
+    Mockery::close();
 });

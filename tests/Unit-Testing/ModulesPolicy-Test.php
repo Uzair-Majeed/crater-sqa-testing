@@ -2,7 +2,6 @@
 
 use Crater\Policies\ModulesPolicy;
 use Crater\Models\User;
-uses(\Mockery::class);
 
 test('manageModules returns true for an owner user', function () {
     // Create a mock User instance
@@ -40,4 +39,11 @@ test('manageModules returns false for a non-owner user', function () {
 
     // Verify interactions with the mock
     $user->shouldHaveReceived('isOwner')->once();
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

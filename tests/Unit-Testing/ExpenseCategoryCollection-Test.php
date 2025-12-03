@@ -150,3 +150,10 @@ test('toArray method does not add extra data beyond parent ResourceCollection', 
             'name' => 'Marketing',
         ]);
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

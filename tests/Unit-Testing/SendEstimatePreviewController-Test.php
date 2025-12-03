@@ -1,6 +1,5 @@
 <?php
 
-uses(\Mockery::class);
 use Illuminate\Mail\Markdown;
 use Crater\Models\Estimate;
 use Crater\Http\Requests\SendEstimatesRequest;
@@ -226,4 +225,11 @@ test('it correctly merges estimate data and pdf url before rendering', function 
     // Assert
     expect($result)->toBeString();
     expect($result)->toEqual($renderedContent);
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

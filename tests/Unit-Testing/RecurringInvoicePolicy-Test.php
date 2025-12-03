@@ -11,10 +11,6 @@ beforeEach(function () {
     $this->policy = new RecurringInvoicePolicy();
 });
 
-afterEach(function () {
-    // Close Mockery to prevent memory leaks and verify expectations
-    Mockery::close();
-});
 
 // --- Test Cases for viewAny method ---
 
@@ -443,4 +439,11 @@ test('deleteMultiple denies access when Bouncer denies permission', function () 
     $result = $this->policy->deleteMultiple($user);
 
     expect($result)->toBeFalse();
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

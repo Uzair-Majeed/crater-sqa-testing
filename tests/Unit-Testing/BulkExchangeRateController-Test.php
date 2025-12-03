@@ -447,3 +447,9 @@ test('taxes handles an empty collection even if exists is true (edge case)', fun
 
     // Assertions handled by Mockery expectations (no Tax model updates)
 });
+
+ 
+
+afterEach(function () {
+    Mockery::close();
+});

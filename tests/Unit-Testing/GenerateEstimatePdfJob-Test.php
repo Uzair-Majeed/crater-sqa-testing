@@ -1,11 +1,7 @@
 <?php
 
 use Crater\Jobs\GenerateEstimatePdfJob;
-uses(\Mockery::class);
 
-afterEach(function () {
-    Mockery::close();
-});
 
 test('constructor sets estimate and deleteExistingFile properties correctly with default value', function () {
     // We only need a minimal object for the constructor test, as its methods aren't called here.
@@ -73,3 +69,6 @@ test('handle returns 0 after successful execution', function () {
 
     expect($result)->toBe(0);
 });
+
+
+

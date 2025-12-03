@@ -16,3 +16,10 @@ test('rules method returns the correct validation rules for settings', function 
     ];
     expect($request->rules())->toEqual($expectedRules);
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

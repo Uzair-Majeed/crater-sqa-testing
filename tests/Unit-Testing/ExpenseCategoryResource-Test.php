@@ -174,3 +174,10 @@ test('toArray handles zero amount property', function () {
     ]);
     expect($result)->not->toHaveKey('company');
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

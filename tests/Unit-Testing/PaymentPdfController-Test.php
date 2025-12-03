@@ -45,3 +45,10 @@ it('returns the generated PDF stream when the request does not have a preview pa
     // Assert that the response from getGeneratedPDFOrStream is returned
     expect($response)->toBe($expectedPdfContent);
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

@@ -3,7 +3,6 @@
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Collection as BaseCollection;
-uses(\Mockery::class);
 use Crater\Http\Resources\NoteCollection;
 
 beforeEach(function () {
@@ -119,4 +118,11 @@ test('it ensures the request instance is passed to each underlying resource tran
         'item_id' => 100,
         'param_used' => 'request_specific_value',
     ]);
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

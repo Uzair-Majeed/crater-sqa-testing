@@ -41,3 +41,10 @@ test('it returns the correct validation rules', function () {
     expect($tableProperty->getValue($existsRule))->toBe('expenses')
         ->and($columnProperty->getValue($existsRule))->toBe('id');
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

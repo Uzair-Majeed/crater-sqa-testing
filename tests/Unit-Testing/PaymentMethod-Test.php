@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\Request;
-uses(\Mockery::class);
 
 beforeEach(function () {
     Mockery::close();
@@ -295,4 +294,11 @@ test('getSettings throws error if payment method not found', function () {
     expect(function () use ($id) {
         PaymentMethod::getSettings($id);
     })->toThrow(\Error::class);
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

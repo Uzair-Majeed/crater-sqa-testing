@@ -33,3 +33,9 @@ test('CompanySettingRequest returns the correct validation rules', function () {
 
     expect($request->rules())->toEqual($expectedRules);
 });
+
+ 
+
+afterEach(function () {
+    Mockery::close();
+});

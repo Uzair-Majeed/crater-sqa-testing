@@ -2,7 +2,6 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-uses(\Mockery::class);
 use Carbon\Carbon;
 
 // Ensure Mockery is closed after each test to prevent static mock pollution
@@ -261,4 +260,11 @@ test('it correctly handles different types of return values from getNextInvoiceD
         'success' => true,
         'next_invoice_at' => $expectedNextInvoiceAtString, // The response should convert it to string
     ]);
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

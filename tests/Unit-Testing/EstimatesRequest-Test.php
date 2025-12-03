@@ -332,3 +332,10 @@ test('getEstimatePayload throws TypeError when customer is not found', function 
 
     expect(fn() => $request->getEstimatePayload())->toThrow(TypeError::class);
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

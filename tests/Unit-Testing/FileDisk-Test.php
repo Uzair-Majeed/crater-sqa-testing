@@ -697,3 +697,10 @@ test('isRemote returns false if type is not REMOTE', function () {
     $fileDisk->type = 'OTHER';
     expect($fileDisk->isRemote())->toBeFalse();
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

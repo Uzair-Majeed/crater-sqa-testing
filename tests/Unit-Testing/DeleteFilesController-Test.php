@@ -4,7 +4,6 @@ use Crater\Http\Controllers\V1\Admin\Update\DeleteFilesController;
 use Crater\Space\Updater;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-uses(\Mockery::class);
 
 beforeEach(function () {
     // Clear mocks before each test to ensure isolation
@@ -155,4 +154,11 @@ test('it handles non-array but truthy deleted_files gracefully without error', f
 
     expect($response->getStatusCode())->toBe(200)
         ->and($response->getData(true))->toEqual(['success' => true]);
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

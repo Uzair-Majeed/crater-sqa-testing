@@ -1,7 +1,6 @@
 <?php
 
 use function Pest\Laravel\mock;
-uses(\Mockery::class);
 use Crater\Http\Controllers\V1\Admin\Payment\PaymentMethodsController;
 use Crater\Http\Requests\PaymentMethodRequest;
 use Crater\Http\Resources\PaymentMethodResource;
@@ -237,3 +236,10 @@ test('destroy method returns error if expenses are attached but no payments', fu
 // if the test runs in a Laravel context and `response()->json()` works as expected.
 // Since the instruction is white-box unit testing and focusing on the class itself,
 // mocking `respondJson` directly is the most isolated approach.
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

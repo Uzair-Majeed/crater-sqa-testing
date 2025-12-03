@@ -370,3 +370,10 @@ beforeEach(function () {
         // Act & Assert
         expect($this->policy->forceDelete($user, $paymentMethod))->toBeFalse();
     });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

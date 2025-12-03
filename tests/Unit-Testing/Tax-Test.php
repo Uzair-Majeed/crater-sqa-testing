@@ -265,3 +265,10 @@ test('casts properties are correctly configured', function () {
     expect($casts)->toHaveKey('percent', 'float');
     expect(count($casts))->toBe(2);
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

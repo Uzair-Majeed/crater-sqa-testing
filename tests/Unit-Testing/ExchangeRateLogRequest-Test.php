@@ -244,3 +244,6 @@ test('getExchangeRateLogPayload handles company setting returning null for base 
 
     expect($request->getExchangeRateLogPayload())->toEqual($expectedPayload);
 });
+
+
+

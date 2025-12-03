@@ -92,3 +92,10 @@ test('UserCollection toArray handles different Request instances gracefully', fu
     $result2 = $userCollection->toArray($simpleRequest);
     expect($result2)->toEqual([$userData]);
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

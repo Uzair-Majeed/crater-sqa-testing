@@ -650,3 +650,5 @@ test('it handles missing company header and estimate company_id gracefully', fun
     expect($response)->toBeInstanceOf(InvoiceResource::class);
     expect($response->resource)->toBe($mockCreatedInvoice);
 });
+
+ 

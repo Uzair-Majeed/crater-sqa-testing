@@ -3,7 +3,6 @@
 use Crater\Policies\InvoicePolicy;
 use Crater\Models\User;
 use Crater\Models\Invoice;
-uses(\Mockery::class);
 
 beforeEach(function () {
         // Clear Mockery mocks before each test
@@ -546,3 +545,10 @@ beforeEach(function () {
 
         expect($result)->toBeFalse();
     });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

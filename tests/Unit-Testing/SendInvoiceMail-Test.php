@@ -5,7 +5,6 @@ use Crater\Models\EmailLog;
 use Crater\Models\Invoice;
 use Illuminate\Mail\Mailable;
 use Vinkla\Hashids\Facades\Hashids;
-uses(\Mockery::class); // Explicitly use Mockery for clarity
 
 // Define common test data
 $testData = [
@@ -210,4 +209,11 @@ test('build method creates email log and sets properties with attachment', funct
 
     // Assert the build method returns the mail instance (or its mock)
     expect($result)->toBe($mail);
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

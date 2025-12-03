@@ -36,3 +36,10 @@ test('it returns the correct validation rules for deleting users', function () {
     }
     expect($existsRuleFound)->toBeTrue('Expected Rule::exists(\'users\', \'id\') not found for users.*');
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

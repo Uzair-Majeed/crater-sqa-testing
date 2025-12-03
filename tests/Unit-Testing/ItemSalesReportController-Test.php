@@ -1,6 +1,5 @@
 <?php
 
-uses(\Mockery::class);
 use Carbon\Carbon;
 use Crater\Models\Company;
 use Crater\Models\Currency;
@@ -647,4 +646,11 @@ test('it includes color settings in shared view data', function () {
     $result = $controller($request, $hash);
 
     expect($result)->toBe('PDF Stream Content');
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

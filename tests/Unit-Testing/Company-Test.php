@@ -603,3 +603,4 @@ test('hasTransactions returns false if no transactional relationship exists', fu
 
     expect($this->company->hasTransactions())->toBeFalse();
 });
+ 

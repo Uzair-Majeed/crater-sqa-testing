@@ -4,7 +4,6 @@ use Carbon\Carbon;
 use Crater\Http\Resources\RoleResource;
 use Crater\Models\CompanySetting;
 use Illuminate\Http\Request;
-uses(\Mockery::class);
 
 // Ensure Mockery is closed after each test to prevent mock expectation leaks
 beforeEach(function () {
@@ -174,3 +173,10 @@ test('getFormattedAt throws exception for malformed created_at string', function
 // No separate tests for protected/private methods are needed as RoleResource has none.
 // getAbilities is called by toArray but not defined within RoleResource,
 // thus it's mocked when testing toArray, as per white-box testing principles for the given file.
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

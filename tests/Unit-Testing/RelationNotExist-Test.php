@@ -206,3 +206,10 @@ test('message returns a message with empty relation name when relation property 
 
     expect($rule->message())->toBe('Relation  exists.'); // Notice the space from the empty string
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

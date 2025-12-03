@@ -98,3 +98,10 @@ test('it throws a TypeError if request user is null', function () {
 
     $controller($mockRequest);
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

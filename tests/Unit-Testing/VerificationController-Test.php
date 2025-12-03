@@ -77,3 +77,10 @@ test('controller correctly uses VerifiesEmails trait methods', function () {
     expect(method_exists($controller, 'verify'))->toBeTrue(); // Handles the verification link
     expect(method_exists($controller, 'resend'))->toBeTrue(); // Resends the verification email
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

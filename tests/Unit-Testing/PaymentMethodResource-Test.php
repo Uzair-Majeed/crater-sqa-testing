@@ -3,7 +3,6 @@
 use Crater\Http\Resources\PaymentMethodResource;
 use Crater\Http\Resources\CompanyResource;
 use Illuminate\Http\Request;
-uses(\Mockery::class);
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 beforeEach(function () {
@@ -11,10 +10,6 @@ beforeEach(function () {
     Mockery::close();
 });
 
-afterEach(function () {
-    // Ensure all Mockery expectations are met and cleanup after each test
-    Mockery::close();
-});
 
 test('payment method resource transforms correctly when company relationship exists', function () {
     // 1. Mock the underlying PaymentMethod model that the resource wraps
@@ -186,4 +181,11 @@ test('payment method resource handles when the request parameter is not an Illum
         ->and($result['id'])->toBe(4)
         ->and($result['name'])->toBe('Visa')
         ->and($result['company'])->toBeInstanceOf(CompanyResource::class);
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

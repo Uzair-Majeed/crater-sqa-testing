@@ -1,6 +1,5 @@
 <?php
 
-uses(\Mockery::class);
 use Crater\Http\Controllers\V1\Admin\Settings\GetUserSettingsController;
 use Crater\Http\Requests\GetSettingsRequest;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -197,3 +196,6 @@ test('it returns empty json when the user has no settings at all', function () {
         ->assertStatus(200)
         ->assertJson([]);
 });
+
+
+

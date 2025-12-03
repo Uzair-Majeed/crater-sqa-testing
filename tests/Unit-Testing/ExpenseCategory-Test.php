@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\Request;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-uses(\Mockery::class);
 use function Pest\Faker\faker;
 use function Pest\Laravel\mock;
 
@@ -268,5 +267,12 @@ test('scopePaginateData paginates data when limit is numeric', function () {
 });
 
 afterAll(function () {
+    Mockery::close();
+});
+
+
+
+
+afterEach(function () {
     Mockery::close();
 });

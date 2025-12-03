@@ -10,7 +10,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Contracts\Routing\ResponseFactory;
-uses(\Mockery::class);
 
 beforeEach(function () {
     Mockery::close(); // Ensure mocks are cleaned up before each test
@@ -188,3 +187,10 @@ test('index method returns a collection of units with default limit', function (
         expect($response)->toBeInstanceOf(JsonResponse::class)
             ->and($response->getData(true)['success'])->toBe('Unit deleted successfully');
     });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

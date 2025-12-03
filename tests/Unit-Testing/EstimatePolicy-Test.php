@@ -5,7 +5,6 @@ use Crater\Models\Estimate;
 use Crater\Models\User;
 use Crater\Policies\EstimatePolicy;
 use Silber\Bouncer\BouncerFacade;
-uses(\Mockery::class);
 
 beforeEach(function () {
     Mockery::close(); // Clean up Mockery mocks after each test
@@ -609,4 +608,11 @@ test('deleteMultiple returns false when user does not have permission to delete 
 
     // Assert
     expect($result)->toBeFalse();
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

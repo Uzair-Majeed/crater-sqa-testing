@@ -552,3 +552,10 @@ test('getCurrencyConverterUrl returns null for unknown type', function () {
     // In PHP, if no case matches and there's no default, the function implicitly returns null.
     expect(ExchangeRateProvider::getCurrencyConverterUrl($data))->toBeNull();
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

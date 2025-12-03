@@ -36,3 +36,9 @@ test('it correctly defines the has many address relationship', function () {
     // Mockery's `shouldReceive->once()` will automatically fail the test if the method
     // was not called or called with incorrect arguments, verifying the interaction.
 });
+
+ 
+
+afterEach(function () {
+    Mockery::close();
+});

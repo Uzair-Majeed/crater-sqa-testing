@@ -4,7 +4,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Config;
 use Crater\Http\Controllers\V1\Installation\FilePermissionsController;
 use Crater\Space\FilePermissionChecker;
-uses(\Mockery::class);
 
 test('constructor injects FilePermissionChecker correctly', function () {
     $mockChecker = Mockery::mock(FilePermissionChecker::class);
@@ -184,5 +183,12 @@ test('permissions method handles diverse permission configurations and results',
                          ->toHaveKey('permissions')
                          ->and($responseData['permissions'])->toBe($checkerResult);
 
+    Mockery::close();
+});
+
+
+
+
+afterEach(function () {
     Mockery::close();
 });

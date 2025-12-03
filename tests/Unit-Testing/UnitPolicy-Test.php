@@ -6,9 +6,6 @@ use Crater\Models\User;
 use Crater\Policies\UnitPolicy;
 use Silber\Bouncer\BouncerFacade;
 
-afterEach(function () {
-    Mockery::close();
-});
 
 test('viewAny returns true if user can view any models', function () {
     $bouncer = Mockery::mock('alias:' . BouncerFacade::class);
@@ -398,4 +395,11 @@ test('forceDelete returns false if user cannot permanently delete model regardle
     $result = $policy->forceDelete($user, $unit);
 
     expect($result)->toBeFalse();
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

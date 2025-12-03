@@ -26,3 +26,10 @@ test('it sets the protected except property to an empty array', function () {
 
     expect($exceptValue)->toBeArray()->toBeEmpty();
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

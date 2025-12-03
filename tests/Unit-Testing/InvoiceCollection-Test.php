@@ -177,3 +177,10 @@ test('toArray always returns an array, even if the collection is null or invalid
 
     expect($result)->toBeArray()->toBeEmpty(); // ResourceCollection typically defaults to empty array for null collection
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

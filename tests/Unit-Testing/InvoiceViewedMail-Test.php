@@ -2,7 +2,6 @@
 
 use Crater\Mail\InvoiceViewedMail;
 use Illuminate\Support\Facades\Config;
-uses(\Mockery::class);
 
 beforeEach(function () {
     Mockery::close();
@@ -146,3 +145,10 @@ test('build method handles different types of invoice data', function (array $in
     'data with mixed types' => [['id' => 1, 'date' => '2023-01-01', 'paid' => true]],
     'data with nested array' => [['customer' => ['id' => 101, 'name' => 'Alice'], 'items' => ['item1']]],
 ]);
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

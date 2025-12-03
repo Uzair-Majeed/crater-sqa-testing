@@ -8,7 +8,6 @@ use Crater\Models\ExchangeRateProvider;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-uses(\Mockery::class);
 
 // Test Case 1: Exchange rate from provider is found and succeeds (status 200).
 test('it returns exchange rate from provider if available and successful', function () {
@@ -378,5 +377,12 @@ test('it prioritizes provider result over log if provider succeeds', function ()
 
     // Assert
     expect($response)->toBe($mockExchangeRateValue);
+    Mockery::close();
+});
+
+
+
+
+afterEach(function () {
     Mockery::close();
 });

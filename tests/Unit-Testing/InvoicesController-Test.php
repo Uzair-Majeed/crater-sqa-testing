@@ -1,6 +1,5 @@
 <?php
 
-uses(\Tests\TestCase::class)->group('unit');
 
 use Crater\Http\Controllers\V1\Customer\Invoice\InvoicesController;
 use Crater\Http\Resources\Customer\InvoiceResource;
@@ -10,7 +9,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
-uses(\Mockery::class);
 
 beforeEach(function () {
     Mockery::close();
@@ -234,4 +232,11 @@ test('show method returns 404 error if invoice is not found for the authenticate
     expect($response)->toBeInstanceOf(\Illuminate\Http\JsonResponse::class);
     expect($response->getStatusCode())->toBe(404);
     expect($response->getData(true))->toEqual(['error' => 'invoice_not_found']);
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

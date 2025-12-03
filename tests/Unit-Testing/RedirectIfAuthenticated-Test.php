@@ -1,7 +1,6 @@
 <?php
 
 
-uses(\Mockery::class);
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
@@ -125,4 +124,11 @@ test('it passes unauthenticated users to the next middleware with a specific gua
     expect($response)->toBe($expectedResponseFromNext);
 
     $next->shouldHaveBeenCalled()->once()->with($request);
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

@@ -286,3 +286,10 @@ test('updateVersion sets the application version in settings', function () {
     $method->setAccessible(true);
     $method->invoke($listener);
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

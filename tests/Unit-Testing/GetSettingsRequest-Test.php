@@ -119,3 +119,10 @@ test('rules ignore settings keys that are not present in the input for "settings
 
     expect($validator->passes())->toBeTrue();
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

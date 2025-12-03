@@ -17,3 +17,10 @@ test('domain environment request returns correct validation rules', function () 
         ->and($rules['app_domain'])->toContain('required')
         ->and($rules['app_domain'])->toHaveCount(1); // Ensure no other rules are present for 'app_domain'
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

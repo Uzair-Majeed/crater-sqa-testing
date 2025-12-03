@@ -11,11 +11,6 @@ beforeEach(function () {
     m::mock('alias:Illuminate\Support\Facades\Broadcast');
 });
 
-afterEach(function () {
-    // Close Mockery to clean up any mocks.
-    m::close();
-});
-
 test('the service provider registers broadcast routes and includes channels file', function () {
     // Arrange: Define expectations for the Broadcast facade.
 
@@ -57,4 +52,10 @@ test('the service provider registers broadcast routes and includes channels file
     // so that the `require` statement executes without causing a fatal error.
     // The success of this test implies this line was executed without crashing the process,
     // thereby covering the execution path of this statement.
+});
+
+
+afterEach(function () {
+    // Close Mockery to clean up any mocks.
+    m::close();
 });

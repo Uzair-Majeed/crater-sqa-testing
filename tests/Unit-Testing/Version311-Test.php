@@ -2,7 +2,6 @@
 
 use Crater\Listeners\Updates\v3\Version311;
 use Crater\Events\UpdateFinished;
-uses(\Mockery::class);
 
 beforeEach(function () {
     // Clear any previous mocks to ensure isolation between tests
@@ -65,4 +64,11 @@ test('handle executes migrations and updates version if the listener has not fir
 
     // Call the handle method under test
     $listener->handle($event);
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

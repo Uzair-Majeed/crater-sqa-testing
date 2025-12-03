@@ -9,7 +9,6 @@ use Illuminate\Contracts\View\Factory as ViewFactory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-uses(\Mockery::class);
 use Psr\Log\LoggerInterface;
 
 // Helper function for accessing protected properties for white-box testing
@@ -197,4 +196,11 @@ test('render method delegates to parent render and returns a json response for j
         ]);
 
     Mockery::close(); // Clean up mocks
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

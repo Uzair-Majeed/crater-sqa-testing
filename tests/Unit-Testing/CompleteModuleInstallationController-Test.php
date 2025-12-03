@@ -127,3 +127,9 @@ test('it throws AuthorizationException if gate authorization fails', function ()
 
     $controller($request);
 });
+
+ 
+
+afterEach(function () {
+    Mockery::close();
+});

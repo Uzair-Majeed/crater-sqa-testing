@@ -179,3 +179,10 @@ test('getExpenseCategoryPayload handles empty string company header', function (
         ->and($payload['name'])->toBe('Empty String Company Category')
         ->and($payload['company_id'])->toBe('');
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

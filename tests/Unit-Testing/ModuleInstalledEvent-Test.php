@@ -51,3 +51,10 @@ test('module installed event constructor correctly assigns the module property',
 // The traits (Dispatchable, InteractsWithSockets, SerializesModels) are framework-level concerns
 // and their internal workings are assumed to be tested by the framework itself.
 // This test comprehensively covers the constructor's assignment logic and various input types.
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

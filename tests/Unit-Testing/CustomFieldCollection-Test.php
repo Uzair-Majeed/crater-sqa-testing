@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Collection;
-uses(\Mockery::class);
 use Crater\Http\Resources\CustomFieldCollection;
 
 test('custom field collection can be instantiated', function () {
@@ -88,5 +87,11 @@ test('custom field collection toArray handles non-resource items by including th
                         (object)['id' => 4, 'value' => 'StdClass Object Item'],
                    ]);
 
+    Mockery::close();
+});
+
+ 
+
+afterEach(function () {
     Mockery::close();
 });

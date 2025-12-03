@@ -7,7 +7,6 @@ use Crater\Http\Resources\CustomFieldResource;
 use Crater\Models\CustomField;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
-uses(\Mockery::class);
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -27,9 +26,6 @@ beforeEach(function () {
     });
 });
 
-afterEach(function () {
-    Mockery::close();
-});
 
 test('index displays a listing of custom fields with default limit', function () {
     /** @var CustomFieldsController $controller */
@@ -246,4 +242,10 @@ test('destroy deletes the specified custom field with values', function () {
     expect($response)->toBeInstanceOf(JsonResponse::class);
     expect($response->getStatusCode())->toBe(200);
     expect($response->original)->toEqual(['success' => true]);
+});
+
+ 
+
+afterEach(function () {
+    Mockery::close();
 });

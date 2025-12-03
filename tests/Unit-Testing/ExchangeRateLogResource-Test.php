@@ -135,3 +135,10 @@ test('exchange rate log resource handles empty resource object', function () {
         ->currency_id->toBeNull()
         ->exchange_rate->toBeNull();
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

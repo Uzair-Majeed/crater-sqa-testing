@@ -490,3 +490,10 @@ test('getPaymentPayload ensures currency_id is from the customer model, not requ
 afterAll(function () {
     Mockery::close();
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

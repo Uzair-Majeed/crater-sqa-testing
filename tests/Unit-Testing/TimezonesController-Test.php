@@ -4,7 +4,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Crater\Http\Controllers\V1\Admin\General\TimezonesController;
 use Crater\Space\TimeZones;
-uses(\Mockery::class);
 
 beforeEach(function () {
     // Ensure Mockery is closed after each test to prevent mock leaks.
@@ -128,4 +127,11 @@ test('it handles non-array return from TimeZones get_list method gracefully', fu
     expect($response)->toBeInstanceOf(JsonResponse::class)
         ->and($response->getStatusCode())->toBe(200)
         ->and($response->getData(true))->toEqual(['time_zones' => $unexpectedData]);
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

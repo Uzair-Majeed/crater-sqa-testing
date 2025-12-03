@@ -3,7 +3,6 @@
 use Crater\Mail\SendEstimateMail;
 use Crater\Models\EmailLog;
 use Crater\Models\Estimate;
-uses(\Mockery::class);
 use Pest\Laravel\Functions; // Using Pest\Laravel\Functions for global function mocking in a Laravel context
 
 beforeEach(function () {
@@ -360,4 +359,11 @@ test('build method handles missing mail from name in config', function () {
     expect($result)->toBe($mailableMock);
     expect($emailLogMock->token)->toBe('hashed_log_token');
     expect($mailableMock->data['url'])->toBe('http://example.com/estimate/hashed_log_token');
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

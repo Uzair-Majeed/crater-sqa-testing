@@ -73,3 +73,10 @@
         // Call the handle method
         $listener->handle($event);
     });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

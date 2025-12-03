@@ -6,7 +6,6 @@ use Crater\Models\Currency;
 use Crater\Models\ExchangeRateLog;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-uses(Tests\TestCase::class); // Assuming Tests\TestCase exists in your project
 
 beforeEach(function () {
     Mockery::close();
@@ -183,4 +182,11 @@ test('id is a guarded property and cannot be mass-assigned', function () {
     // The 'id' should not be mass-assignable by fill()
     expect($log->id)->toBeNull(); // It should remain null as it was not set initially
     expect($log->exchange_rate)->toBe(2.5); // Other fillable attributes should be updated
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

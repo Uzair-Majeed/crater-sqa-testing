@@ -1,6 +1,5 @@
 <?php
 
-uses(\Mockery::class);
 use Crater\Jobs\CreateBackupJob;
 use Crater\Models\FileDisk;
 use Spatie\Backup\Tasks\Backup\BackupJobFactory;
@@ -378,4 +377,10 @@ test('handle throws error if file_disk_id key is missing from data array', funct
     $this->expectExceptionMessageMatches('/Undefined array key "file_disk_id"/');
 
     $job->handle();
+});
+
+ 
+
+afterEach(function () {
+    Mockery::close();
 });

@@ -11,7 +11,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Contracts\Routing\ResponseFactory;
 
 // Ensure Laravel's TestCase setup is used for global app() access to mock global helpers like `response()`
-uses(\Tests\TestCase::class);
 
 // Mock the Auth facade for all tests in this file
 beforeEach(function () {
@@ -220,6 +219,10 @@ test('show method returns 404 if estimate not found', function () {
 });
 
 // Clean up mocks after each test
+
+
+
+
 afterEach(function () {
     Mockery::close();
 });

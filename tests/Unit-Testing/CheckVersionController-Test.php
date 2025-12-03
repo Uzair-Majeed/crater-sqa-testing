@@ -1,7 +1,6 @@
 <?php
 use Crater\Http\Controllers\V1\Admin\Update\CheckVersionController;
 use Illuminate\Http\Request;
-uses(\Mockery::class);
 use function Pest\Laravel\assertJson;
 
 beforeEach(function () {
@@ -100,4 +99,10 @@ test('it handles updater returning an error response gracefully', function () {
 
     expect($response->getStatusCode())->toBe(200); // The HTTP request itself succeeded, but the update check reported an internal error
     assertJson($errorResult, $response->getContent());
+});
+
+ 
+
+afterEach(function () {
+    Mockery::close();
 });

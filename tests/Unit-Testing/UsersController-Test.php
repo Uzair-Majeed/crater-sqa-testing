@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
-uses(\Mockery::class);
 
 // Setup for Pest
 beforeEach(function () {
@@ -230,4 +229,11 @@ test('delete method authorizes but does not delete users when no users are provi
     // Assert
     expect($response)->toBeInstanceOf(JsonResponse::class)
         ->and($response->getData(true))->toEqual(['success' => true]);
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

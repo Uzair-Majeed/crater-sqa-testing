@@ -10,7 +10,6 @@ use Crater\Models\Invoice;
 use Crater\Models\Payment;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
-uses(\Mockery::class);
 
 beforeEach(function () {
     // Clear mocks before each test
@@ -31,9 +30,6 @@ beforeEach(function () {
     Mockery::mock('overload:Crater\Http\Resources\CustomerResource');
 });
 
-afterEach(function () {
-    Carbon::setTestNow(); // Reset Carbon's test instance after each test
-});
 
 test('it correctly calculates customer stats for default fiscal year (1-12) and current year', function () {
     $companyId = 1;
@@ -788,4 +784,11 @@ test('it correctly calculates customer stats when fiscal year starts in future m
 
     // Assertions
     expect($response)->toBeInstanceOf(CustomerResource::class);
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

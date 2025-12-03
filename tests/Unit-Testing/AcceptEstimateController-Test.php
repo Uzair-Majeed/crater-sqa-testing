@@ -23,10 +23,6 @@ function mockAuthFacade(?int $customerId): void
         );
 }
 
-// Cleanup Mockery mocks after each test to prevent mock bleeding
-afterEach(function () {
-    Mockery::close();
-});
 
 test('invoke returns 404 if estimate is not found or does not belong to the authenticated customer', function () {
     // Arrange
@@ -173,4 +169,10 @@ test('invoke handles request with no status field, resulting in no status change
     expect($resource)->toBeInstanceOf(EstimateResource::class);
     // Verify that the status on the mock estimate remained unchanged
     expect($mockEstimate->status)->toBe($originalStatus);
+});
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

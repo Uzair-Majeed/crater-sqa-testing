@@ -96,3 +96,10 @@ it('handles a collection with a single resource correctly', function () {
             ['id' => 3, 'name' => 'Single Estimate', 'amount' => 300],
         ]);
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

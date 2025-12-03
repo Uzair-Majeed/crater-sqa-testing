@@ -4,16 +4,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Contracts\Support\Arrayable;
-uses(\Mockery::class);
 use Crater\Http\Resources\TaxCollection;
 
 beforeEach(function () {
     Mockery::close(); // Ensure mocks are cleaned up before each test
 });
 
-afterEach(function () {
-    Mockery::close(); // Ensure mocks are cleaned up after each test
-});
 
 test('toArray returns an empty array for an empty collection', function () {
     $collection = Collection::make([]);
@@ -166,4 +162,11 @@ test('toArray handles a collection with a single item correctly', function () {
         ->toEqual([
             ['id' => 5, 'tax_name' => 'Single Tax'],
         ]);
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

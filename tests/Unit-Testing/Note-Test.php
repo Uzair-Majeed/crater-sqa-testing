@@ -213,6 +213,10 @@ test('scopeWhereCompany applies filter with a null company header', function () 
 });
 
 // Clean up Mockery expectations after each test to prevent conflicts
+
+
+
+
 afterEach(function () {
     Mockery::close();
 });

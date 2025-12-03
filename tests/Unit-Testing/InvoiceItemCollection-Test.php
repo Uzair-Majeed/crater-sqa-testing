@@ -185,3 +185,6 @@ test('toArray handles non-Request object as parameter gracefully', function () {
     expect($result)->toEqual($expectedArray);
     expect(count($result))->toBe(1);
 });
+
+
+

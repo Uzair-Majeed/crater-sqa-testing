@@ -5,7 +5,6 @@ use Illuminate\Http\Response;
 //use Closure;
 use Crater\Http\Middleware\AdminMiddleware;
 
-uses(\Mockery::class);
 
 beforeEach(function () {
     Mockery::close(); // Ensure Mockery is fresh for each test
@@ -408,6 +407,9 @@ test('it handles non-boolean falsy return from isSuperAdminOrAdmin as unauthoriz
         ->and($response->getContent())->toBeJson()
         ->and(json_decode($response->getContent(), true))->toEqual(['error' => 'user_is_not_admin']);
 });
+
+
+
 
 afterEach(function () {
     Mockery::close();

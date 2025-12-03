@@ -388,3 +388,10 @@ test('syncAbilities method handles empty abilities configuration', function () {
 
     expect($result)->toBeTrue();
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

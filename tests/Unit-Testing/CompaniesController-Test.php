@@ -524,3 +524,9 @@ test('getUserCompanies returns an empty collection if user has no companies', fu
     expect($response->collection)->toEqual($mockCompanies);
     expect($response->collection)->toBeEmpty();
 });
+
+ 
+
+afterEach(function () {
+    Mockery::close();
+});

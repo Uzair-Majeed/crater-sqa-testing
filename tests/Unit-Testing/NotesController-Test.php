@@ -279,3 +279,10 @@ beforeEach(function () {
             ->and($response->getStatusCode())->toBe(200)
             ->and($response->getContent())->json()->success->toBeTrue();
     });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

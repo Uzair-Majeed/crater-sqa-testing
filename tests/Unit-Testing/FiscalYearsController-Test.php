@@ -90,3 +90,10 @@ test('it handles object fiscal years config value gracefully', function () {
             'fiscal_years' => $objectConfig,
         ]);
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

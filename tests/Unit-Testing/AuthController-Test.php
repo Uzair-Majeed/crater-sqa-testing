@@ -8,7 +8,6 @@ use Illuminate\Validation\ValidationException;
 
 // Ensure Mockery is available and cleaned up after each test.
 // This is typically handled by `uses(RefreshDatabase::class, ...)` or a `TestCase` setup.
-// We'll use fully qualified Mockery calls to avoid requiring a 'uses(\Mockery::class);' statement.
 
 beforeEach(function () {
     $this->controller = new AuthController();
@@ -132,4 +131,10 @@ test('check returns false when user is not authenticated', function () {
     $result = $this->controller->check();
 
     expect($result)->toBeFalse();
+});
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

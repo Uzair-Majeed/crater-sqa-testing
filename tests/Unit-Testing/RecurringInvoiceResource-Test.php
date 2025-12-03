@@ -1,6 +1,5 @@
 <?php
 
-uses(\Mockery::class);
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Collection;
@@ -291,6 +290,10 @@ test('toArray handles boolean flags correctly for true and false values', functi
 });
 
 // Clean up Mockery mocks after each test to prevent test pollution
+
+
+
+
 afterEach(function () {
     Mockery::close();
 });

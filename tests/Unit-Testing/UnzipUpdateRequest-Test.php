@@ -27,3 +27,10 @@ test('rules method returns the correct validation rules', function () {
     expect($rules['module'])->toContain('string');
     expect($rules['module'])->toHaveCount(2);
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

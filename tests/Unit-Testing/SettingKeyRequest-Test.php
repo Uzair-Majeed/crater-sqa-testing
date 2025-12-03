@@ -57,3 +57,10 @@ test('validation fails when the key is null', function () {
     expect($validator->errors()->has('key'))->toBeTrue();
     expect($validator->errors()->first('key'))->toBe('The key field is required.');
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

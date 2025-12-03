@@ -283,3 +283,6 @@ test('isExpired throws error if mailable relationship returns empty array for co
     expect(fn() => $emailLog->isExpired())
         ->toThrow(Error::class, 'Undefined array key 0');
 });
+
+
+

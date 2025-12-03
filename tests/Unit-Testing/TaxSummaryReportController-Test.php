@@ -9,7 +9,6 @@ use Crater\Models\CompanySetting;
 use Illuminate\Support\Facades\App;
 use Crater\Http\Controllers\V1\Admin\Report\TaxSummaryReportController;
 use Illuminate\Support\Facades\View;
-uses(\Mockery::class);
 //use PDF; // Facade
 
 // Helper to create a partial mock of the controller for authorize()
@@ -613,4 +612,11 @@ test('it throws an AuthorizationException if company not found', function () {
     expect(function () use ($controller, $request, $companyHash) {
         $controller($request, $companyHash);
     })->toThrow(\Illuminate\Auth\Access\AuthorizationException::class);
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

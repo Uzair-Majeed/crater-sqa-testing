@@ -7,11 +7,6 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Pagination\Paginator;
 
-// Ensure Mockery is torn down after each test
-afterEach(function () {
-    Mockery::close();
-});
-
 // Pest PHP test suite for AppServiceProvider
 function getPartialMockedServiceProvider()
     {
@@ -336,3 +331,9 @@ function getPartialMockedServiceProvider()
 
             $provider->generateMenu($menuMock, $data);
         });
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

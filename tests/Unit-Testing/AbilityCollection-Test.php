@@ -99,3 +99,10 @@ test('to_array_handles_different_types_of_resources_implementing_to_array', func
                        ['custom' => 'data', 'request_spl_id' => spl_object_id($request)],
                    ]);
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

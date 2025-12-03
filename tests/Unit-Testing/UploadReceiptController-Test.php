@@ -5,15 +5,11 @@ use Crater\Http\Requests\UploadExpenseReceiptRequest;
 use Crater\Models\Expense;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
-uses(\Mockery::class);
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileCannotBeAdded;
 use Spatie\MediaLibrary\MediaCollections\FileAdder;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 // Ensure Mockery is closed after each test to prevent test interference.
-afterEach(function () {
-    Mockery::close();
-});
 
 test('it successfully uploads a new expense receipt when type is create', function () {
     // Arrange
@@ -287,4 +283,11 @@ test('it throws FileCannotBeAdded exception when attachment data field is missin
     // Act & Assert
     expect(fn () => $controller->__invoke($mockRequest, $mockExpense))
         ->toThrow(FileCannotBeAdded::class);
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

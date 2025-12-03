@@ -5,7 +5,6 @@ use Crater\Http\Resources\InvoiceItemResource;
 use Crater\Http\Resources\TaxResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
-uses(\Mockery::class);
 
 test('toArray transforms all direct properties and includes existing relations', function () {
     // 1. Arrange - Mock the underlying model instance
@@ -341,4 +340,11 @@ test('toArray includes empty collection for relation if it exists but the collec
     expect($result)->toHaveKey('fields');
     expect($result['fields'])->toBeInstanceOf(ResourceCollection::class);
     expect($result['fields'])->toHaveCount(0);
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

@@ -8,7 +8,6 @@ use Crater\Models\Payment;
 use Crater\Models\Transaction;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-uses(\Mockery::class);
 use Vinkla\Hashids\Facades\Hashids;
 
 // Setup a test suite for Transaction model
@@ -229,4 +228,11 @@ test('isExpired handles zero link expiry days correctly on the next day', functi
     // Expiry date (Y-m-d) is 2023-01-10. Carbon::now() (Y-m-d) is 2023-01-11.
     // '2023-01-11' > '2023-01-10' is true.
     expect($transaction->isExpired())->toBeTrue();
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

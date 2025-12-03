@@ -68,3 +68,10 @@ test('the UpdateFinished event uses the Dispatchable trait', function () {
 
     expect($uses)->toContain(\Illuminate\Foundation\Events\Dispatchable::class);
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

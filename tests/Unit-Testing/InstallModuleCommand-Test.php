@@ -103,3 +103,10 @@ test('handle method propagates exceptions from ModuleInstaller::complete', funct
 
     \Mockery::close();
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

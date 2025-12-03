@@ -20,8 +20,6 @@ if (!function_exists('respondJson')) {
     }
 }
 
-uses(TestCase::class)->group('exchange-rate-provider-controller');
-
 beforeEach(function () {
     $this->controller = new ExchangeRateProviderController();
 });
@@ -404,4 +402,11 @@ test('destroy returns error if exchange rate provider is active', function () {
     expect($result)->toBeInstanceOf(JsonResponse::class);
     expect($result->getData(true))->toMatchArray(['message' => 'Provider Active.']);
     expect($result->getStatusCode())->toBe(400); // Default status for respondJson
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

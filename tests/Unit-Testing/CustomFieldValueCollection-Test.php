@@ -188,3 +188,9 @@ test('toArray returns additional data when present in the collection instance', 
     expect($result['data'][0]['id'])->toBe(1);
     expect($result['additional_field'])->toBe('extra_data');
 });
+
+ 
+
+afterEach(function () {
+    Mockery::close();
+});

@@ -180,3 +180,9 @@ test('appends attributes are set correctly', function () {
     $appends = (new ReflectionClass($model))->getProperty('appends')->getValue($model);
     expect($appends)->toContain('defaultAnswer');
 });
+
+ 
+
+afterEach(function () {
+    Mockery::close();
+});

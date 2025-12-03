@@ -277,6 +277,9 @@ test('dateTimeFormat returns default_answer for other types (string, number, boo
     expect($result3)->toBe($booleanValue);
 });
 
+
+ 
+
 afterEach(function () {
-    Mockery::close(); // Close Mockery to clean up mocks after each test
+    Mockery::close();
 });

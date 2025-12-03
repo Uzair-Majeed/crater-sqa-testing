@@ -96,3 +96,4 @@ test('it clears the optimize cache and returns errors when environment variables
 afterEach(function () {
     m::close();
 });
+

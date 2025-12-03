@@ -5,7 +5,6 @@ use Crater\Listeners\Updates\v2\Version210;
 use Crater\Models\CompanySetting;
 use Crater\Models\Setting;
 use Illuminate\Support\Facades\Auth;
-uses(\Mockery::class);
 
 // Use Laravel's TestCase for automatic Mockery setup and teardown,
 // and other Laravel testing utilities.
@@ -120,4 +119,11 @@ test('add_auto_generate_settings_stores_correct_values_for_authenticated_company
     $reflection = new ReflectionMethod($listener, 'addAutoGenerateSettings');
     $reflection->setAccessible(true); // Make private method accessible
     $reflection->invoke($listener); // Call the private method
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

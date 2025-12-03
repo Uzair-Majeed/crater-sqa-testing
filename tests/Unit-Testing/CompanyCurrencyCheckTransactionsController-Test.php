@@ -4,7 +4,6 @@ use Crater\Http\Controllers\V1\Admin\Settings\CompanyCurrencyCheckTransactionsCo
 use Crater\Models\Company;
 use Illuminate\Http\Request;
 use Illuminate\Auth\Access\AuthorizationException;
-uses(\Mockery::class);
 
 // Ensure Mockery is torn down after each test
 beforeEach(function () {
@@ -176,4 +175,10 @@ test('it handles empty company header by implicitly failing authorization', func
     expect(function () use ($controller, $mockRequest) {
         $controller->__invoke($mockRequest);
     })->throws(AuthorizationException::class, 'Company ID is missing or invalid.');
+});
+
+ 
+
+afterEach(function () {
+    Mockery::close();
 });

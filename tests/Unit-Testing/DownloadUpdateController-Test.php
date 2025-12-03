@@ -6,7 +6,6 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\MessageBag;
-uses(\Mockery::class);
 
 beforeEach(fn () => Mockery::close());
 
@@ -90,4 +89,11 @@ test('it downloads the update and returns success with path', function () {
         'success' => true,
         'path' => $expectedPath,
     ]);
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

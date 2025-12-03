@@ -90,3 +90,9 @@ test('it handles a request instance, even if not used internally', function () {
     // No specific assertion about the $request content itself, as the controller doesn't use it.
     // The test confirms the method call completes successfully with a valid Request object.
 });
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

@@ -1,6 +1,5 @@
 <?php
 
-uses(\Mockery::class);
 use Illuminate\Http\Request;
 use Crater\Http\Resources\Customer\CustomerResource;
 use Crater\Models\Currency;
@@ -10,7 +9,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Collection;
 use Illuminate\Http\Resources\Json\JsonResource; // Used for reflection into `additional` property
 
-uses(Tests\TestCase::class);
 
 // Helper function to create mock menu items for testing purposes
 function createMockMenuItem(string $title, string $url): stdClass
@@ -253,4 +251,10 @@ test('it returns an empty modules array when no enabled modules exist for authen
     ]);
     expect($additionalData['meta']['current_customer_currency'])->toEqual($currency);
     expect($additionalData['meta']['modules'])->toEqual($modules);
+});
+
+ 
+
+afterEach(function () {
+    Mockery::close();
 });

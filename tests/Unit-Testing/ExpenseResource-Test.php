@@ -616,3 +616,10 @@ test('it handles null relation method return gracefully', function () {
     expect($result)->not->toHaveKey('currency');
     expect($result)->not->toHaveKey('payment_method');
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

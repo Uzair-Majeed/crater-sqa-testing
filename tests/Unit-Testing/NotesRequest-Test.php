@@ -197,3 +197,10 @@ test('getNotesPayload handles null company_id', function () {
             'company_id' => $companyId,
         ]));
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

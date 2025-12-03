@@ -1,11 +1,7 @@
 <?php
 
 use Crater\Jobs\GenerateInvoicePdfJob;
-uses(\Mockery::class);
 
-afterEach(function () {
-    Mockery::close();
-});
 
 test('it constructs with invoice and deleteExistingFile set to true', function () {
     $invoice = (object) ['id' => 1, 'invoice_number' => 'INV-001'];
@@ -112,4 +108,11 @@ test('handle calls generatePDF with empty string for invoice_number if it is an 
     $result = $job->handle();
 
     expect($result)->toBe(0);
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

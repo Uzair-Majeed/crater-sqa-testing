@@ -1,3 +1,4 @@
+
 <?php
 
 use Crater\Models\Setting;

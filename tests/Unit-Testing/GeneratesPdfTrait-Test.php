@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Storage;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\MediaLibrary\MediaCollections\FileAdder;
-uses(\Mockery::class);
 use org\bovigo\vfs\vfsStream;
 
 // Define a dummy class to use the trait for testing
@@ -129,12 +128,6 @@ beforeEach(function () {
     
 });
 
-afterEach(function () {
-    Mockery::close();
-    // Clear the global mock function for config
-    global $mockConfig;
-    $mockConfig = [];
-});
 
 test('getGeneratedPDFOrStream returns existing PDF response when file exists', function () {
     $trait = Mockery::mock(TestClassForGeneratesPdfTrait::class)->makePartial();
@@ -963,4 +956,11 @@ test('getFormattedString handles multiple newlines and placeholders', function (
     $result = $trait->getFormattedString($format);
 
     expect($result)->toBe($expected);
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

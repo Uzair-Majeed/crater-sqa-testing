@@ -3,7 +3,6 @@
 use Crater\Http\Resources\CompanyResource;
 use Crater\Http\Resources\UnitResource;
 use Illuminate\Http\Request;
-uses(\Mockery::class);
 
 // Ensure Mockery expectations are cleared before each test
 beforeEach(function () {
@@ -160,4 +159,11 @@ test('toArray handles null properties gracefully for core fields', function () {
         'name' => null,
         'company_id' => null,
     ])->not->toHaveKey('company'); // 'company' key should still be absent.
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

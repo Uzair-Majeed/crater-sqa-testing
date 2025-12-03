@@ -22,9 +22,6 @@ beforeEach(function () {
     Mockery::mock('overload:' . CompanyResource::class);
 });
 
-afterEach(function () {
-    Mockery::close();
-});
 
 test('toArray correctly transforms transaction without relationships', function () {
     /** @var MockInterface|Transaction $transactionMock */
@@ -269,4 +266,11 @@ test('toArray handles null properties and no relationships gracefully', function
 
     expect($result)->not->toHaveKey('invoice');
     expect($result)->not->toHaveKey('company');
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

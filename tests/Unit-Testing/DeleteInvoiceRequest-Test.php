@@ -52,3 +52,10 @@ test('rules method returns correct validation rules', function () {
     expect($modelProperty->getValue($relationNotExistRule))->toBe(Invoice::class);
     expect($relationProperty->getValue($relationNotExistRule))->toBe('payments');
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

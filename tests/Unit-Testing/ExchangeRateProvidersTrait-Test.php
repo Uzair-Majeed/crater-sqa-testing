@@ -1,7 +1,6 @@
 <?php
 
 use Tests\TestCase;
-uses(\Mockery::class);
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Contracts\Routing\ResponseFactory;
@@ -37,9 +36,6 @@ beforeEach(function () {
     });
 
     // This will run after each test in this describe block
-    afterEach(function () {
-        Mockery::close();
-    });
 
     // --- Tests for getExchangeRate method ---
    test('currency_freak returns exchange rate on success', function () {
@@ -628,3 +624,10 @@ beforeEach(function () {
 
             expect($result)->toBe($apiResponse);
         });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

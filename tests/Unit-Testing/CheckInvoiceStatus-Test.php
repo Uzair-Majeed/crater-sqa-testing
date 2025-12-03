@@ -11,12 +11,6 @@ beforeEach(function () {
     Carbon::setTestNow(Carbon::create(2023, 10, 26, 10, 0, 0));
 });
 
-afterEach(function () {
-    // Clear the fixed test time after each test
-    Carbon::setTestNow(null);
-    // Close Mockery to verify expectations
-    Mockery::close();
-});
 
 test('command has correct signature and description', function () {
     $command = new CheckInvoiceStatus();
@@ -256,4 +250,11 @@ test('handle ensures invoices with future or current due dates are excluded by t
 
     // No invoice saving or output is expected
     $this->assertTrue(true);
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

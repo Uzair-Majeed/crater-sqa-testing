@@ -5,7 +5,6 @@ use Crater\Listeners\Updates\v2\Version201;
 use Crater\Models\Setting;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
-uses(\Mockery::class);
 use Illuminate\Support\Facades\File;
 use Illuminate\Contracts\Foundation\Application;
 
@@ -230,4 +229,11 @@ afterAll(function () {
     if (app()->bound(Application::class) && app()->instance(Application::class) instanceof Mockery\MockInterface) {
         app()->forgetInstance(Application::class);
     }
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

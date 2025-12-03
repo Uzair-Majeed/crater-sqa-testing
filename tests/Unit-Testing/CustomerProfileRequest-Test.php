@@ -179,3 +179,9 @@ test('getBillingAddress returns array with only type when billing data is null',
     expect($request->getBillingAddress())->toEqual($expected)
         ->toBeArray();
 });
+
+ 
+
+afterEach(function () {
+    Mockery::close();
+});

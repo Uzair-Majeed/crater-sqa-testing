@@ -6,7 +6,6 @@ use Crater\Http\Requests\RecurringInvoiceRequest;
 use Crater\Models\CompanySetting;
 use Crater\Models\Customer;
 use Crater\Models\RecurringInvoice;
-uses(\Mockery::class);
 
 beforeEach(function () {
     Mockery::close();
@@ -415,4 +414,11 @@ test('getRecurringInvoicePayload handles missing company currency setting for ex
     // If $company_currency is null, then $company_currency != $current_currency will be true,
     // so $this->exchange_rate will be used.
     expect($payload['exchange_rate'])->toBe($providedExchangeRate);
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

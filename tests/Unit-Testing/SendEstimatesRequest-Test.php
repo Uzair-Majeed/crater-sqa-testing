@@ -19,3 +19,10 @@ test('rules method returns the correct validation rules', function () {
         ->and($rules['from'])->toEqual(['required'])
         ->and($rules['to'])->toEqual(['required']);
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

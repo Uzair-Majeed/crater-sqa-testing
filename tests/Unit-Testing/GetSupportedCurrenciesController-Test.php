@@ -1,6 +1,5 @@
 <?php
 
-uses(\Mockery::class);
 use Illuminate\Http\Request;
 use Crater\Models\ExchangeRateProvider;
 use Illuminate\Http\JsonResponse;
@@ -63,4 +62,11 @@ test('it throws AuthorizationException when authorization fails', function () {
     $this->expectExceptionMessage('User not authorized.');
 
     $controller($request); // Invokes the __invoke method
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

@@ -22,3 +22,9 @@ test('authorize method always returns true', function () {
         expect($request->rules())->toEqual($expectedRules);
     });
 
+
+ 
+
+afterEach(function () {
+    Mockery::close();
+});

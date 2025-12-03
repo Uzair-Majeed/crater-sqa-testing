@@ -30,3 +30,10 @@ test('user setting uses the HasFactory trait', function () {
     // Assert that calling the 'factory' method returns an instance of the Eloquent Factory
     expect(UserSetting::factory())->toBeInstanceOf(Factory::class);
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

@@ -5,7 +5,6 @@ use Crater\Models\Customer;
 use Crater\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
-uses(\Mockery::class);
 
 beforeEach(function () {
     // Clear any Mockery expectations between tests
@@ -360,4 +359,11 @@ test('it returns an empty users array when user is owner but User::applyFilters 
     expect($responseData)->toHaveKeys(['customers', 'users']);
     expect($responseData['customers'])->toEqual($mockCustomerPaginator->toArray());
     expect($responseData['users'])->toEqual($mockUserPaginator->toArray());
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

@@ -192,3 +192,4 @@ test('getPathForResponsiveImages handles null media key gracefully', function ()
 
     expect($path)->toBe('/responsive-images/');
 });
+ 

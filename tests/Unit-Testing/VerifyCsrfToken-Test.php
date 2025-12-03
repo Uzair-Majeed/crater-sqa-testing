@@ -3,7 +3,6 @@
 use Crater\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Encryption\Encrypter;
-uses(\Mockery::class);
 
 function createMiddlewareInstance(): VerifyCsrfToken
     {
@@ -38,6 +37,10 @@ function createMiddlewareInstance(): VerifyCsrfToken
     });
 
     // Ensure Mockery is closed after each test to prevent memory leaks and unexpected behavior
-    afterEach(function () {
-        Mockery::close();
-    });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

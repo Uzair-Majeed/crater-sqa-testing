@@ -569,3 +569,10 @@ test('deleteMultiple returns false if user cannot delete multiple payments', fun
 
     assertFalse($policy->deleteMultiple($user));
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

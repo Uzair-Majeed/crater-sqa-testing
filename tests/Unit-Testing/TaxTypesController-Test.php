@@ -348,3 +348,10 @@ test('destroy throws authorization exception', function () {
     $this->expectException(AuthorizationException::class);
     $controller->destroy($taxType);
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

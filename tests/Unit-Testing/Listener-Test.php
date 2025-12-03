@@ -137,3 +137,10 @@ test('isListenerFired handles empty version strings (static::VERSION not empty, 
 
     expect($listener->publicIsListenerFired($event))->toBeFalse();
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

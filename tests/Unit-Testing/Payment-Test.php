@@ -1067,3 +1067,10 @@ function createMockQuery()
         expect(true)->toBeTrue();
     });
     
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

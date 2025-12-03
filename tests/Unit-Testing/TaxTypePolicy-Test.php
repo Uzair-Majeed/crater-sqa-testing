@@ -400,3 +400,10 @@ test('forceDelete returns false if user has no company access to specific tax ty
 
     expect($result)->toBeFalse();
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

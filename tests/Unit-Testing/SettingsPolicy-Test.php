@@ -114,3 +114,6 @@ test('manageSettings returns false if user is not an owner', function () {
 
     expect($result)->toBeFalse();
 });
+
+
+

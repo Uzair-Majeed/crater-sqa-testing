@@ -164,3 +164,10 @@ test('it returns an empty array when initialized with null', function () {
         ->toBeArray()
         ->toBeEmpty();
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

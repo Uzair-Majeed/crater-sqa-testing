@@ -584,3 +584,10 @@ test('respondJson returns a json response with empty message', function () {
 
     expect(respondJson(true, ''))->toBe($mockJsonResponse);
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

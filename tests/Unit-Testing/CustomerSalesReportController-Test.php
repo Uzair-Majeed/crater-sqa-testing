@@ -93,10 +93,6 @@ beforeEach(function () {
     $this->controller->shouldReceive('authorize')->with('view report', $this->companyMock)->andReturn(true)->byDefault();
 });
 
-afterEach(function () {
-    Mockery::close();
-    Carbon::setTestNow(null); // Clear Carbon's test now state
-});
 
 /**
  * Helper for creating mock invoice objects.
@@ -537,3 +533,8 @@ test('it calls applyInvoiceFilters with only from_date and to_date from the requ
 // and that the test proceeds as if authorization passed. Explicitly testing authorization failure
 // (e.g., throwing an `AuthorizationException`) is typically done in feature tests where policies
 // are properly loaded and applied, as unit tests focus on the controller's internal logic.
+ 
+
+afterEach(function () {
+    Mockery::close();
+});

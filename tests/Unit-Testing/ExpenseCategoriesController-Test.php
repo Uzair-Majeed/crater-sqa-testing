@@ -262,3 +262,6 @@ test('destroy returns error if expense category has attached expenses', function
     $category->shouldNotHaveReceived('delete'); // Verify delete was not called
     $this->controller->shouldHaveReceived('authorize')->once()->with('delete', $category);
 });
+
+
+

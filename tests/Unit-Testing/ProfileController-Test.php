@@ -7,15 +7,11 @@ use Crater\Models\Company;
 use Crater\Models\Customer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-uses(\Mockery::class);
 
 beforeEach(function () {
     Mockery::mock('alias:Illuminate\Support\Facades\Auth');
 });
 
-afterEach(function () {
-    Mockery::close();
-});
 
 test('getUser returns a customer resource for the authenticated customer', function () {
     // Arrange
@@ -419,4 +415,11 @@ test('updateProfile throws an error if Auth user is null when update is attempte
     $this->expectExceptionMessage('Call to a member function update() on null');
 
     $controller->updateProfile($mockCompany, $mockRequest);
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

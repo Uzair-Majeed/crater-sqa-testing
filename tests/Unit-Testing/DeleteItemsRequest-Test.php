@@ -101,3 +101,10 @@ use Illuminate\Validation\Rules\Exists;
         // After all expected rules have been matched and removed, the $foundRelationNotExists array should be empty.
         expect($foundRelationNotExists)->toBeEmpty('There were unexpected or duplicate RelationNotExist rules found that did not match any expected rule.');
     });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

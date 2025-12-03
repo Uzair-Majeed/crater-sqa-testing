@@ -25,3 +25,10 @@ test('it correctly defines the attributes that should not be trimmed', function 
         ->toContain('password', 'password_confirmation')
         ->toHaveCount(2); // Verifies that only these two specific attributes are present as defined
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

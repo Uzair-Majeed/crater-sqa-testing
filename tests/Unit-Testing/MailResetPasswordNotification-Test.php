@@ -4,7 +4,6 @@ use Crater\Notifications\MailResetPasswordNotification;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\URL;
-uses(\Mockery::class);
 
 test('constructor correctly sets the token via parent', function () {
     $token = 'some_random_token_for_constructor';
@@ -105,4 +104,11 @@ test('toArray method returns an empty array', function () {
     $notifiable = (object)['email' => 'toarray@example.com']; // Dummy notifiable
 
     expect($notification->toArray($notifiable))->toEqual([]);
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

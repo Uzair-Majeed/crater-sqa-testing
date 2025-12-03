@@ -6,7 +6,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Auth\Passwords\PasswordBroker;
-uses(\Mockery::class);
 
 test('broker method returns the customer password broker', function () {
     // Arrange
@@ -58,4 +57,11 @@ test('sendResetLinkFailedResponse returns a failed response with 403 status', fu
     expect($response)->toBeInstanceOf(Response::class)
         ->and($response->getStatusCode())->toBe(403)
         ->and($response->getContent())->toBe('Email could not be sent to this email address.');
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

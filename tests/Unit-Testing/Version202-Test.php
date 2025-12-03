@@ -3,16 +3,12 @@
 use Crater\Events\UpdateFinished;
 use Crater\Listeners\Updates\v2\Version202;
 use Crater\Models\Setting;
-uses(\Mockery::class);
 
 beforeEach(function () {
     // Mock the static facade for Setting
     Mockery::mock('alias:' . Setting::class);
 });
 
-afterEach(function () {
-    Mockery::close();
-});
 
 test('it can be instantiated', function () {
     $listener = new Version202();
@@ -56,4 +52,11 @@ test('handle updates version if listener is not already fired', function () {
 
     // Call the handle method
     $listener->handle($event);
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

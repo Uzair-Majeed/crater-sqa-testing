@@ -2,7 +2,6 @@
 
 use Crater\Policies\OwnerPolicy;
 use Crater\Models\User;
-uses(\Mockery::class);
 
 test('managedByOwner returns true if the user is an owner', function () {
     // Arrange
@@ -35,5 +34,12 @@ test('managedByOwner returns false if the user is not an owner', function () {
     expect($result)->toBeFalse();
 
     // Verify mocks
+    Mockery::close();
+});
+
+
+
+
+afterEach(function () {
     Mockery::close();
 });

@@ -171,3 +171,10 @@ test('scopeWhereCompany handles zero company ID', function () {
 
     EstimateItem::scopeWhereCompany($query, $companyId);
 });
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

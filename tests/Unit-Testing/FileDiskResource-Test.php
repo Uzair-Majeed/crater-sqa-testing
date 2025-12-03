@@ -2,7 +2,6 @@
 
 use Crater\Http\Resources\FileDiskResource;
 use Illuminate\Http\Request;
-uses(\Mockery::class);
 
 test('toArray returns correct data with all properties populated', function () {
     // Arrange: Create a mock object to represent the underlying model
@@ -122,4 +121,11 @@ test('toArray ensures all expected keys are present even if properties are undef
         'credentials' => null,
         'company_id' => null,
     ]);
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

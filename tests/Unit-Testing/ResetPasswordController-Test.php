@@ -10,7 +10,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
-uses(\Mockery::class);
 
 // Use an anonymous class to expose protected methods for direct testing
 // This is a common pattern for white-box testing protected methods
@@ -139,4 +138,11 @@ test('sendResetFailedResponse calls response() with correct message and status, 
     $result = $controller->publicSendResetFailedResponse($request, $responseString);
 
     expect($result)->toBe($mockResponse);
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

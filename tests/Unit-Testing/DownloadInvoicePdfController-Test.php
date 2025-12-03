@@ -1,6 +1,5 @@
 <?php
 
-uses(\Mockery::class);
 use Crater\Models\Invoice;
 use Crater\Http\Controllers\V1\PDF\DownloadInvoicePdfController;
 use Illuminate\Contracts\Routing\ResponseFactory;
@@ -40,4 +39,11 @@ test('it downloads the invoice PDF with the correct path', function () {
     // automatically act as assertions. If the `download` method is not called
     // exactly once with the specified path, Mockery will cause the test to fail.
     // No explicit `expect()` or `assertTrue()` is needed here.
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

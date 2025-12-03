@@ -5,7 +5,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Support\Facades\Config;
-uses(\Mockery::class);
 
 // Ensures Mockery expectations are cleared before each test runs.
 beforeEach(function () {
@@ -133,4 +132,11 @@ test('it returns mail configuration with empty string values if config keys are 
     // Assert
     expect($response)->toBeInstanceOf(JsonResponse::class);
     expect($response->getData(true))->toEqual($expectedMailConfig);
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

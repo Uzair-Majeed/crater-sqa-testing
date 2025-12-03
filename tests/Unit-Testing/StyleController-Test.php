@@ -5,7 +5,6 @@ use Crater\Services\Module\ModuleFacade;
 //use DateTime;
 use Illuminate\Http\Response;
 use Illuminate\Support\Arr;
-uses(\Mockery::class);
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  // This refers to the global alias for Illuminate\Http\Request
 use org\bovigo\vfs\vfsStream;
@@ -187,3 +186,6 @@ test('invoke handles style names with special characters correctly when not foun
 
     $controller($mockRequest, $styleName);
 });
+
+
+

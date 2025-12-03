@@ -150,3 +150,9 @@ test('it throws TypeError when underlying resource is null and properties are ac
 
     $resource->toArray($request);
 });
+
+ 
+
+afterEach(function () {
+    Mockery::close();
+});

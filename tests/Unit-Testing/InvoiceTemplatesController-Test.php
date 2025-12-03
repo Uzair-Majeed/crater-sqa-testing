@@ -2,7 +2,6 @@
 
 use Illuminate\Http\Request;
 use Crater\Models\Invoice;
-uses(\Mockery::class);
 use Illuminate\Auth\Access\AuthorizationException;
 
 // Helper function to create a partial mock of the controller for isolation
@@ -91,6 +90,10 @@ test('it throws an authorization exception if the user is not authorized', funct
 });
 
 // Clean up mocks after each test
+
+
+
+
 afterEach(function () {
     Mockery::close();
 });

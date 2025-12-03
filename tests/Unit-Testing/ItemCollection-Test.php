@@ -139,3 +139,10 @@ test('toArray passes the request instance directly to the parent method', functi
 // introduced by `ItemCollection` itself to test. All complex logic is inherited
 // from `ResourceCollection` and the individual resources, which our tests
 // implicitly cover by verifying the correct delegation.
+
+
+
+
+afterEach(function () {
+    Mockery::close();
+});

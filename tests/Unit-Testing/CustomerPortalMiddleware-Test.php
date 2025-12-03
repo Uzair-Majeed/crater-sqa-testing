@@ -5,7 +5,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Crater\Http\Middleware\CustomerPortalMiddleware;
-uses(\Mockery::class);
 
 it('throws an error if the user is null and enable_portal is accessed', function () {
     // Arrange
@@ -89,4 +88,10 @@ it('proceeds to the next middleware if customer portal is enabled', function () 
     // Assert
     expect($response)->toBeInstanceOf(Response::class)
         ->and($response)->toBe($expectedNextResponse); // Ensure the exact response from $next is returned
+});
+
+ 
+
+afterEach(function () {
+    Mockery::close();
 });

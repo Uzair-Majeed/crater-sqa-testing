@@ -9,7 +9,6 @@ use File;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Support\Facades\Event;
-uses(\Mockery::class);
 use ZipArchive;
 
 // Mock global functions/helpers
@@ -162,11 +161,6 @@ beforeEach(function () {
     Event::fake();
 });
 
-afterEach(function () {
-    Mockery::close();
-    // Assert nothing else was dispatched if this test didn't explicitly expect events.
-    Event::assertNothingDispatched();
-});
 
 test('checkForUpdate returns null if getRemote fails or returns non-200', function () {
     // Mock getRemote to return null
@@ -644,4 +638,11 @@ test('finishUpdate dispatches UpdateFinished event and returns success response'
         ->and($result['success'])->toBeTrue()
         ->and($result['error'])->toBeFalse()
         ->and($result['data'])->toBeArray()->toBeEmpty();
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

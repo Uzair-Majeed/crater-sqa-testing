@@ -4,12 +4,8 @@ use Crater\Http\Requests\RoleRequest;
 use Illuminate\Validation\Rule;
 use Illuminate\Routing\Route;
 use Illuminate\Validation\Rules\Unique;
-uses(\Mockery::class);
 
 // Ensure Mockery is closed after each test to prevent test pollution
-afterEach(function () {
-    Mockery::close();
-});
 
 test('authorize method always returns true', function () {
     $request = new RoleRequest();
@@ -222,4 +218,11 @@ test('getRolePayload method handles empty request data', function () {
 
     expect($payload)->toBeArray()
         ->and($payload)->toEqual($expectedPayload);
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

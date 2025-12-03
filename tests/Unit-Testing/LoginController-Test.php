@@ -1,6 +1,5 @@
 <?php
 
-uses(\Mockery::class);
 use Illuminate\Http\Request;
 use Crater\Http\Controllers\V1\Installation\LoginController;
 
@@ -153,4 +152,11 @@ test('it throws a TypeError if no super admin user is found', function () {
         // The specific error message can vary between PHP versions (e.g., "Attempt to call a method 'companies' on null" in PHP 8+,
         // or "Trying to get property 'companies' of non-object" in PHP 7.x).
         // Checking just the TypeError class is robust for unit testing.
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

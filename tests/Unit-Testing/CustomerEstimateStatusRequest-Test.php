@@ -1,5 +1,4 @@
 <?php
-uses(Tests\TestCase::class);
 use Crater\Http\Requests\CustomerEstimateStatusRequest;
 use Illuminate\Validation\Rule;
 
@@ -38,4 +37,11 @@ test('rules method returns only the expected keys', function () {
 
     $this->assertCount(1, $rules); // Only 'status' key should be present
     $this->assertArrayHasKey('status', $rules);
+});
+
+ 
+
+
+afterEach(function () {
+    Mockery::close();
 });

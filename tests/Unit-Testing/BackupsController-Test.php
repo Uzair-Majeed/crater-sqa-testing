@@ -14,7 +14,6 @@ use Spatie\Backup\BackupDestination\Backup;
 use Spatie\Backup\BackupDestination\BackupDestination;
 use Spatie\Backup\Helpers\Format;
 use Illuminate\Contracts\Routing\ResponseFactory;
-uses(\Mockery::class);
 
 beforeEach(function () {
     Mockery::close();
@@ -404,6 +403,8 @@ test('destroy method throws TypeError if backup path is not found in the destina
     $otherBackup->shouldNotHaveReceived('delete'); // Confirm delete was not called on the non-matching backup.
     $this->controller->shouldNotHaveReceived('respondSuccess'); // Should not reach the success response.
 });
+
+ 
 
 afterEach(function () {
     Mockery::close();

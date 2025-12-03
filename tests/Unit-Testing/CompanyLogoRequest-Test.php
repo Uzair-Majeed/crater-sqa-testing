@@ -44,3 +44,9 @@ it('returns the correct validation rules for the company_logo field', function (
     // Verify the specific allowed mime types passed to the Base64Mime constructor.
     expect($allowedMimes)->toBe(['gif', 'jpg', 'png']);
 });
+
+ 
+
+afterEach(function () {
+    Mockery::close();
+});

@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
-uses(\Mockery::class);
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 
 // Integrate Mockery cleanup with Pest.
@@ -329,4 +328,11 @@ test('constructor accepts a non-collection array', function () {
         ->toBeArray()
         ->toHaveCount(1)
         ->and($result[0])->toEqual((object)['id' => 102]); // No transformation applied without `collects`.
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

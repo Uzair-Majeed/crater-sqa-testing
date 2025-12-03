@@ -14,16 +14,12 @@ use Crater\Listeners\Updates\v3\Version300;
 use Crater\Listeners\Updates\v3\Version310;
 use Crater\Listeners\Updates\v3\Version311;
 use Crater\Providers\EventServiceProvider;
-uses(\Mockery::class);
 
 beforeEach(function () {
     // Mock the Laravel Application instance for each test.
     $this->app = Mockery::mock(Application::class);
 });
 
-afterEach(function () {
-    Mockery::close();
-});
 
 test('it can be instantiated', function () {
     $provider = new EventServiceProvider($this->app);
@@ -122,4 +118,11 @@ test('boot method registers all defined listeners with the event dispatcher', fu
     // No direct return value from boot() to assert, but the Mockery expectations
     // will verify that the internal logic of registering listeners was executed correctly.
     expect(true)->toBeTrue(); // Dummy assertion to ensure test passes if no other direct assertion.
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });

@@ -4,7 +4,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Crater\Http\Resources\ExchangeRateProviderCollection;
-uses(\Mockery::class);
 
 beforeEach(function () {
     // Clear Mockery expectations before each test to prevent conflicts
@@ -118,4 +117,11 @@ test('toArray method propagates the request object to child JsonResources', func
     $result = $resourceCollection->toArray($request);
 
     expect($result)->toBeArray()->toEqual([['verified' => true]]);
+});
+
+
+
+
+afterEach(function () {
+    Mockery::close();
 });
