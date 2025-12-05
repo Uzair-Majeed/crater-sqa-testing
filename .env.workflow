@@ -8,7 +8,7 @@ LOG_CHANNEL=stack
 LOG_LEVEL=debug
 
 DB_CONNECTION=sqlite
-DB_DATABASE=:memory:
+DB_DATABASE=database/database.sqlite
 
 BROADCAST_DRIVER=log
 CACHE_DRIVER=array

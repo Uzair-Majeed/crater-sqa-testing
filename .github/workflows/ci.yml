@@ -43,11 +43,6 @@ jobs:
           touch database/database.sqlite
           php artisan config:clear
 
-      - name: Configure database for testing
-        run: |
-          echo "DB_CONNECTION=sqlite" >> .env
-          echo "DB_DATABASE=database/database.sqlite" >> .env
-
       - name: Run database migrations
         run: php artisan migrate --force --seed
 
