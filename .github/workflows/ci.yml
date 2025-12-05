@@ -1,4 +1,4 @@
-name: CI
+name: CI Pipeline
 
 on: 
   push:
@@ -9,42 +9,66 @@ on:
 jobs:
   build-test:
     runs-on: ubuntu-latest
+    
     strategy:
       fail-fast: false
       matrix:
-        php: ['7.4', '8.0', '8.1']
+        php: ['8.0', '8.1']
 
-    name: PHP ${{ matrix.php }}
+    name: PHP ${{ matrix.php }} - Build & Test
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: exif, fileinfo, zip, mbstring, pdo_mysql, sqlite3
-          ini-values: post_max_size=256M, upload_max_filesize=256M
+          extensions: exif, fileinfo, zip, mbstring, pdo_mysql, sqlite3, bcmath, gd
+          ini-values: post_max_size=256M, upload_max_filesize=256M, memory_limit=2000M
+          coverage: none
 
-      - name: Install Composer
-        run: |
-          php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-          php composer-setup.php --install-dir=/usr/local/bin --filename=composer
-          composer --version
+      - name: Copy environment file
+        run: cp .env.workflow .env
 
-      - name: Install PHP dependencies
-        run: composer install --no-interaction --no-progress
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --no-progress --prefer-dist --optimize-autoloader
 
-      - name: Generate app key
+      - name: Generate application key
         run: php artisan key:generate
 
-      - name: PHP-CS-Fixer Check
-        if: hashFiles('**/.php-cs-fixer.dist.php') != ''
-        run: ./vendor/bin/php-cs-fixer fix -v --dry-run --using-cache=no --config=.php-cs-fixer.dist.php
+      - name: Set up SQLite database
+        run: |
+          touch database/database.sqlite
+          php artisan config:clear
+
+      - name: Configure database for testing
+        run: |
+          echo "DB_CONNECTION=sqlite" >> .env
+          echo "DB_DATABASE=database/database.sqlite" >> .env
+
+      - name: Run database migrations
+        run: php artisan migrate --force --seed
+
+      - name: Seed demo data
+        run: php artisan db:seed --class=DemoSeeder --force
 
       - name: Run Unit Tests
-        run: php -d memory_limit=2000M vendor/bin/pest tests/Unit-Testing
+        run: php -d memory_limit=2000M vendor/bin/pest tests/Unit --parallel
 
-      - name : Run Integration Tests
-        run: php -d memory_limit=2000M vendor/bin/pest tests/Integration-Testing
+      - name: Run Integration Tests
+        run: php -d memory_limit=2000M vendor/bin/pest tests/Integration-Testing --parallel
+
+      - name: Generate test coverage report
+        if: matrix.php == '8.1'
+        run: php -d memory_limit=2000M vendor/bin/pest --coverage --min=50
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results-php-${{ matrix.php }}
+          path: |
+            storage/logs/
+            tests/results/
