@@ -50,14 +50,14 @@ jobs:
         run: php artisan db:seed --class=DemoSeeder --force
 
       - name: Run Unit Tests
-        run: php -d memory_limit=2000M vendor/bin/pest tests/Unit --parallel
+        run: php -d memory_limit=2000M vendor/bin/pest tests/Unit-Testing
 
       - name: Run Integration Tests
-        run: php -d memory_limit=2000M vendor/bin/pest tests/Integration-Testing --parallel
+        run: php -d memory_limit=2000M vendor/bin/pest tests/Integration-Testing
 
-      - name: Generate test coverage report
+      - name: Generate test coverage report for unit tests
         if: matrix.php == '8.1'
-        run: php -d memory_limit=2000M vendor/bin/pest --coverage --min=50
+        run: php -d memory_limit=2000M vendor/bin/pest tests/Unit-Testing --coverage --min=50
 
       - name: Upload test results
         if: always()
