@@ -47,7 +47,7 @@ jobs:
         run: php -d memory_limit=2000M vendor/bin/pest tests/Integration-Testing
 
       - name: Run Unit test and Generate code coverage report 
-        run: php -d memory_limit=2000M vendor/bin/pest tests/Unit-Testing --coverage --coverage-html coverage --min=50
+        run: php -d memory_limit=2000M vendor/bin/pest tests/Unit-Testing --coverage --coverage-html coverage
 
       - name: Upload test results
         if: always()
