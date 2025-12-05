@@ -71,6 +71,7 @@ pipeline {
                 echo "Cypress tests would run here..."
                 // Uncomment when Node.js + Cypress are installed
                 // bat 'npx cypress run'
+                
             }
         }
     }
