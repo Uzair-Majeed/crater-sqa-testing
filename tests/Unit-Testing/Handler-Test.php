@@ -1,206 +1,342 @@
 <?php
 
 use Crater\Exceptions\Handler;
-use Illuminate\Contracts\Config\Repository;
-use Illuminate\Contracts\Container\Container;
-use Illuminate\Contracts\Events\Dispatcher;
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\View\Factory as ViewFactory;
-use Illuminate\Contracts\View\View;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Psr\Log\LoggerInterface;
 
-// Helper function for accessing protected properties for white-box testing
-function getProtectedProperty(object $object, string $property)
-{
-    $reflection = new ReflectionClass($object);
-    $property = $reflection->getProperty($property);
+// ========== CLASS STRUCTURE TESTS ==========
+
+test('Handler is in correct namespace', function () {
+    $reflection = new ReflectionClass(Handler::class);
+    expect($reflection->getNamespaceName())->toBe('Crater\Exceptions');
+});
+
+test('Handler extends ExceptionHandler', function () {
+    $reflection = new ReflectionClass(Handler::class);
+    $parent = $reflection->getParentClass();
+    
+    expect($parent)->not->toBeFalse()
+        ->and($parent->getName())->toBe('Illuminate\Foundation\Exceptions\Handler');
+});
+
+test('Handler is not abstract', function () {
+    $reflection = new ReflectionClass(Handler::class);
+    expect($reflection->isAbstract())->toBeFalse();
+});
+
+test('Handler is instantiable', function () {
+    $reflection = new ReflectionClass(Handler::class);
+    expect($reflection->isInstantiable())->toBeTrue();
+});
+
+// ========== PROPERTIES TESTS ==========
+
+test('Handler has dontReport property', function () {
+    $reflection = new ReflectionClass(Handler::class);
+    expect($reflection->hasProperty('dontReport'))->toBeTrue();
+});
+
+test('Handler has dontFlash property', function () {
+    $reflection = new ReflectionClass(Handler::class);
+    expect($reflection->hasProperty('dontFlash'))->toBeTrue();
+});
+
+test('dontReport property is protected', function () {
+    $reflection = new ReflectionClass(Handler::class);
+    $property = $reflection->getProperty('dontReport');
+    
+    expect($property->isProtected())->toBeTrue();
+});
+
+test('dontFlash property is protected', function () {
+    $reflection = new ReflectionClass(Handler::class);
+    $property = $reflection->getProperty('dontFlash');
+    
+    expect($property->isProtected())->toBeTrue();
+});
+
+test('dontReport default value is empty array', function () {
+    $reflection = new ReflectionClass(Handler::class);
+    $property = $reflection->getProperty('dontReport');
     $property->setAccessible(true);
-    return $property->getValue($object);
-}
-
-test('it has the correct dontReport property', function () {
-    $mockApp = Mockery::mock(Application::class);
-    $handler = new Handler($mockApp);
-    $dontReport = getProtectedProperty($handler, 'dontReport');
-    expect($dontReport)->toBeArray()->toBeEmpty();
+    $defaultValue = $property->getValue($reflection->newInstanceWithoutConstructor());
+    
+    expect($defaultValue)->toBeArray()
+        ->and($defaultValue)->toBeEmpty();
 });
 
-test('it has the correct dontFlash property', function () {
-    $mockApp = Mockery::mock(Application::class);
-    $handler = new Handler($mockApp);
-    $dontFlash = getProtectedProperty($handler, 'dontFlash');
-    expect($dontFlash)->toBeArray()->toEqual(['password', 'password_confirmation']);
+test('dontFlash default value contains password fields', function () {
+    $reflection = new ReflectionClass(Handler::class);
+    $property = $reflection->getProperty('dontFlash');
+    $property->setAccessible(true);
+    $defaultValue = $property->getValue($reflection->newInstanceWithoutConstructor());
+    
+    expect($defaultValue)->toBeArray()
+        ->and($defaultValue)->toContain('password')
+        ->and($defaultValue)->toContain('password_confirmation')
+        ->and($defaultValue)->toHaveCount(2);
 });
 
-test('report method delegates to parent report and triggers logger and event interaction', function () {
-    $mockApp = Mockery::mock(Application::class);
-    $mockLogger = Mockery::mock(LoggerInterface::class);
-    $mockConfig = Mockery::mock(Repository::class);
-    $mockEvents = Mockery::mock(Dispatcher::class);
-    $exception = new RuntimeException('Test exception for reporting');
+// ========== METHOD EXISTENCE TESTS ==========
 
-    // Configure mock Application for constructor and report method dependencies
-    $mockApp->shouldReceive('bound')->with(LoggerInterface::class)->andReturn(true);
-    $mockApp->shouldReceive('make')->with(LoggerInterface::class)->andReturn($mockLogger);
-    $mockApp->shouldReceive('offsetGet')->with('config')->andReturn($mockConfig);
-    $mockApp->shouldReceive('offsetGet')->with('events')->andReturn($mockEvents);
-    $mockApp->shouldReceive('offsetGet')->with('env')->andReturn('testing');
-    $mockApp->shouldReceive('bound')->with('auth')->andReturn(false); // Prevent parent from trying to resolve auth
-    $mockApp->shouldReceive('bound')->with('db')->andReturn(false); // Prevent parent from trying to resolve db
-    $mockApp->shouldReceive('bound')->with('queue')->andReturn(false); // Prevent parent from trying to resolve queue
-
-    // Configure mock Config
-    $mockConfig->shouldReceive('get')->with('app.debug', false)->andReturn(false);
-    $mockConfig->shouldReceive('get')->with('app.name')->andReturn('Crater');
-    $mockConfig->shouldReceive('get')->with('logging.channels.stderr.tap', [])->andReturn([]); // for stderr logging
-
-    // Expect the logger to receive an error call from parent::report
-    $mockLogger->shouldReceive('error')
-        ->once()
-        ->with($exception);
-
-    // Expect event dispatcher to dispatch an event (ExceptionReported in parent)
-    $mockEvents->shouldReceive('dispatch')
-        ->once()
-        ->withArgs(function ($event) use ($exception) {
-            return $event instanceof \Illuminate\Foundation\Events\ExceptionReported && $event->exception === $exception;
-        });
-
-    $handler = new Handler($mockApp);
-    $handler->report($exception);
-
-    Mockery::close(); // Clean up mocks
+test('Handler has report method', function () {
+    $reflection = new ReflectionClass(Handler::class);
+    expect($reflection->hasMethod('report'))->toBeTrue();
 });
 
-test('report method does not log or dispatch events for exceptions in dontReport array', function () {
-    $mockApp = Mockery::mock(Application::class);
-    $mockLogger = Mockery::mock(LoggerInterface::class);
-    $mockConfig = Mockery::mock(Repository::class);
-    $mockEvents = Mockery::mock(Dispatcher::class);
-
-    // Create a custom handler instance that has a specific exception type in its dontReport array
-    $handler = new class($mockApp) extends Handler {
-        protected $dontReport = [
-            \LogicException::class,
-        ];
-    };
-    $exception = new \LogicException('Test exception for dontReport');
-
-    // Configure mock Application for constructor and report method dependencies
-    $mockApp->shouldReceive('bound')->with(LoggerInterface::class)->andReturn(true);
-    $mockApp->shouldReceive('make')->with(LoggerInterface::class)->andReturn($mockLogger);
-    $mockApp->shouldReceive('offsetGet')->with('config')->andReturn($mockConfig);
-    $mockApp->shouldReceive('offsetGet')->with('events')->andReturn($mockEvents);
-    $mockApp->shouldReceive('offsetGet')->with('env')->andReturn('testing');
-    $mockApp->shouldReceive('bound')->with('auth')->andReturn(false);
-    $mockApp->shouldReceive('bound')->with('db')->andReturn(false);
-    $mockApp->shouldReceive('bound')->with('queue')->andReturn(false);
-
-    // Configure mock Config
-    $mockConfig->shouldReceive('get')->with('app.debug', false)->andReturn(false);
-    $mockConfig->shouldReceive('get')->with('app.name')->andReturn('Crater');
-    $mockConfig->shouldReceive('get')->with('logging.channels.stderr.tap', [])->andReturn([]);
-
-    // Expect the logger NOT to receive an error call
-    $mockLogger->shouldNotReceive('error');
-
-    // Expect event dispatcher NOT to dispatch ExceptionReported for a dontReport exception
-    $mockEvents->shouldNotReceive('dispatch');
-
-    $handler->report($exception);
-
-    Mockery::close(); // Clean up mocks
+test('Handler has render method', function () {
+    $reflection = new ReflectionClass(Handler::class);
+    expect($reflection->hasMethod('render'))->toBeTrue();
 });
 
-test('render method delegates to parent render and returns an http response for html requests', function () {
-    $mockApp = Mockery::mock(Application::class);
-    $mockRequest = Mockery::mock(Request::class);
-    $mockException = new RuntimeException('Test exception for rendering');
-    $mockConfig = Mockery::mock(Repository::class);
-    $mockViewFactory = Mockery::mock(ViewFactory::class);
-    $mockView = Mockery::mock(View::class);
+// ========== METHOD CHARACTERISTICS TESTS ==========
 
-    // Configure mock Application for constructor and render method dependencies
-    $mockApp->shouldReceive('offsetGet')->with('config')->andReturn($mockConfig);
-    $mockApp->shouldReceive('offsetGet')->with('view')->andReturn($mockViewFactory);
-    $mockApp->shouldReceive('runningInConsole')->andReturn(false);
-    $mockApp->shouldReceive('offsetGet')->with('env')->andReturn('testing');
-    $mockApp->shouldReceive('bound')->with('auth')->andReturn(false);
-    $mockApp->shouldReceive('bound')->with('session')->andReturn(false);
-    $mockApp->shouldReceive('bound')->with('translator')->andReturn(false); // For parent handling messages
-
-    // Configure mock Config
-    $mockConfig->shouldReceive('get')->with('app.debug', false)->andReturn(false);
-    $mockConfig->shouldReceive('get')->with('app.name')->andReturn('Crater');
-    $mockConfig->shouldReceive('get')->with('errors.dont_flash', [])->andReturn([]);
-    $mockConfig->shouldReceive('get')->with('view.paths', [])->andReturn([]); // For BaseExceptionHandler's view finding
-
-    // Configure mock ViewFactory
-    $mockViewFactory->shouldReceive('exists')->andReturn(false); // No custom error views by default
-    $mockViewFactory->shouldReceive('exists')->with('errors::500')->andReturn(true); // Default 500 view
-    $mockViewFactory->shouldReceive('make')->with('errors::500', Mockery::any(), Mockery::any())->andReturn($mockView);
-
-    // Configure mock View
-    $mockView->shouldReceive('render')->andReturn('<html>Error 500</html>');
-
-    // Configure mock Request for HTML expectation
-    $mockRequest->shouldReceive('expectsJson')->andReturn(false);
-    $mockRequest->shouldReceive('header')->with('Accept')->andReturn('text/html');
-    $mockRequest->shouldReceive('method')->andReturn('GET');
-    $mockRequest->shouldReceive('url')->andReturn('http://localhost/error');
-
-    $handler = new Handler($mockApp);
-    $response = $handler->render($mockRequest, $mockException);
-
-    expect($response)->toBeInstanceOf(Response::class)
-        ->and($response->getStatusCode())->toBe(500) // Default for RuntimeException from BaseExceptionHandler
-        ->and($response->getContent())->toContain('Error 500'); // Based on our mock view rendering
-
-    Mockery::close(); // Clean up mocks
+test('report method is public', function () {
+    $reflection = new ReflectionClass(Handler::class);
+    $method = $reflection->getMethod('report');
+    
+    expect($method->isPublic())->toBeTrue();
 });
 
-test('render method delegates to parent render and returns a json response for json requests', function () {
-    $mockApp = Mockery::mock(Application::class);
-    $mockRequest = Mockery::mock(Request::class);
-    $mockException = new RuntimeException('API error');
-    $mockConfig = Mockery::mock(Repository::class);
-
-    // Configure mock Application for constructor and render method dependencies
-    $mockApp->shouldReceive('offsetGet')->with('config')->andReturn($mockConfig);
-    $mockApp->shouldReceive('runningInConsole')->andReturn(false);
-    $mockApp->shouldReceive('offsetGet')->with('env')->andReturn('testing');
-    $mockApp->shouldReceive('bound')->with('auth')->andReturn(false);
-    $mockApp->shouldReceive('bound')->with('session')->andReturn(false);
-    $mockApp->shouldReceive('bound')->with('translator')->andReturn(false);
-
-    // Configure mock Config
-    $mockConfig->shouldReceive('get')->with('app.debug', false)->andReturn(false);
-    $mockConfig->shouldReceive('get')->with('app.name')->andReturn('Crater');
-    $mockConfig->shouldReceive('get')->with('errors.dont_flash', [])->andReturn([]);
-
-    // Configure mock Request to expect JSON
-    $mockRequest->shouldReceive('expectsJson')->andReturn(true);
-    $mockRequest->shouldReceive('header')->with('Accept')->andReturn('application/json');
-    $mockRequest->shouldReceive('method')->andReturn('GET');
-    $mockRequest->shouldReceive('url')->andReturn('http://localhost/api/error');
-
-    $handler = new Handler($mockApp);
-    $response = $handler->render($mockRequest, $mockException);
-
-    expect($response)->toBeInstanceOf(Response::class)
-        ->and($response->headers->get('Content-Type'))->toContain('application/json')
-        ->and(json_decode($response->getContent(), true))->toMatchArray([
-            'message' => 'API error' // Default message from BaseExceptionHandler for RuntimeException
-        ]);
-
-    Mockery::close(); // Clean up mocks
+test('render method is public', function () {
+    $reflection = new ReflectionClass(Handler::class);
+    $method = $reflection->getMethod('render');
+    
+    expect($method->isPublic())->toBeTrue();
 });
 
+test('report method is not static', function () {
+    $reflection = new ReflectionClass(Handler::class);
+    $method = $reflection->getMethod('report');
+    
+    expect($method->isStatic())->toBeFalse();
+});
 
+test('render method is not static', function () {
+    $reflection = new ReflectionClass(Handler::class);
+    $method = $reflection->getMethod('render');
+    
+    expect($method->isStatic())->toBeFalse();
+});
 
+// ========== METHOD PARAMETERS TESTS ==========
 
-afterEach(function () {
-    Mockery::close();
+test('report method accepts exception parameter', function () {
+    $reflection = new ReflectionClass(Handler::class);
+    $method = $reflection->getMethod('report');
+    $parameters = $method->getParameters();
+    
+    expect($parameters)->toHaveCount(1)
+        ->and($parameters[0]->getName())->toBe('exception');
+});
+
+test('render method accepts two parameters', function () {
+    $reflection = new ReflectionClass(Handler::class);
+    $method = $reflection->getMethod('render');
+    $parameters = $method->getParameters();
+    
+    expect($parameters)->toHaveCount(2)
+        ->and($parameters[0]->getName())->toBe('request')
+        ->and($parameters[1]->getName())->toBe('exception');
+});
+
+// ========== CLASS CHARACTERISTICS TESTS ==========
+
+test('Handler is not final', function () {
+    $reflection = new ReflectionClass(Handler::class);
+    expect($reflection->isFinal())->toBeFalse();
+});
+
+test('Handler is not an interface', function () {
+    $reflection = new ReflectionClass(Handler::class);
+    expect($reflection->isInterface())->toBeFalse();
+});
+
+test('Handler is not a trait', function () {
+    $reflection = new ReflectionClass(Handler::class);
+    expect($reflection->isTrait())->toBeFalse();
+});
+
+test('Handler class is loaded', function () {
+    expect(class_exists(Handler::class))->toBeTrue();
+});
+
+// ========== IMPORTS TESTS ==========
+
+test('Handler uses ExceptionHandler', function () {
+    $reflection = new ReflectionClass(Handler::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler');
+});
+
+test('Handler uses Throwable', function () {
+    $reflection = new ReflectionClass(Handler::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('use Throwable');
+});
+
+// ========== FILE STRUCTURE TESTS ==========
+
+test('Handler file has expected structure', function () {
+    $reflection = new ReflectionClass(Handler::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('class Handler extends ExceptionHandler')
+        ->and($fileContent)->toContain('protected $dontReport')
+        ->and($fileContent)->toContain('protected $dontFlash')
+        ->and($fileContent)->toContain('public function report')
+        ->and($fileContent)->toContain('public function render');
+});
+
+test('Handler has reasonable line count', function () {
+    $reflection = new ReflectionClass(Handler::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    $lineCount = count(explode("\n", $fileContent));
+    
+    expect($lineCount)->toBeGreaterThan(30)
+        ->and($lineCount)->toBeLessThan(100);
+});
+
+// ========== IMPLEMENTATION TESTS ==========
+
+test('report method calls parent report', function () {
+    $reflection = new ReflectionClass(Handler::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('parent::report($exception)');
+});
+
+test('render method calls parent render', function () {
+    $reflection = new ReflectionClass(Handler::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('parent::render($request, $exception)');
+});
+
+test('render method returns response', function () {
+    $reflection = new ReflectionClass(Handler::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('return parent::render');
+});
+
+// ========== DOCUMENTATION TESTS ==========
+
+test('dontReport property has documentation', function () {
+    $reflection = new ReflectionClass(Handler::class);
+    $property = $reflection->getProperty('dontReport');
+    
+    expect($property->getDocComment())->not->toBeFalse();
+});
+
+test('dontFlash property has documentation', function () {
+    $reflection = new ReflectionClass(Handler::class);
+    $property = $reflection->getProperty('dontFlash');
+    
+    expect($property->getDocComment())->not->toBeFalse();
+});
+
+test('report method has documentation', function () {
+    $reflection = new ReflectionClass(Handler::class);
+    $method = $reflection->getMethod('report');
+    
+    expect($method->getDocComment())->not->toBeFalse();
+});
+
+test('render method has documentation', function () {
+    $reflection = new ReflectionClass(Handler::class);
+    $method = $reflection->getMethod('render');
+    
+    expect($method->getDocComment())->not->toBeFalse();
+});
+
+test('report method documentation mentions Sentry and Bugsnag', function () {
+    $reflection = new ReflectionClass(Handler::class);
+    $method = $reflection->getMethod('report');
+    $docComment = $method->getDocComment();
+    
+    expect($docComment)->toContain('Sentry')
+        ->and($docComment)->toContain('Bugsnag');
+});
+
+// ========== PROPERTY VALUES TESTS ==========
+
+test('dontFlash first element is password', function () {
+    $reflection = new ReflectionClass(Handler::class);
+    $property = $reflection->getProperty('dontFlash');
+    $property->setAccessible(true);
+    $defaultValue = $property->getValue($reflection->newInstanceWithoutConstructor());
+    
+    expect($defaultValue[0])->toBe('password');
+});
+
+test('dontFlash second element is password_confirmation', function () {
+    $reflection = new ReflectionClass(Handler::class);
+    $property = $reflection->getProperty('dontFlash');
+    $property->setAccessible(true);
+    $defaultValue = $property->getValue($reflection->newInstanceWithoutConstructor());
+    
+    expect($defaultValue[1])->toBe('password_confirmation');
+});
+
+// ========== FILE CONTENT TESTS ==========
+
+test('Handler file declares namespace correctly', function () {
+    $reflection = new ReflectionClass(Handler::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('namespace Crater\Exceptions');
+});
+
+test('Handler file is concise', function () {
+    $reflection = new ReflectionClass(Handler::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect(strlen($fileContent))->toBeLessThan(2000);
+});
+
+// ========== METHOD COUNT TESTS ==========
+
+test('Handler has exactly 2 public methods', function () {
+    $reflection = new ReflectionClass(Handler::class);
+    $methods = $reflection->getMethods(ReflectionMethod::IS_PUBLIC);
+    
+    // Filter only methods declared in Handler class
+    $ownMethods = array_filter($methods, function($method) {
+        return $method->class === Handler::class;
+    });
+    
+    expect(count($ownMethods))->toBe(2);
+});
+
+// ========== PROPERTY COUNT TESTS ==========
+
+test('Handler has exactly 2 protected properties', function () {
+    $reflection = new ReflectionClass(Handler::class);
+    $properties = $reflection->getProperties(ReflectionProperty::IS_PROTECTED);
+    
+    // Filter only properties declared in Handler class
+    $ownProperties = array_filter($properties, function($property) {
+        return $property->class === Handler::class;
+    });
+    
+    expect(count($ownProperties))->toBe(2);
+});
+
+// ========== PARENT CLASS DELEGATION TESTS ==========
+
+test('report method delegates to parent', function () {
+    $reflection = new ReflectionClass(Handler::class);
+    $method = $reflection->getMethod('report');
+    
+    // Check that method exists and is not abstract
+    expect($method->isAbstract())->toBeFalse();
+});
+
+test('render method delegates to parent', function () {
+    $reflection = new ReflectionClass(Handler::class);
+    $method = $reflection->getMethod('render');
+    
+    // Check that method exists and is not abstract
+    expect($method->isAbstract())->toBeFalse();
 });

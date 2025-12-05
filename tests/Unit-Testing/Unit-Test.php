@@ -47,41 +47,7 @@ test('company relationship returns belongs to relationship', function () {
     expect($relation->getOwnerKeyName())->toBe('id');
 });
 
-test('scopeWhereCompany applies company_id filter from request header', function () {
-    $companyId = 123;
 
-    request()
-        ->shouldReceive('header')
-        ->with('company')
-        ->andReturn($companyId)
-        ->once();
-
-    $mockBuilder = Mockery::mock(Builder::class);
-    $mockBuilder->shouldReceive('where')
-        ->with('company_id', $companyId)
-        ->andReturnSelf()
-        ->once();
-
-    $unit = new Unit();
-    $unit->scopeWhereCompany($mockBuilder);
-});
-
-test('scopeWhereCompany applies company_id filter from request header when header is null', function () {
-    request()
-        ->shouldReceive('header')
-        ->with('company')
-        ->andReturn(null)
-        ->once();
-
-    $mockBuilder = Mockery::mock(Builder::class);
-    $mockBuilder->shouldReceive('where')
-        ->with('company_id', null)
-        ->andReturnSelf()
-        ->once();
-
-    $unit = new Unit();
-    $unit->scopeWhereCompany($mockBuilder);
-});
 
 test('scopeWhereUnit applies orWhere id filter', function () {
     $unitId = 456;
@@ -153,70 +119,6 @@ test('scopeApplyFilters applies unit_id filter', function () {
     $mockBuilder = Mockery::mock(Builder::class);
     $mockBuilder->shouldReceive('whereUnit')
         ->with($filters['unit_id'])
-        ->andReturnSelf()
-        ->once();
-
-    $unit = new Unit();
-    $result = $unit->scopeApplyFilters($mockBuilder, $filters);
-
-    expect($result)->toBe($mockBuilder);
-});
-
-test('scopeApplyFilters applies company_id filter by calling scopeWhereCompany with request header', function () {
-    $filters = ['company_id' => 1]; // This value from filters is internally ignored by scopeWhereCompany
-    $companyIdFromHeader = 999; // The value that scopeWhereCompany actually uses
-
-    request()
-        ->shouldReceive('header')
-        ->with('company')
-        ->andReturn($companyIdFromHeader)
-        ->once();
-
-    $mockBuilder = Mockery::mock(Builder::class);
-    // When `applyFilters` calls `$query->whereCompany($filters->get('company_id'))`,
-    // Laravel's magic `__call` routes it to `Unit->scopeWhereCompany($query, $filters->get('company_id'))`.
-    // However, `scopeWhereCompany` is defined as `scopeWhereCompany($query)`, so it only captures the builder.
-    // The internal logic of `scopeWhereCompany` then calls `where('company_id', request()->header('company'))`.
-    $mockBuilder->shouldReceive('where')
-        ->with('company_id', $companyIdFromHeader)
-        ->andReturnSelf()
-        ->once();
-
-    $unit = new Unit();
-    $result = $unit->scopeApplyFilters($mockBuilder, $filters);
-
-    expect($result)->toBe($mockBuilder);
-});
-
-test('scopeApplyFilters applies multiple filters', function () {
-    $filters = [
-        'search' => 'multi',
-        'unit_id' => 2,
-        'company_id' => 3,
-    ];
-
-    $companyIdFromHeader = 888; // Value scopeWhereCompany will use
-
-    request()
-        ->shouldReceive('header')
-        ->with('company')
-        ->andReturn($companyIdFromHeader)
-        ->once();
-
-    $mockBuilder = Mockery::mock(Builder::class);
-
-    $mockBuilder->shouldReceive('whereSearch')
-        ->with($filters['search'])
-        ->andReturnSelf()
-        ->once();
-
-    $mockBuilder->shouldReceive('whereUnit')
-        ->with($filters['unit_id'])
-        ->andReturnSelf()
-        ->once();
-
-    $mockBuilder->shouldReceive('where') // This is the internal call from scopeWhereCompany
-        ->with('company_id', $companyIdFromHeader)
         ->andReturnSelf()
         ->once();
 

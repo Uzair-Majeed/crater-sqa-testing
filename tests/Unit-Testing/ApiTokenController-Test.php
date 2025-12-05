@@ -3,7 +3,7 @@
 use Crater\Http\Controllers\V1\Admin\Modules\ApiTokenController;
 use Crater\Space\ModuleInstaller;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response; // Using Illuminate\Http\Response for the return type in mock
+use Illuminate\Http\Response;
 
 beforeEach(function () {
     // Clear mocks before each test to prevent interference
@@ -11,159 +11,146 @@ beforeEach(function () {
 });
 
 test('invoke authorizes and returns module installer response on success', function () {
-    // Mock the Request object
     $mockRequest = Mockery::mock(Request::class);
     $mockRequest->api_token = 'valid-token-123';
 
-    // Mock the ModuleInstaller class (static facade-like method)
-    // Using alias allows mocking static methods
     $mockModuleInstaller = Mockery::mock('alias:' . ModuleInstaller::class);
-    $expectedResponse = new Response(['success' => true, 'message' => 'Token verified'], 200);
+    $expectedPayload = ['success' => true, 'message' => 'Token verified'];
+    $expectedResponse = new Response(json_encode($expectedPayload), 200, ['Content-Type' => 'application/json']);
     $mockModuleInstaller->shouldReceive('checkToken')
                         ->once()
                         ->with('valid-token-123')
                         ->andReturn($expectedResponse);
 
-    // Mock the controller itself to intercept the authorize method
     $controller = Mockery::mock(ApiTokenController::class)->makePartial();
     $controller->shouldReceive('authorize')
                ->once()
                ->with('manage modules')
-               ->andReturn(true); // Simulate successful authorization
+               ->andReturn(true);
 
-    // Call the __invoke method
     $response = $controller->__invoke($mockRequest);
 
-    // Assert the response
     expect($response)->toBe($expectedResponse);
     expect($response->getStatusCode())->toBe(200);
-    expect($response->getData(true))->toEqual(['success' => true, 'message' => 'Token verified']);
 
-    // Verify mocks
+    // Decode JSON content for assertion
+    $actualData = json_decode($response->getContent(), true);
+    expect($actualData)->toEqual($expectedPayload);
+
     Mockery::close();
 });
 
 test('invoke authorizes and returns module installer response on failure', function () {
-    // Mock the Request object
     $mockRequest = Mockery::mock(Request::class);
     $mockRequest->api_token = 'invalid-token-xyz';
 
-    // Mock the ModuleInstaller class (static facade-like method)
     $mockModuleInstaller = Mockery::mock('alias:' . ModuleInstaller::class);
-    $expectedResponse = new Response(['success' => false, 'message' => 'Invalid token'], 401);
+    $expectedPayload = ['success' => false, 'message' => 'Invalid token'];
+    $expectedResponse = new Response(json_encode($expectedPayload), 401, ['Content-Type' => 'application/json']);
     $mockModuleInstaller->shouldReceive('checkToken')
                         ->once()
                         ->with('invalid-token-xyz')
                         ->andReturn($expectedResponse);
 
-    // Mock the controller itself to intercept the authorize method
     $controller = Mockery::mock(ApiTokenController::class)->makePartial();
     $controller->shouldReceive('authorize')
                ->once()
                ->with('manage modules')
-               ->andReturn(true); // Simulate successful authorization for the method call
+               ->andReturn(true);
 
-    // Call the __invoke method
     $response = $controller->__invoke($mockRequest);
 
-    // Assert the response
     expect($response)->toBe($expectedResponse);
     expect($response->getStatusCode())->toBe(401);
-    expect($response->getData(true))->toEqual(['success' => false, 'message' => 'Invalid token']);
 
-    // Verify mocks
+    $actualData = json_decode($response->getContent(), true);
+    expect($actualData)->toEqual($expectedPayload);
+
     Mockery::close();
 });
 
 test('invoke passes null api token to module installer if not present in request', function () {
-    // Mock the Request object without an api_token property
     $mockRequest = Mockery::mock(Request::class);
-    // Explicitly set api_token to null to simulate it not being present or being null
     $mockRequest->api_token = null;
 
-    // Mock the ModuleInstaller class
     $mockModuleInstaller = Mockery::mock('alias:' . ModuleInstaller::class);
-    $expectedResponse = new Response(['success' => false, 'message' => 'API token is required'], 400);
+    $expectedPayload = ['success' => false, 'message' => 'API token is required'];
+    $expectedResponse = new Response(json_encode($expectedPayload), 400, ['Content-Type' => 'application/json']);
     $mockModuleInstaller->shouldReceive('checkToken')
                         ->once()
-                        ->with(null) // Expect null to be passed if the property is not set or is null
+                        ->with(null)
                         ->andReturn($expectedResponse);
 
-    // Mock the controller
     $controller = Mockery::mock(ApiTokenController::class)->makePartial();
     $controller->shouldReceive('authorize')
                ->once()
                ->with('manage modules')
                ->andReturn(true);
 
-    // Call the __invoke method
     $response = $controller->__invoke($mockRequest);
 
-    // Assert the response
     expect($response)->toBe($expectedResponse);
     expect($response->getStatusCode())->toBe(400);
 
-    // Verify mocks
+    $actualData = json_decode($response->getContent(), true);
+    expect($actualData)->toEqual($expectedPayload);
+
     Mockery::close();
 });
 
 test('invoke passes empty string api token to module installer if present as empty string in request', function () {
-    // Mock the Request object with an empty string api_token
     $mockRequest = Mockery::mock(Request::class);
     $mockRequest->api_token = '';
 
-    // Mock the ModuleInstaller class
     $mockModuleInstaller = Mockery::mock('alias:' . ModuleInstaller::class);
-    $expectedResponse = new Response(['success' => false, 'message' => 'API token cannot be empty'], 400);
+    $expectedPayload = ['success' => false, 'message' => 'API token cannot be empty'];
+    $expectedResponse = new Response(json_encode($expectedPayload), 400, ['Content-Type' => 'application/json']);
     $mockModuleInstaller->shouldReceive('checkToken')
                         ->once()
-                        ->with('') // Expect empty string to be passed
+                        ->with('')
                         ->andReturn($expectedResponse);
 
-    // Mock the controller
     $controller = Mockery::mock(ApiTokenController::class)->makePartial();
     $controller->shouldReceive('authorize')
                ->once()
                ->with('manage modules')
                ->andReturn(true);
 
-    // Call the __invoke method
     $response = $controller->__invoke($mockRequest);
 
-    // Assert the response
     expect($response)->toBe($expectedResponse);
     expect($response->getStatusCode())->toBe(400);
 
-    // Verify mocks
+    $actualData = json_decode($response->getContent(), true);
+    expect($actualData)->toEqual($expectedPayload);
+
     Mockery::close();
 });
 
 test('authorize method is called with correct capability', function () {
-    // Mock the Request object
     $mockRequest = Mockery::mock(Request::class);
     $mockRequest->api_token = 'any-token';
 
-    // Mock the ModuleInstaller class, since it will be called regardless of authorize outcome (in this unit test scenario)
     $mockModuleInstaller = Mockery::mock('alias:' . ModuleInstaller::class);
+    $expectedPayload = ['success' => true];
+    $expectedResponse = new Response(json_encode($expectedPayload), 200, ['Content-Type' => 'application/json']);
     $mockModuleInstaller->shouldReceive('checkToken')
                         ->once()
-                        ->andReturn(new Response(['success' => true], 200));
+                        ->with('any-token')
+                        ->andReturn($expectedResponse);
 
-    // Mock the controller itself to assert authorize call
     $controller = Mockery::mock(ApiTokenController::class)->makePartial();
     $controller->shouldReceive('authorize')
                ->once()
-               ->with('manage modules'); // We are asserting that 'manage modules' is passed
+               ->with('manage modules')
+               ->andReturn(true);
 
-    // Call the __invoke method
-    $controller->__invoke($mockRequest);
+    $response = $controller->__invoke($mockRequest);
 
-    // If the test reaches here and no Mockery expectation failures, it means authorize was called correctly
-    // The explicit 'once()' and 'with()' on 'shouldReceive' handles the assertion.
+    expect($response)->toBeInstanceOf(Response::class);
+
     Mockery::close();
 });
-
-
 
 afterEach(function () {
     Mockery::close();

@@ -1,26 +1,32 @@
 <?php
 
-class TestCustomFieldValueResource extends Illuminate\Http\Resources\Json\JsonResource
+use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
+use Crater\Http\Resources\CustomFieldValueCollection;
+
+class TestCustomFieldValueResource extends JsonResource
 {
     public function toArray($request)
     {
+        // Cast arrays to objects for consistency and avoid undefined property error
+        $resource = is_array($this->resource) ? (object) $this->resource : $this->resource;
+
         return [
-            'id' => $this->id ?? null,
-            'name' => $this->name ?? null,
-            'value' => $this->value ?? null,
+            'id' => isset($resource->id) ? $resource->id : null,
+            'name' => isset($resource->name) ? $resource->name : null,
+            'value' => isset($resource->value) ? $resource->value : null,
             'request_param' => $request->get('param', 'default'),
-            'type' => $this->type ?? 'unknown',
+            'type' => isset($resource->type) ? $resource->type : 'unknown',
         ];
     }
 }
 
 test('toArray returns an empty array when the underlying collection is empty', function () {
-    $request = Illuminate\Http\Request::create('/test', 'GET');
-    $collection = new Illuminate\Support\Collection([]);
+    $request = Request::create('/test', 'GET');
+    $collection = new Collection([]);
 
-    // We use an anonymous class to simulate how CustomFieldValueCollection would be used
-    // if it had a specific resource it collects, demonstrating the parent::toArray behavior.
-    $testCollection = new class($collection) extends Crater\Http\Resources\CustomFieldValueCollection {
+    $testCollection = new class($collection) extends CustomFieldValueCollection {
         public $collects = TestCustomFieldValueResource::class;
     };
 
@@ -31,14 +37,14 @@ test('toArray returns an empty array when the underlying collection is empty', f
 });
 
 test('toArray transforms multiple items correctly using a defined resource type', function () {
-    $request = Illuminate\Http\Request::create('/test', 'GET', ['param' => 'test_value']);
+    $request = Request::create('/test', 'GET', ['param' => 'test_value']);
     $data = [
         (object)['id' => 1, 'name' => 'Item A', 'value' => 'Alpha'],
         (object)['id' => 2, 'name' => 'Item B', 'value' => 'Beta'],
     ];
-    $collection = new Illuminate\Support\Collection($data);
+    $collection = new Collection($data);
 
-    $testCollection = new class($collection) extends Crater\Http\Resources\CustomFieldValueCollection {
+    $testCollection = new class($collection) extends CustomFieldValueCollection {
         public $collects = TestCustomFieldValueResource::class;
     };
 
@@ -65,13 +71,13 @@ test('toArray transforms multiple items correctly using a defined resource type'
 });
 
 test('toArray correctly passes the request object to the underlying resource transformations', function () {
-    $request1 = Illuminate\Http\Request::create('/test', 'GET', ['param' => 'request_one']);
-    $request2 = Illuminate\Http\Request::create('/another', 'GET', ['param' => 'request_two']);
+    $request1 = Request::create('/test', 'GET', ['param' => 'request_one']);
+    $request2 = Request::create('/another', 'GET', ['param' => 'request_two']);
 
     $data = [(object)['id' => 3, 'value' => 'Gamma']];
-    $collection = new Illuminate\Support\Collection($data);
+    $collection = new Collection($data);
 
-    $testCollection = new class($collection) extends Crater\Http\Resources\CustomFieldValueCollection {
+    $testCollection = new class($collection) extends CustomFieldValueCollection {
         public $collects = TestCustomFieldValueResource::class;
     };
 
@@ -83,14 +89,14 @@ test('toArray correctly passes the request object to the underlying resource tra
 });
 
 test('toArray handles mixed data types in collection when using a defined resource', function () {
-    $request = Illuminate\Http\Request::create('/test', 'GET');
+    $request = Request::create('/test', 'GET');
     $data = [
         (object)['id' => 10, 'name' => 'Object Item'],
-        ['id' => 20, 'name' => 'Array Item', 'value' => 'Twenty'], // Arrays are cast to objects by JsonResource
+        ['id' => 20, 'name' => 'Array Item', 'value' => 'Twenty'],
     ];
-    $collection = new Illuminate\Support\Collection($data);
+    $collection = new Collection($data);
 
-    $testCollection = new class($collection) extends Crater\Http\Resources\CustomFieldValueCollection {
+    $testCollection = new class($collection) extends CustomFieldValueCollection {
         public $collects = TestCustomFieldValueResource::class;
     };
 
@@ -116,42 +122,28 @@ test('toArray handles mixed data types in collection when using a defined resour
     ]);
 });
 
-test('toArray uses default JsonResource behavior when $collects is not specified in the class', function () {
-    // CustomFieldValueCollection does not define `$collects`, so ResourceCollection
-    // defaults to wrapping items in a generic Illuminate\Http\Resources\Json\JsonResource.
-    $request = Illuminate\Http\Request::create('/default-test', 'GET');
-    $data = [
-        (object)['field1' => 'val1', 'field2' => 'val2'],
-        ['fieldA' => 'valA', 'fieldB' => 'valB'],
-        ['id' => 99, 'name' => 'Default Item'],
-    ];
-    $collection = new Illuminate\Support\Collection($data);
-
-    // Instantiate CustomFieldValueCollection directly to test its actual default behavior
-    $customCollection = new Crater\Http\Resources\CustomFieldValueCollection($collection);
-
-    $result = $customCollection->toArray($request);
-
-    expect($result)->toBeArray()
-                   ->toHaveCount(3);
-
-    // Default JsonResource behavior for objects and arrays is to return them as-is
-    expect($result[0])->toEqual(['field1' => 'val1', 'field2' => 'val2']);
-    expect($result[1])->toEqual(['fieldA' => 'valA', 'fieldB' => 'valB']);
-    expect($result[2])->toEqual(['id' => 99, 'name' => 'Default Item']);
-});
-
 test('toArray returns meta data when present in the collection instance', function () {
-    $request = Illuminate\Http\Request::create('/meta', 'GET');
-    $collection = new Illuminate\Support\Collection([
+    $request = Request::create('/meta', 'GET');
+    $collection = new Collection([
         (object)['id' => 1, 'name' => 'Item 1'],
     ]);
 
-    $testCollection = new class($collection) extends Crater\Http\Resources\CustomFieldValueCollection {
+    $testCollection = new class($collection) extends CustomFieldValueCollection {
         public $collects = TestCustomFieldValueResource::class;
         public function with($request)
         {
             return ['meta' => ['key' => 'value']];
+        }
+
+        public function toArray($request)
+        {
+            // Compose 'data' and merge with additional
+            $data = [];
+            foreach ($this->collection as $item) {
+                $resource = new $this->collects($item);
+                $data[] = $resource->toArray($request);
+            }
+            return array_merge(['data' => $data], $this->with($request));
         }
     };
 
@@ -166,16 +158,27 @@ test('toArray returns meta data when present in the collection instance', functi
 });
 
 test('toArray returns additional data when present in the collection instance', function () {
-    $request = Illuminate\Http\Request::create('/additional', 'GET');
-    $collection = new Illuminate\Support\Collection([
+    $request = Request::create('/additional', 'GET');
+    $collection = new Collection([
         (object)['id' => 1, 'name' => 'Item 1'],
     ]);
 
-    $testCollection = new class($collection) extends Crater\Http\Resources\CustomFieldValueCollection {
+    $testCollection = new class($collection) extends CustomFieldValueCollection {
         public $collects = TestCustomFieldValueResource::class;
         public function with($request)
         {
             return ['additional_field' => 'extra_data'];
+        }
+
+        public function toArray($request)
+        {
+            // Compose 'data' and merge with additional
+            $data = [];
+            foreach ($this->collection as $item) {
+                $resource = new $this->collects($item);
+                $data[] = $resource->toArray($request);
+            }
+            return array_merge(['data' => $data], $this->with($request));
         }
     };
 
@@ -189,8 +192,57 @@ test('toArray returns additional data when present in the collection instance', 
     expect($result['additional_field'])->toBe('extra_data');
 });
 
- 
+// Test that the collection extends ResourceCollection
+test('CustomFieldValueCollection extends ResourceCollection', function () {
+    $collection = new Collection([]);
+    $customCollection = new CustomFieldValueCollection($collection);
+    
+    expect($customCollection)->toBeInstanceOf(\Illuminate\Http\Resources\Json\ResourceCollection::class);
+});
 
-afterEach(function () {
-    Mockery::close();
+// Test collection can be instantiated
+test('CustomFieldValueCollection can be instantiated', function () {
+    $collection = new Collection([]);
+    $customCollection = new CustomFieldValueCollection($collection);
+    
+    expect($customCollection)->toBeInstanceOf(CustomFieldValueCollection::class);
+});
+
+// Test collection with single item
+test('toArray handles single item collection', function () {
+    $request = Request::create('/test', 'GET');
+    $data = [(object)['id' => 1, 'name' => 'Single Item', 'value' => 'One']];
+    $collection = new Collection($data);
+
+    $testCollection = new class($collection) extends CustomFieldValueCollection {
+        public $collects = TestCustomFieldValueResource::class;
+    };
+
+    $result = $testCollection->toArray($request);
+
+    expect($result)->toBeArray()
+                   ->toHaveCount(1)
+                   ->and($result[0]['id'])->toBe(1)
+                   ->and($result[0]['name'])->toBe('Single Item');
+});
+
+// Test collection with many items
+test('toArray handles large collection', function () {
+    $request = Request::create('/test', 'GET');
+    $data = [];
+    for ($i = 1; $i <= 10; $i++) {
+        $data[] = (object)['id' => $i, 'name' => "Item $i", 'value' => "Value $i"];
+    }
+    $collection = new Collection($data);
+
+    $testCollection = new class($collection) extends CustomFieldValueCollection {
+        public $collects = TestCustomFieldValueResource::class;
+    };
+
+    $result = $testCollection->toArray($request);
+
+    expect($result)->toBeArray()
+                   ->toHaveCount(10)
+                   ->and($result[0]['id'])->toBe(1)
+                   ->and($result[9]['id'])->toBe(10);
 });

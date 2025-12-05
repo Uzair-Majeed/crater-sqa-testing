@@ -4,6 +4,7 @@ test('it returns unauthorized if user is not logged in', function () {
     // Arrange
     $request = Mockery::mock(\Illuminate\Http\Request::class);
     $request->shouldReceive('user')->andReturn(null); // No user logged in
+    $request->shouldReceive('all')->andReturn([]); // Mock all() as controllers often access it for logging or general input
 
     $controller = new \Crater\Http\Controllers\V1\Admin\Update\UnzipUpdateController();
 
@@ -27,6 +28,7 @@ test('it returns unauthorized if user is logged in but not an owner', function (
     $request = Mockery::mock(\Illuminate\Http\Request::class);
     $request->shouldReceive('user')->andReturn($user); // User is logged in
     $request->shouldNotReceive('validate'); // Should not reach validation
+    $request->shouldReceive('all')->andReturn([]); // Mock all() as controllers often access it
 
     $controller = new \Crater\Http\Controllers\V1\Admin\Update\UnzipUpdateController();
 
@@ -59,6 +61,7 @@ test('it throws validation exception if path is missing and user is owner', func
                     ->getMock()
             ));
     $request->shouldNotReceive('path'); // Should not get to request->path() if validation fails
+    $request->shouldReceive('all')->andReturn([]); // Mock all() as controllers often access it, possibly even before validation or for error context
 
     $controller = new \Crater\Http\Controllers\V1\Admin\Update\UnzipUpdateController();
 
@@ -76,6 +79,7 @@ test('it successfully unzips the update file when user is owner and path is prov
     $request->shouldReceive('user')->andReturn($user); // User is logged in and owner
     $request->shouldReceive('validate')->once()->with(['path' => 'required']); // Expect validation to pass
     $request->shouldReceive('path')->withNoArgs()->andReturn('/tmp/update.zip'); // Simulate request path
+    $request->shouldReceive('all')->andReturn(['path' => '/tmp/update.zip']); // Mock all() for general input access, common in controllers
 
     // Mock Updater::unzip static method using alias
     Mockery::mock('alias:'. \Crater\Space\Updater::class)
@@ -107,6 +111,7 @@ test('it handles unzip failure gracefully when user is owner and path is provide
     $request->shouldReceive('user')->andReturn($user); // User is logged in and owner
     $request->shouldReceive('validate')->once()->with(['path' => 'required']); // Expect validation to pass
     $request->shouldReceive('path')->withNoArgs()->andReturn('/tmp/bad_update.zip'); // Simulate request path
+    $request->shouldReceive('all')->andReturn(['path' => '/tmp/bad_update.zip']); // Mock all() for general input access, especially in error handling
 
     $errorMessage = 'Failed to unzip archive: Corrupted file.';
     // Mock Updater::unzip static method to throw an exception
@@ -129,8 +134,6 @@ test('it handles unzip failure gracefully when user is owner and path is provide
             'error' => $errorMessage,
         ]);
 });
-
-
 
 
 afterEach(function () {

@@ -1,6 +1,5 @@
 <?php
 
-
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -21,10 +20,9 @@ it('throws an error if the user is null and enable_portal is accessed', function
     $middleware = new CustomerPortalMiddleware();
 
     // Act & Assert
-    // Expect a TypeError because null->enable_portal will be accessed
-    $this->expectException(TypeError::class);
-    $this->expectExceptionMessageMatches('/Trying to get property \'enable_portal\' of non-object/');
-
+    // Expect an ErrorException or Error, since null->enable_portal will be accessed
+    $this->expectException(ErrorException::class);
+    $this->expectExceptionMessageMatches('/Attempt to read property "enable_portal" on null/');
     $middleware->handle($request, $next);
 });
 
@@ -41,9 +39,13 @@ it('logs out and returns unauthorized if customer portal is disabled', function 
         ->andReturn($mockGuard);
 
     $request = Request::create('/portal', 'GET');
+
     // The next closure should not be called in this scenario
-    $next = Mockery::mock(Closure::class);
-    $next->shouldNotReceive('__invoke');
+    $nextWasCalled = false;
+    $next = function () use (&$nextWasCalled) {
+        $nextWasCalled = true;
+        return new Response('Should not be called', 200);
+    };
 
     $middleware = new CustomerPortalMiddleware();
 
@@ -53,7 +55,8 @@ it('logs out and returns unauthorized if customer portal is disabled', function 
     // Assert
     expect($response)->toBeInstanceOf(Response::class)
         ->and($response->getStatusCode())->toBe(401)
-        ->and($response->getContent())->toBe('Unauthorized.');
+        ->and($response->getContent())->toBe('Unauthorized.')
+        ->and($nextWasCalled)->toBeFalse(); // Ensure $next is NOT called
 });
 
 it('proceeds to the next middleware if customer portal is enabled', function () {
@@ -71,14 +74,12 @@ it('proceeds to the next middleware if customer portal is enabled', function () 
     $request = Request::create('/portal', 'GET');
     $expectedNextResponse = new Response('Authorized and proceeded', 200);
 
-    // Mock the $next closure to assert it's called and returns its value
-    $next = Mockery::mock(Closure::class);
-    $next->shouldReceive('__invoke')
-        ->once()
-        ->with(Mockery::on(function ($arg) use ($request) {
-            return $arg === $request; // Ensure same request object is passed
-        }))
-        ->andReturn($expectedNextResponse);
+    $nextWasCalled = false;
+    $next = function ($arg) use ($request, &$nextWasCalled, $expectedNextResponse) {
+        expect($arg)->toBe($request);
+        $nextWasCalled = true;
+        return $expectedNextResponse;
+    };
 
     $middleware = new CustomerPortalMiddleware();
 
@@ -87,10 +88,9 @@ it('proceeds to the next middleware if customer portal is enabled', function () 
 
     // Assert
     expect($response)->toBeInstanceOf(Response::class)
-        ->and($response)->toBe($expectedNextResponse); // Ensure the exact response from $next is returned
+        ->and($response)->toBe($expectedNextResponse) // Ensure the exact response from $next is returned
+        ->and($nextWasCalled)->toBeTrue(); // Ensure $next WAS called
 });
-
- 
 
 afterEach(function () {
     Mockery::close();

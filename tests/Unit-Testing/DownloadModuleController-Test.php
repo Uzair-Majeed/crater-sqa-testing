@@ -17,7 +17,8 @@ test('it authorizes module management and downloads the module successfully', fu
     $request->module = $moduleName;
     $request->version = $moduleVersion;
 
-    Mockery::mock('alias:' . ModuleInstaller::class)
+    $moduleInstallerMock = Mockery::mock('alias:' . ModuleInstaller::class);
+    $moduleInstallerMock
         ->shouldReceive('download')
         ->once()
         ->with($moduleName, $moduleVersion)
@@ -48,7 +49,8 @@ test('it handles authorization failure', function () {
     $request->module = $moduleName;
     $request->version = $moduleVersion;
 
-    Mockery::mock('alias:' . ModuleInstaller::class)
+    $moduleInstallerMock = Mockery::mock('alias:' . ModuleInstaller::class);
+    $moduleInstallerMock
         ->shouldNotReceive('download');
 
     $controller = Mockery::mock(\Crater\Http\Controllers\V1\Admin\Modules\DownloadModuleController::class)
@@ -73,7 +75,8 @@ test('it handles module download failure', function () {
     $request->module = $moduleName;
     $request->version = $moduleVersion;
 
-    Mockery::mock('alias:' . ModuleInstaller::class)
+    $moduleInstallerMock = Mockery::mock('alias:' . ModuleInstaller::class);
+    $moduleInstallerMock
         ->shouldReceive('download')
         ->once()
         ->with($moduleName, $moduleVersion)
@@ -107,7 +110,8 @@ test('it handles null module or version parameters gracefully', function () {
     $request->module = $moduleName;
     $request->version = $moduleVersion;
 
-    Mockery::mock('alias:' . ModuleInstaller::class)
+    $moduleInstallerMock = Mockery::mock('alias:' . ModuleInstaller::class);
+    $moduleInstallerMock
         ->shouldReceive('download')
         ->once()
         ->with($moduleName, $moduleVersion)
@@ -138,7 +142,8 @@ test('it handles empty string module or version parameters gracefully', function
     $request->module = $moduleName;
     $request->version = $moduleVersion;
 
-    Mockery::mock('alias:' . ModuleInstaller::class)
+    $moduleInstallerMock = Mockery::mock('alias:' . ModuleInstaller::class);
+    $moduleInstallerMock
         ->shouldReceive('download')
         ->once()
         ->with($moduleName, $moduleVersion)
@@ -159,9 +164,6 @@ test('it handles empty string module or version parameters gracefully', function
     expect($response->getData(true))
         ->toEqual($downloadResponse);
 });
-
-
-
 
 afterEach(function () {
     Mockery::close();

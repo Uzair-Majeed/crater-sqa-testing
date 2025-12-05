@@ -35,6 +35,8 @@ test('it constructs with deleteExistingFile defaulting to false', function () {
 test('handle calls generatePDF on the invoice with true for deleteExistingFile', function () {
     $invoiceNumber = 'INV-TEST-001';
     $mockInvoice = Mockery::mock();
+    // When mocking, properties often need to be defined to be accessible or set via constructor.
+    // For simple property access in the job, directly assigning it to the mock works for testing purposes.
     $mockInvoice->invoice_number = $invoiceNumber;
 
     $mockInvoice->shouldReceive('generatePDF')
@@ -109,8 +111,6 @@ test('handle calls generatePDF with empty string for invoice_number if it is an 
 
     expect($result)->toBe(0);
 });
-
-
 
 
 afterEach(function () {

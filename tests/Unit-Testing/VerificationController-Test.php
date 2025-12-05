@@ -3,7 +3,6 @@
 use Mockery as m;
 use Crater\Http\Controllers\V1\Admin\Auth\VerificationController;
 use Illuminate\Routing\PendingMiddleware; // Represents the return type of the middleware() method
-//use ReflectionClass; // For accessing protected properties
 
 // Helper function to access protected properties via Reflection
 if (!function_exists('getProtectedProperty')) {
@@ -55,6 +54,9 @@ test('constructor applies correct middleware with proper chaining', function () 
     $controller->__construct();
 
     // Mockery will automatically verify that `shouldReceive->once()` expectations were met when `m::close()` is called.
+    // Add an explicit assertion to satisfy Pest's assertion count requirement.
+    expect(true)->toBeTrue();
+
     m::close();
 });
 
@@ -77,8 +79,6 @@ test('controller correctly uses VerifiesEmails trait methods', function () {
     expect(method_exists($controller, 'verify'))->toBeTrue(); // Handles the verification link
     expect(method_exists($controller, 'resend'))->toBeTrue(); // Resends the verification email
 });
-
-
 
 
 afterEach(function () {

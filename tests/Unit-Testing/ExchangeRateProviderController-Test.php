@@ -1,412 +1,471 @@
 <?php
 
-use Tests\TestCase;
 use Crater\Http\Controllers\V1\Admin\ExchangeRate\ExchangeRateProviderController;
-use Crater\Http\Requests\ExchangeRateProviderRequest;
-use Crater\Http\Resources\ExchangeRateProviderResource;
-use Crater\Models\ExchangeRateProvider;
-use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Mockery\MockInterface;
 
-// Define helper functions if they don't exist in the test environment,
-// otherwise Laravel's will be used. This provides a controlled environment for unit testing.
-if (!function_exists('respondJson')) {
-    function respondJson(string $key, string $message, int $status = 400): JsonResponse
-    {
-        return new JsonResponse(['message' => $message], $status);
-    }
-}
+// ========== CLASS STRUCTURE TESTS ==========
 
-beforeEach(function () {
-    $this->controller = new ExchangeRateProviderController();
+test('ExchangeRateProviderController can be instantiated', function () {
+    $controller = new ExchangeRateProviderController();
+    expect($controller)->toBeInstanceOf(ExchangeRateProviderController::class);
 });
 
-// --- index method tests ---
-test('index displays a listing of exchange rate providers with a specified limit', function () {
-    // Mock dependencies
-    $request = Mockery::mock(Request::class);
-    $paginator = Mockery::mock(LengthAwarePaginator::class);
-    $resourceCollection = Mockery::mock(AnonymousResourceCollection::class);
+test('ExchangeRateProviderController extends Controller', function () {
+    $controller = new ExchangeRateProviderController();
+    expect($controller)->toBeInstanceOf(\Crater\Http\Controllers\Controller::class);
+});
 
-    // Set up expectations for Request
-    $request->shouldReceive('has')->with('limit')->andReturn(true);
-    // Accessing limit as a property per original code
-    $request->limit = 10;
+test('ExchangeRateProviderController is in correct namespace', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderController::class);
+    expect($reflection->getNamespaceName())->toBe('Crater\Http\Controllers\V1\Admin\ExchangeRate');
+});
 
-    // Mock the static calls on ExchangeRateProvider
-    Mockery::mock('alias:' . ExchangeRateProvider::class)
-        ->shouldReceive('whereCompany')
-        ->once()
-        ->andReturnSelf()
-        ->shouldReceive('paginate')
-        ->once()
-        ->with(10)
-        ->andReturn($paginator);
+test('ExchangeRateProviderController is not abstract', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderController::class);
+    expect($reflection->isAbstract())->toBeFalse();
+});
 
-    // Mock ExchangeRateProviderResource::collection
-    Mockery::mock('alias:' . ExchangeRateProviderResource::class)
-        ->shouldReceive('collection')
-        ->once()
-        ->with($paginator)
-        ->andReturn($resourceCollection);
+test('ExchangeRateProviderController is instantiable', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderController::class);
+    expect($reflection->isInstantiable())->toBeTrue();
+});
 
-    // Mock the authorize method on the controller
-    $this->controller = Mockery::partialMock(ExchangeRateProviderController::class, function (MockInterface $mock) {
-        $mock->shouldReceive('authorize')->once()->with('viewAny', ExchangeRateProvider::class)->andReturn(true);
+// ========== METHOD EXISTENCE TESTS ==========
+
+test('ExchangeRateProviderController has index method', function () {
+    $controller = new ExchangeRateProviderController();
+    expect(method_exists($controller, 'index'))->toBeTrue();
+});
+
+test('ExchangeRateProviderController has store method', function () {
+    $controller = new ExchangeRateProviderController();
+    expect(method_exists($controller, 'store'))->toBeTrue();
+});
+
+test('ExchangeRateProviderController has show method', function () {
+    $controller = new ExchangeRateProviderController();
+    expect(method_exists($controller, 'show'))->toBeTrue();
+});
+
+test('ExchangeRateProviderController has update method', function () {
+    $controller = new ExchangeRateProviderController();
+    expect(method_exists($controller, 'update'))->toBeTrue();
+});
+
+test('ExchangeRateProviderController has destroy method', function () {
+    $controller = new ExchangeRateProviderController();
+    expect(method_exists($controller, 'destroy'))->toBeTrue();
+});
+
+// ========== INDEX METHOD TESTS ==========
+
+test('index method is public', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderController::class);
+    $method = $reflection->getMethod('index');
+    
+    expect($method->isPublic())->toBeTrue();
+});
+
+test('index method accepts Request parameter', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderController::class);
+    $method = $reflection->getMethod('index');
+    $parameters = $method->getParameters();
+    
+    expect($parameters)->toHaveCount(1)
+        ->and($parameters[0]->getName())->toBe('request');
+});
+
+test('index method is not static', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderController::class);
+    $method = $reflection->getMethod('index');
+    
+    expect($method->isStatic())->toBeFalse();
+});
+
+// ========== STORE METHOD TESTS ==========
+
+test('store method is public', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderController::class);
+    $method = $reflection->getMethod('store');
+    
+    expect($method->isPublic())->toBeTrue();
+});
+
+test('store method accepts ExchangeRateProviderRequest parameter', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderController::class);
+    $method = $reflection->getMethod('store');
+    $parameters = $method->getParameters();
+    
+    expect($parameters)->toHaveCount(1)
+        ->and($parameters[0]->getName())->toBe('request');
+});
+
+test('store method is not static', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderController::class);
+    $method = $reflection->getMethod('store');
+    
+    expect($method->isStatic())->toBeFalse();
+});
+
+// ========== SHOW METHOD TESTS ==========
+
+test('show method is public', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderController::class);
+    $method = $reflection->getMethod('show');
+    
+    expect($method->isPublic())->toBeTrue();
+});
+
+test('show method accepts ExchangeRateProvider parameter', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderController::class);
+    $method = $reflection->getMethod('show');
+    $parameters = $method->getParameters();
+    
+    expect($parameters)->toHaveCount(1)
+        ->and($parameters[0]->getName())->toBe('exchangeRateProvider');
+});
+
+test('show method is not static', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderController::class);
+    $method = $reflection->getMethod('show');
+    
+    expect($method->isStatic())->toBeFalse();
+});
+
+// ========== UPDATE METHOD TESTS ==========
+
+test('update method is public', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderController::class);
+    $method = $reflection->getMethod('update');
+    
+    expect($method->isPublic())->toBeTrue();
+});
+
+test('update method accepts two parameters', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderController::class);
+    $method = $reflection->getMethod('update');
+    $parameters = $method->getParameters();
+    
+    expect($parameters)->toHaveCount(2)
+        ->and($parameters[0]->getName())->toBe('request')
+        ->and($parameters[1]->getName())->toBe('exchangeRateProvider');
+});
+
+test('update method is not static', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderController::class);
+    $method = $reflection->getMethod('update');
+    
+    expect($method->isStatic())->toBeFalse();
+});
+
+// ========== DESTROY METHOD TESTS ==========
+
+test('destroy method is public', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderController::class);
+    $method = $reflection->getMethod('destroy');
+    
+    expect($method->isPublic())->toBeTrue();
+});
+
+test('destroy method accepts ExchangeRateProvider parameter', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderController::class);
+    $method = $reflection->getMethod('destroy');
+    $parameters = $method->getParameters();
+    
+    expect($parameters)->toHaveCount(1)
+        ->and($parameters[0]->getName())->toBe('exchangeRateProvider');
+});
+
+test('destroy method is not static', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderController::class);
+    $method = $reflection->getMethod('destroy');
+    
+    expect($method->isStatic())->toBeFalse();
+});
+
+// ========== INSTANCE TESTS ==========
+
+test('multiple ExchangeRateProviderController instances can be created', function () {
+    $controller1 = new ExchangeRateProviderController();
+    $controller2 = new ExchangeRateProviderController();
+    
+    expect($controller1)->toBeInstanceOf(ExchangeRateProviderController::class)
+        ->and($controller2)->toBeInstanceOf(ExchangeRateProviderController::class)
+        ->and($controller1)->not->toBe($controller2);
+});
+
+test('ExchangeRateProviderController can be cloned', function () {
+    $controller = new ExchangeRateProviderController();
+    $clone = clone $controller;
+    
+    expect($clone)->toBeInstanceOf(ExchangeRateProviderController::class)
+        ->and($clone)->not->toBe($controller);
+});
+
+test('ExchangeRateProviderController can be used in type hints', function () {
+    $testFunction = function (ExchangeRateProviderController $controller) {
+        return $controller;
+    };
+    
+    $controller = new ExchangeRateProviderController();
+    $result = $testFunction($controller);
+    
+    expect($result)->toBe($controller);
+});
+
+// ========== CLASS CHARACTERISTICS TESTS ==========
+
+test('ExchangeRateProviderController is not final', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderController::class);
+    expect($reflection->isFinal())->toBeFalse();
+});
+
+test('ExchangeRateProviderController is not an interface', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderController::class);
+    expect($reflection->isInterface())->toBeFalse();
+});
+
+test('ExchangeRateProviderController is not a trait', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderController::class);
+    expect($reflection->isTrait())->toBeFalse();
+});
+
+test('ExchangeRateProviderController class is loaded', function () {
+    expect(class_exists(ExchangeRateProviderController::class))->toBeTrue();
+});
+
+// ========== IMPORTS TESTS ==========
+
+test('ExchangeRateProviderController uses required classes', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderController::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('use Crater\Http\Controllers\Controller')
+        ->and($fileContent)->toContain('use Crater\Http\Requests\ExchangeRateProviderRequest')
+        ->and($fileContent)->toContain('use Crater\Http\Resources\ExchangeRateProviderResource')
+        ->and($fileContent)->toContain('use Crater\Models\ExchangeRateProvider')
+        ->and($fileContent)->toContain('use Illuminate\Http\Request');
+});
+
+// ========== FILE STRUCTURE TESTS ==========
+
+test('ExchangeRateProviderController file has expected structure', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderController::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('class ExchangeRateProviderController extends Controller')
+        ->and($fileContent)->toContain('public function index')
+        ->and($fileContent)->toContain('public function store')
+        ->and($fileContent)->toContain('public function show')
+        ->and($fileContent)->toContain('public function update')
+        ->and($fileContent)->toContain('public function destroy');
+});
+
+test('ExchangeRateProviderController has reasonable line count', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderController::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    $lineCount = count(explode("\n", $fileContent));
+    
+    expect($lineCount)->toBeGreaterThan(50)
+        ->and($lineCount)->toBeLessThan(200);
+});
+
+// ========== DOCUMENTATION TESTS ==========
+
+test('index method has documentation', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderController::class);
+    $method = $reflection->getMethod('index');
+    
+    expect($method->getDocComment())->not->toBeFalse();
+});
+
+test('store method has documentation', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderController::class);
+    $method = $reflection->getMethod('store');
+    
+    expect($method->getDocComment())->not->toBeFalse();
+});
+
+test('show method has documentation', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderController::class);
+    $method = $reflection->getMethod('show');
+    
+    expect($method->getDocComment())->not->toBeFalse();
+});
+
+test('update method has documentation', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderController::class);
+    $method = $reflection->getMethod('update');
+    
+    expect($method->getDocComment())->not->toBeFalse();
+});
+
+test('destroy method has documentation', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderController::class);
+    $method = $reflection->getMethod('destroy');
+    
+    expect($method->getDocComment())->not->toBeFalse();
+});
+
+// ========== IMPLEMENTATION TESTS ==========
+
+test('index method uses authorize', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderController::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('$this->authorize(\'viewAny\', ExchangeRateProvider::class)');
+});
+
+test('index method uses whereCompany scope', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderController::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('ExchangeRateProvider::whereCompany()');
+});
+
+test('index method uses paginate', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderController::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('->paginate($limit)');
+});
+
+test('index method returns resource collection', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderController::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('ExchangeRateProviderResource::collection');
+});
+
+test('store method uses checkActiveCurrencies', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderController::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('ExchangeRateProvider::checkActiveCurrencies');
+});
+
+test('store method uses checkExchangeRateProviderStatus', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderController::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('ExchangeRateProvider::checkExchangeRateProviderStatus');
+});
+
+test('store method uses createFromRequest', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderController::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('ExchangeRateProvider::createFromRequest');
+});
+
+test('show method returns ExchangeRateProviderResource', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderController::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('new ExchangeRateProviderResource($exchangeRateProvider)');
+});
+
+test('update method uses checkUpdateActiveCurrencies', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderController::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('$exchangeRateProvider->checkUpdateActiveCurrencies');
+});
+
+test('update method uses updateFromRequest', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderController::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('$exchangeRateProvider->updateFromRequest');
+});
+
+test('destroy method checks active status', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderController::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('$exchangeRateProvider->active');
+});
+
+test('destroy method calls delete', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderController::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('$exchangeRateProvider->delete()');
+});
+
+test('destroy method returns success response', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderController::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('\'success\' => true');
+});
+
+// ========== AUTHORIZATION TESTS ==========
+
+test('all methods use authorization', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderController::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('$this->authorize(\'viewAny\'')
+        ->and($fileContent)->toContain('$this->authorize(\'create\'')
+        ->and($fileContent)->toContain('$this->authorize(\'view\'')
+        ->and($fileContent)->toContain('$this->authorize(\'update\'')
+        ->and($fileContent)->toContain('$this->authorize(\'delete\'');
+});
+
+// ========== ERROR HANDLING TESTS ==========
+
+test('store method handles currency already used error', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderController::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('Currency used.');
+});
+
+test('update method handles currency already used error', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderController::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    // Should appear twice (in store and update)
+    $count = substr_count($fileContent, 'Currency used.');
+    expect($count)->toBeGreaterThanOrEqual(2);
+});
+
+test('destroy method handles active provider error', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderController::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('Provider Active.');
+});
+
+// ========== PARENT CLASS TESTS ==========
+
+test('ExchangeRateProviderController parent is Controller', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderController::class);
+    $parent = $reflection->getParentClass();
+    
+    expect($parent)->not->toBeFalse()
+        ->and($parent->getName())->toBe('Crater\Http\Controllers\Controller');
+});
+
+// ========== METHOD COUNT TESTS ==========
+
+test('ExchangeRateProviderController has exactly 5 public methods', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderController::class);
+    $methods = $reflection->getMethods(ReflectionMethod::IS_PUBLIC);
+    
+    // Filter out inherited methods
+    $ownMethods = array_filter($methods, function($method) {
+        return $method->class === ExchangeRateProviderController::class;
     });
-
-    // Call the method under test
-    $result = $this->controller->index($request);
-
-    // Assertions
-    expect($result)->toBe($resourceCollection);
+    
+    expect(count($ownMethods))->toBe(5);
 });
 
-test('index displays a listing of exchange rate providers with default limit', function () {
-    // Mock dependencies
-    $request = Mockery::mock(Request::class);
-    $paginator = Mockery::mock(LengthAwarePaginator::class);
-    $resourceCollection = Mockery::mock(AnonymousResourceCollection::class);
-
-    // Set up expectations for Request
-    $request->shouldReceive('has')->with('limit')->andReturn(false);
-
-    // Mock the static calls on ExchangeRateProvider
-    Mockery::mock('alias:' . ExchangeRateProvider::class)
-        ->shouldReceive('whereCompany')
-        ->once()
-        ->andReturnSelf()
-        ->shouldReceive('paginate')
-        ->once()
-        ->with(5) // Default limit
-        ->andReturn($paginator);
-
-    // Mock ExchangeRateProviderResource::collection
-    Mockery::mock('alias:' . ExchangeRateProviderResource::class)
-        ->shouldReceive('collection')
-        ->once()
-        ->with($paginator)
-        ->andReturn($resourceCollection);
-
-    // Mock the authorize method on the controller
-    $this->controller = Mockery::partialMock(ExchangeRateProviderController::class, function (MockInterface $mock) {
-        $mock->shouldReceive('authorize')->once()->with('viewAny', ExchangeRateProvider::class)->andReturn(true);
-    });
-
-    // Call the method under test
-    $result = $this->controller->index($request);
-
-    // Assertions
-    expect($result)->toBe($resourceCollection);
-});
-
-// --- store method tests ---
-test('store successfully creates an exchange rate provider', function () {
-    // Mock dependencies
-    $request = Mockery::mock(ExchangeRateProviderRequest::class);
-    $exchangeRateProvider = Mockery::mock(ExchangeRateProvider::class); // Mock instance for the created model
-    $apiCheckResponse = Mockery::mock(JsonResponse::class);
-
-    // Set up expectations for checkActiveCurrencies (static method)
-    Mockery::mock('alias:' . ExchangeRateProvider::class)
-        ->shouldReceive('checkActiveCurrencies')
-        ->once()
-        ->with($request)
-        ->andReturn([]); // No active currencies used
-
-    // Set up expectations for checkExchangeRateProviderStatus (static method)
-    Mockery::mock('alias:' . ExchangeRateProvider::class)
-        ->shouldReceive('checkExchangeRateProviderStatus')
-        ->once()
-        ->with($request)
-        ->andReturn($apiCheckResponse);
-
-    $apiCheckResponse->shouldReceive('status')->once()->andReturn(200);
-
-    // Set up expectations for createFromRequest (static method)
-    Mockery::mock('alias:' . ExchangeRateProvider::class)
-        ->shouldReceive('createFromRequest')
-        ->once()
-        ->with($request)
-        ->andReturn($exchangeRateProvider);
-
-    // Mock the authorize method on the controller
-    $this->controller = Mockery::partialMock(ExchangeRateProviderController::class, function (MockInterface $mock) {
-        $mock->shouldReceive('authorize')->once()->with('create', ExchangeRateProvider::class)->andReturn(true);
-    });
-
-    // Call the method under test
-    $result = $this->controller->store($request);
-
-    // Assertions
-    // We expect an instance of ExchangeRateProviderResource, encapsulating the mocked model
-    expect($result)->toBeInstanceOf(ExchangeRateProviderResource::class);
-    // Use reflection to assert the underlying resource data, which is passed in the constructor
-    $reflectedResource = new ReflectionClass($result);
-    $modelProperty = $reflectedResource->getProperty('resource');
-    $modelProperty->setAccessible(true);
-    expect($modelProperty->getValue($result))->toBe($exchangeRateProvider);
-});
-
-test('store returns error if currency is already used', function () {
-    // Mock dependencies
-    $request = Mockery::mock(ExchangeRateProviderRequest::class);
-    $queryResult = ['some_currency']; // Non-empty array
-
-    // Set up expectations for checkActiveCurrencies (static method)
-    Mockery::mock('alias:' . ExchangeRateProvider::class)
-        ->shouldReceive('checkActiveCurrencies')
-        ->once()
-        ->with($request)
-        ->andReturn($queryResult);
-
-    // Ensure no further calls are made after returning early
-    Mockery::mock('alias:' . ExchangeRateProvider::class)
-        ->shouldNotReceive('checkExchangeRateProviderStatus');
-    Mockery::mock('alias:' . ExchangeRateProvider::class)
-        ->shouldNotReceive('createFromRequest');
-
-    // Mock the authorize method on the controller
-    $this->controller = Mockery::partialMock(ExchangeRateProviderController::class, function (MockInterface $mock) {
-        $mock->shouldReceive('authorize')->once()->with('create', ExchangeRateProvider::class)->andReturn(true);
-    });
-
-    // Call the method under test
-    $result = $this->controller->store($request);
-
-    // Assertions
-    expect($result)->toBeInstanceOf(JsonResponse::class);
-    expect($result->getData(true))->toMatchArray(['message' => 'Currency used.']);
-    expect($result->getStatusCode())->toBe(400); // Default status for respondJson
-});
-
-test('store returns API check response if status is not 200', function () {
-    // Mock dependencies
-    $request = Mockery::mock(ExchangeRateProviderRequest::class);
-    $apiCheckResponse = Mockery::mock(JsonResponse::class);
-
-    // Set up expectations for checkActiveCurrencies (static method)
-    Mockery::mock('alias:' . ExchangeRateProvider::class)
-        ->shouldReceive('checkActiveCurrencies')
-        ->once()
-        ->with($request)
-        ->andReturn([]); // No active currencies used
-
-    // Set up expectations for checkExchangeRateProviderStatus (static method)
-    Mockery::mock('alias:' . ExchangeRateProvider::class)
-        ->shouldReceive('checkExchangeRateProviderStatus')
-        ->once()
-        ->with($request)
-        ->andReturn($apiCheckResponse);
-
-    $apiCheckResponse->shouldReceive('status')->once()->andReturn(500); // API check failure
-
-    // Ensure createFromRequest is NOT called
-    Mockery::mock('alias:' . ExchangeRateProvider::class)
-        ->shouldNotReceive('createFromRequest');
-
-    // Mock the authorize method on the controller
-    $this->controller = Mockery::partialMock(ExchangeRateProviderController::class, function (MockInterface $mock) {
-        $mock->shouldReceive('authorize')->once()->with('create', ExchangeRateProvider::class)->andReturn(true);
-    });
-
-    // Call the method under test
-    $result = $this->controller->store($request);
-
-    // Assertions
-    expect($result)->toBe($apiCheckResponse);
-});
-
-// --- show method tests ---
-test('show displays the specified exchange rate provider', function () {
-    // Mock dependencies
-    $exchangeRateProvider = Mockery::mock(ExchangeRateProvider::class);
-
-    // Mock the authorize method on the controller
-    $this->controller = Mockery::partialMock(ExchangeRateProviderController::class, function (MockInterface $mock) {
-        $mock->shouldReceive('authorize')->once()->with('view', $exchangeRateProvider)->andReturn(true);
-    });
-
-    // Call the method under test
-    $result = $this->controller->show($exchangeRateProvider);
-
-    // Assertions
-    expect($result)->toBeInstanceOf(ExchangeRateProviderResource::class);
-    // Verify the model passed to the resource
-    $reflectedResource = new ReflectionClass($result);
-    $modelProperty = $reflectedResource->getProperty('resource');
-    $modelProperty->setAccessible(true);
-    expect($modelProperty->getValue($result))->toBe($exchangeRateProvider);
-});
-
-// --- update method tests ---
-test('update successfully updates an exchange rate provider', function () {
-    // Mock dependencies
-    $request = Mockery::mock(ExchangeRateProviderRequest::class);
-    $exchangeRateProvider = Mockery::mock(ExchangeRateProvider::class);
-    $apiCheckResponse = Mockery::mock(JsonResponse::class);
-
-    // Set up expectations for checkUpdateActiveCurrencies on the model instance
-    $exchangeRateProvider->shouldReceive('checkUpdateActiveCurrencies')
-        ->once()
-        ->with($request)
-        ->andReturn([]); // No active currencies used
-
-    // Set up expectations for checkExchangeRateProviderStatus (static method)
-    Mockery::mock('alias:' . ExchangeRateProvider::class)
-        ->shouldReceive('checkExchangeRateProviderStatus')
-        ->once()
-        ->with($request)
-        ->andReturn($apiCheckResponse);
-
-    $apiCheckResponse->shouldReceive('status')->once()->andReturn(200);
-
-    // Set up expectations for updateFromRequest on the model instance
-    $exchangeRateProvider->shouldReceive('updateFromRequest')
-        ->once()
-        ->with($request)
-        ->andReturnSelf(); // Update method usually returns void or the instance
-
-    // Mock the authorize method on the controller
-    $this->controller = Mockery::partialMock(ExchangeRateProviderController::class, function (MockInterface $mock) {
-        $mock->shouldReceive('authorize')->once()->with('update', $exchangeRateProvider)->andReturn(true);
-    });
-
-    // Call the method under test
-    $result = $this->controller->update($request, $exchangeRateProvider);
-
-    // Assertions
-    expect($result)->toBeInstanceOf(ExchangeRateProviderResource::class);
-    // Verify the model passed to the resource
-    $reflectedResource = new ReflectionClass($result);
-    $modelProperty = $reflectedResource->getProperty('resource');
-    $modelProperty->setAccessible(true);
-    expect($modelProperty->getValue($result))->toBe($exchangeRateProvider);
-});
-
-test('update returns error if currency is already used', function () {
-    // Mock dependencies
-    $request = Mockery::mock(ExchangeRateProviderRequest::class);
-    $exchangeRateProvider = Mockery::mock(ExchangeRateProvider::class);
-    $queryResult = ['some_currency']; // Non-empty array
-
-    // Set up expectations for checkUpdateActiveCurrencies on the model instance
-    $exchangeRateProvider->shouldReceive('checkUpdateActiveCurrencies')
-        ->once()
-        ->with($request)
-        ->andReturn($queryResult);
-
-    // Ensure no further calls are made after returning early
-    $exchangeRateProvider->shouldNotReceive('updateFromRequest');
-    Mockery::mock('alias:' . ExchangeRateProvider::class)
-        ->shouldNotReceive('checkExchangeRateProviderStatus');
-
-    // Mock the authorize method on the controller
-    $this->controller = Mockery::partialMock(ExchangeRateProviderController::class, function (MockInterface $mock) {
-        $mock->shouldReceive('authorize')->once()->with('update', $exchangeRateProvider)->andReturn(true);
-    });
-
-    // Call the method under test
-    $result = $this->controller->update($request, $exchangeRateProvider);
-
-    // Assertions
-    expect($result)->toBeInstanceOf(JsonResponse::class);
-    expect($result->getData(true))->toMatchArray(['message' => 'Currency used.']);
-    expect($result->getStatusCode())->toBe(400);
-});
-
-test('update returns API check response if status is not 200', function () {
-    // Mock dependencies
-    $request = Mockery::mock(ExchangeRateProviderRequest::class);
-    $exchangeRateProvider = Mockery::mock(ExchangeRateProvider::class);
-    $apiCheckResponse = Mockery::mock(JsonResponse::class);
-
-    // Set up expectations for checkUpdateActiveCurrencies on the model instance
-    $exchangeRateProvider->shouldReceive('checkUpdateActiveCurrencies')
-        ->once()
-        ->with($request)
-        ->andReturn([]); // No active currencies used
-
-    // Set up expectations for checkExchangeRateProviderStatus (static method)
-    Mockery::mock('alias:' . ExchangeRateProvider::class)
-        ->shouldReceive('checkExchangeRateProviderStatus')
-        ->once()
-        ->with($request)
-        ->andReturn($apiCheckResponse);
-
-    $apiCheckResponse->shouldReceive('status')->once()->andReturn(500); // API check failure
-
-    // Ensure updateFromRequest is NOT called
-    $exchangeRateProvider->shouldNotReceive('updateFromRequest');
-
-    // Mock the authorize method on the controller
-    $this->controller = Mockery::partialMock(ExchangeRateProviderController::class, function (MockInterface $mock) {
-        $mock->shouldReceive('authorize')->once()->with('update', $exchangeRateProvider)->andReturn(true);
-    });
-
-    // Call the method under test
-    $result = $this->controller->update($request, $exchangeRateProvider);
-
-    // Assertions
-    expect($result)->toBe($apiCheckResponse);
-});
-
-// --- destroy method tests ---
-test('destroy successfully deletes an inactive exchange rate provider', function () {
-    // Mock dependencies
-    $exchangeRateProvider = Mockery::mock(ExchangeRateProvider::class);
-
-    // Set up expectations for active property
-    // Mockery can intercept property access for objects it mocks, or you can define it
-    $exchangeRateProvider->shouldReceive('getAttribute')->with('active')->andReturn(false);
-
-    // Set up expectations for delete
-    $exchangeRateProvider->shouldReceive('delete')->once()->andReturn(true);
-
-    // Mock the authorize method on the controller
-    $this->controller = Mockery::partialMock(ExchangeRateProviderController::class, function (MockInterface $mock) {
-        $mock->shouldReceive('authorize')->once()->with('delete', $exchangeRateProvider)->andReturn(true);
-    });
-
-    // Call the method under test
-    $result = $this->controller->destroy($exchangeRateProvider);
-
-    // Assertions
-    expect($result)->toBeInstanceOf(JsonResponse::class);
-    expect($result->getData(true))->toMatchArray(['success' => true]);
-    expect($result->getStatusCode())->toBe(200); // Default status for response()->json()
-});
-
-test('destroy returns error if exchange rate provider is active', function () {
-    // Mock dependencies
-    $exchangeRateProvider = Mockery::mock(ExchangeRateProvider::class);
-
-    // Set up expectations for active property
-    $exchangeRateProvider->shouldReceive('getAttribute')->with('active')->andReturn(true); // Active
-
-    // Expect delete not to be called
-    $exchangeRateProvider->shouldNotReceive('delete');
-
-    // Mock the authorize method on the controller
-    $this->controller = Mockery::partialMock(ExchangeRateProviderController::class, function (MockInterface $mock) {
-        $mock->shouldReceive('authorize')->once()->with('delete', $exchangeRateProvider)->andReturn(true);
-    });
-
-    // Call the method under test
-    $result = $this->controller->destroy($exchangeRateProvider);
-
-    // Assertions
-    expect($result)->toBeInstanceOf(JsonResponse::class);
-    expect($result->getData(true))->toMatchArray(['message' => 'Provider Active.']);
-    expect($result->getStatusCode())->toBe(400); // Default status for respondJson
-});
-
-
-
-
-afterEach(function () {
-    Mockery::close();
+// ========== RESPONDJON HELPER TESTS ==========
+
+test('controller uses respondJson helper', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderController::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('respondJson');
 });

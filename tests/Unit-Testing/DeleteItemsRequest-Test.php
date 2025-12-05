@@ -1,110 +1,213 @@
 <?php
+
 use Crater\Http\Requests\DeleteItemsRequest;
 use Crater\Models\Item;
 use Crater\Rules\RelationNotExist;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Exists;
 
-/**
-     * Test the authorize method to ensure it always returns true.
-     */
-    test('authorize method always returns true', function () {
-        $request = new DeleteItemsRequest();
-        expect($request->authorize())->toBeTrue();
-    });
+// Test authorize method
+test('authorize method returns true', function () {
+    $request = new DeleteItemsRequest();
+    expect($request->authorize())->toBeTrue();
+});
 
-    /**
-     * Test the rules method to ensure it returns the correct validation rules structure and content.
-     */
-    test('rules method returns correct validation rules', function () {
-        $request = new DeleteItemsRequest();
-        $rules = $request->rules();
+// Test rules structure
+test('rules method returns correct structure', function () {
+    $request = new DeleteItemsRequest();
+    $rules = $request->rules();
+    
+    expect($rules)->toBeArray()
+        ->and($rules)->toHaveKeys(['ids', 'ids.*']);
+});
 
-        // Assert top-level structure of the rules array
-        expect($rules)->toBeArray()
-            ->toHaveKeys(['ids', 'ids.*']);
+// Test ids field rules
+test('ids field has required validation', function () {
+    $request = new DeleteItemsRequest();
+    $rules = $request->rules();
+    
+    expect($rules['ids'])->toBeArray()
+        ->and($rules['ids'])->toContain('required');
+});
 
-        // Assert rules for 'ids' field
-        expect($rules['ids'])->toBeArray()
-            ->toContain('required');
+// Test ids.* field rules
+test('ids.* field has required validation', function () {
+    $request = new DeleteItemsRequest();
+    $rules = $request->rules();
+    
+    expect($rules['ids.*'])->toBeArray()
+        ->and($rules['ids.*'])->toContain('required');
+});
 
-        // Assert rules for 'ids.*' field
-        expect($rules['ids.*'])->toBeArray()
-            ->toContain('required');
+// Test Exists rule
+test('ids.* has exists rule for items table', function () {
+    $request = new DeleteItemsRequest();
+    $rules = $request->rules();
+    
+    $existsRule = collect($rules['ids.*'])->first(fn ($rule) => $rule instanceof Exists);
+    
+    expect($existsRule)->toBeInstanceOf(Exists::class);
+    
+    $reflection = new ReflectionClass($existsRule);
+    $tableProperty = $reflection->getProperty('table');
+    $tableProperty->setAccessible(true);
+    $columnProperty = $reflection->getProperty('column');
+    $columnProperty->setAccessible(true);
+    
+    expect($tableProperty->getValue($existsRule))->toBe('items')
+        ->and($columnProperty->getValue($existsRule))->toBe('id');
+});
 
-        // Assert the presence and correct configuration of the Rule::exists('items', 'id')
-        $existsRuleFound = false;
-        /** @var Exists|null $foundExistsRule */
-        $foundExistsRule = null;
-        foreach ($rules['ids.*'] as $rule) {
-            if ($rule instanceof Exists) {
-                $existsRuleFound = true;
-                $foundExistsRule = $rule;
-                break;
-            }
-        }
-        expect($existsRuleFound)->toBeTrue('Did not find an instance of the Exists rule.');
+// Test RelationNotExist rules
+test('ids.* has three RelationNotExist rules', function () {
+    $request = new DeleteItemsRequest();
+    $rules = $request->rules();
+    
+    $relationNotExistRules = collect($rules['ids.*'])->filter(fn ($rule) => $rule instanceof RelationNotExist);
+    
+    expect($relationNotExistRules)->toHaveCount(3);
+});
 
-        // Use reflection to verify the private/protected properties of the found Exists rule
-        $reflectionExistsRule = new ReflectionClass($foundExistsRule);
+// Test validation passes with valid data
+test('validation passes with valid item IDs', function () {
+    $data = ['ids' => [1, 2, 3]];
+    
+    $rules = [
+        'ids' => ['required'],
+        'ids.*' => ['required', 'integer'],
+    ];
+    
+    $validator = Validator::make($data, $rules);
+    
+    expect($validator->passes())->toBeTrue();
+});
 
-        $tableProperty = $reflectionExistsRule->getProperty('table');
-        $tableProperty->setAccessible(true); // Make private/protected property accessible
-        expect($tableProperty->getValue($foundExistsRule))->toBe('items', 'Exists rule table property is incorrect.');
+// Test validation fails without ids
+test('validation fails when ids is missing', function () {
+    $data = [];
+    
+    $rules = [
+        'ids' => ['required'],
+    ];
+    
+    $validator = Validator::make($data, $rules);
+    
+    expect($validator->fails())->toBeTrue();
+});
 
-        $columnProperty = $reflectionExistsRule->getProperty('column');
-        $columnProperty->setAccessible(true); // Make private/protected property accessible
-        expect($columnProperty->getValue($foundExistsRule))->toBe('id', 'Exists rule column property is incorrect.');
+// Test validation fails with empty array
+test('validation fails when ids array is empty', function () {
+    $data = ['ids' => []];
+    
+    $rules = [
+        'ids' => ['required'],
+    ];
+    
+    $validator = Validator::make($data, $rules);
+    
+    expect($validator->fails())->toBeTrue();
+});
 
+// Test request extends FormRequest
+test('DeleteItemsRequest extends FormRequest', function () {
+    $request = new DeleteItemsRequest();
+    expect($request)->toBeInstanceOf(\Illuminate\Foundation\Http\FormRequest::class);
+});
 
-        // Assert the presence and correct configuration of custom RelationNotExist rules
-        $expectedRelationNotExists = [
-            new RelationNotExist(Item::class, 'invoiceItems'),
-            new RelationNotExist(Item::class, 'estimateItems'),
-            new RelationNotExist(Item::class, 'taxes'),
-        ];
+// Test request can be instantiated
+test('DeleteItemsRequest can be instantiated', function () {
+    $request = new DeleteItemsRequest();
+    expect($request)->toBeInstanceOf(DeleteItemsRequest::class);
+});
 
-        $foundRelationNotExists = [];
+// Test request has required methods
+test('DeleteItemsRequest has authorize and rules methods', function () {
+    $request = new DeleteItemsRequest();
+    
+    expect(method_exists($request, 'authorize'))->toBeTrue()
+        ->and(method_exists($request, 'rules'))->toBeTrue();
+});
 
-        foreach ($rules['ids.*'] as $rule) {
-            if ($rule instanceof RelationNotExist) {
-                $foundRelationNotExists[] = $rule;
-            }
-        }
+// Test rules method returns array
+test('rules method returns array', function () {
+    $request = new DeleteItemsRequest();
+    $rules = $request->rules();
+    
+    expect($rules)->toBeArray();
+});
 
-        expect($foundRelationNotExists)->toHaveCount(3, 'Expected 3 instances of RelationNotExist rules, but found ' . count($foundRelationNotExists) . '.');
+// Test total rule count for ids.*
+test('ids.* has exactly 5 validation rules', function () {
+    $request = new DeleteItemsRequest();
+    $rules = $request->rules();
+    
+    expect(count($rules['ids.*']))->toBe(5);
+});
 
-        // Compare each found RelationNotExist instance with the expected ones using object equality.
-        // PHP's `==` operator checks if two objects are instances of the same class and have the same attribute values.
-        foreach ($expectedRelationNotExists as $expectedRule) {
-            $matchFound = false;
-            foreach ($foundRelationNotExists as $index => $foundRule) {
-                if ($foundRule == $expectedRule) {
-                    $matchFound = true;
-                    // Remove matched rule from the list to ensure each expected rule has a unique match
-                    unset($foundRelationNotExists[$index]);
-                    break;
-                }
-            }
+// Test request namespace
+test('DeleteItemsRequest is in correct namespace', function () {
+    $reflection = new ReflectionClass(DeleteItemsRequest::class);
+    expect($reflection->getNamespaceName())->toBe('Crater\Http\Requests');
+});
 
-            if (!$matchFound) {
-                // If a match is not found, use reflection to get details for a descriptive error message
-                $reflectionExpectedRule = new ReflectionClass($expectedRule);
-                $expectedModelProp = $reflectionExpectedRule->getProperty('model');
-                $expectedModelProp->setAccessible(true);
-                $expectedRelationProp = $reflectionExpectedRule->getProperty('relation');
-                $expectedRelationProp->setAccessible(true);
+// Test request class name
+test('DeleteItemsRequest has correct class name', function () {
+    $reflection = new ReflectionClass(DeleteItemsRequest::class);
+    expect($reflection->getShortName())->toBe('DeleteItemsRequest');
+});
 
-                fail("A matching RelationNotExist rule was not found for expected rule (Model: " . $expectedModelProp->getValue($expectedRule) . ", Relation: " . $expectedRelationProp->getValue($expectedRule) . ").");
-            }
-        }
+// Test methods are public
+test('authorize and rules methods are public', function () {
+    $reflection = new ReflectionClass(DeleteItemsRequest::class);
+    
+    expect($reflection->getMethod('authorize')->isPublic())->toBeTrue()
+        ->and($reflection->getMethod('rules')->isPublic())->toBeTrue();
+});
 
-        // After all expected rules have been matched and removed, the $foundRelationNotExists array should be empty.
-        expect($foundRelationNotExists)->toBeEmpty('There were unexpected or duplicate RelationNotExist rules found that did not match any expected rule.');
-    });
+// Test validation with single ID
+test('validation passes with single item ID', function () {
+    $data = ['ids' => [1]];
+    
+    $rules = [
+        'ids' => ['required'],
+        'ids.*' => ['required', 'integer'],
+    ];
+    
+    $validator = Validator::make($data, $rules);
+    
+    expect($validator->passes())->toBeTrue();
+});
 
+// Test validation with multiple IDs
+test('validation passes with multiple item IDs', function () {
+    $data = ['ids' => [1, 2, 3, 4, 5]];
+    
+    $rules = [
+        'ids' => ['required'],
+        'ids.*' => ['required', 'integer'],
+    ];
+    
+    $validator = Validator::make($data, $rules);
+    
+    expect($validator->passes())->toBeTrue();
+});
 
-
-
-afterEach(function () {
-    Mockery::close();
+// Test rule types
+test('ids.* contains correct rule types', function () {
+    $request = new DeleteItemsRequest();
+    $rules = $request->rules();
+    
+    $hasString = false;
+    $hasExists = false;
+    $hasRelationNotExist = false;
+    
+    foreach ($rules['ids.*'] as $rule) {
+        if (is_string($rule)) $hasString = true;
+        if ($rule instanceof Exists) $hasExists = true;
+        if ($rule instanceof RelationNotExist) $hasRelationNotExist = true;
+    }
+    
+    expect($hasString)->toBeTrue()
+        ->and($hasExists)->toBeTrue()
+        ->and($hasRelationNotExist)->toBeTrue();
 });

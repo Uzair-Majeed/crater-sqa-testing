@@ -17,7 +17,9 @@ test('it returns 401 if no user is authenticated', function () {
     $request->shouldReceive('user')->andReturn(null);
 
     // Ensure Updater::migrateUpdate is not called when authorization fails
-    Mockery::shouldNotReceive('Crater\Space\Updater::migrateUpdate');
+    // Correctly mock the static method of Updater to assert it's not called
+    Mockery::mock('alias:'.Updater::class)
+        ->shouldNotReceive('migrateUpdate');
 
     $controller = new MigrateUpdateController();
 
@@ -42,7 +44,9 @@ test('it returns 401 if the authenticated user is not an owner', function () {
     $request->shouldReceive('user')->andReturn($user);
 
     // Ensure Updater::migrateUpdate is not called when authorization fails
-    Mockery::shouldNotReceive('Crater\Space\Updater::migrateUpdate');
+    // Correctly mock the static method of Updater to assert it's not called
+    Mockery::mock('alias:'.Updater::class)
+        ->shouldNotReceive('migrateUpdate');
 
     $controller = new MigrateUpdateController();
 
@@ -84,9 +88,6 @@ test('it calls Updater::migrateUpdate and returns a success response if the user
         ]);
     // Mockery::close() (in beforeEach) will verify the `once()` expectation.
 });
-
-
-
 
 afterEach(function () {
     Mockery::close();

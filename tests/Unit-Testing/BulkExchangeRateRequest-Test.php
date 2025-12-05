@@ -4,11 +4,7 @@ use Crater\Http\Requests\BulkExchangeRateRequest;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Container\Container;
 
-// It's good practice to set up a basic application container for FormRequest tests
-// if they rely on services like the validator.
 beforeEach(function () {
-    // We need to bind a validator factory to the container, as FormRequest
-    // internally uses the container to resolve the validator.
     $app = new Container();
     $app->singleton('validator', function ($app) {
         return new Illuminate\Validation\Factory(
@@ -19,11 +15,6 @@ beforeEach(function () {
         );
     });
     Container::setInstance($app);
-
-    // Also, usually FormRequest is resolved via the container,
-    // which injects dependencies. For these simple methods,
-    // direct instantiation is fine, but for full validation,
-    // the container setup is crucial.
 });
 
 test('authorize method always returns true', function () {
@@ -50,13 +41,6 @@ test('rules method returns the correct validation rules', function () {
     expect($request->rules())->toEqual($expectedRules);
 });
 
-// Although the request specifies "Focus ONLY on unit-level white-box testing of the class/functions/methods.
-// Do NOT generate tests for HTTP endpoints, routes, middleware, authorization, or full database/framework integration.",
-// testing the *application* of the rules returned by `rules()` can be considered part of
-// "logic coverage" for the overall FormRequest behavior, without being a full integration test.
-// We are essentially unit testing that the *rules themselves* are functionally correct
-// when used with Laravel's Validator, given that `rules()` is the only method supplying them.
-
 test('validation passes with valid currencies data', function () {
     $request = new BulkExchangeRateRequest();
     $rules = $request->rules();
@@ -76,7 +60,7 @@ test('validation fails when currencies array is missing', function () {
     $request = new BulkExchangeRateRequest();
     $rules = $request->rules();
 
-    $data = []; // Missing 'currencies'
+    $data = [];
 
     $validator = Validator::make($data, $rules);
     expect($validator->fails())->toBeTrue();
@@ -87,13 +71,12 @@ test('validation fails when currencies array is empty', function () {
     $request = new BulkExchangeRateRequest();
     $rules = $request->rules();
 
-    $data = ['currencies' => []]; // Empty 'currencies' array
+    $data = ['currencies' => []];
 
     $validator = Validator::make($data, $rules);
     expect($validator->fails())->toBeTrue();
     expect($validator->errors()->has('currencies'))->toBeTrue();
 });
-
 
 test('validation fails when currency id is missing', function () {
     $request = new BulkExchangeRateRequest();
@@ -101,7 +84,7 @@ test('validation fails when currency id is missing', function () {
 
     $data = [
         'currencies' => [
-            ['exchange_rate' => 1.23], // 'id' is missing
+            ['exchange_rate' => 1.23],
         ],
     ];
 
@@ -116,7 +99,7 @@ test('validation fails when currency id is not numeric', function () {
 
     $data = [
         'currencies' => [
-            ['id' => 'abc', 'exchange_rate' => 1.23], // 'id' is not numeric
+            ['id' => 'abc', 'exchange_rate' => 1.23],
         ],
     ];
 
@@ -131,7 +114,7 @@ test('validation fails when currency exchange_rate is missing', function () {
 
     $data = [
         'currencies' => [
-            ['id' => 1], // 'exchange_rate' is missing
+            ['id' => 1],
         ],
     ];
 
@@ -159,8 +142,8 @@ test('validation fails when multiple currency items have issues', function () {
     expect($validator->errors()->has('currencies.2.id'))->toBeTrue();
 });
 
- 
-
 afterEach(function () {
-    Mockery::close();
+    if (class_exists('Mockery')) {
+        \Mockery::close();
+    }
 });

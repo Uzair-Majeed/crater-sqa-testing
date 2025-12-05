@@ -111,8 +111,10 @@ test('boot method calls configureRateLimiting and registers routes', function ()
         ->andReturn(null);
 
     // Create a partial mock of RouteServiceProvider to capture the closure passed to the 'routes' method
+    // Fix: Add shouldAllowMockingProtectedMethods() as 'routes' is a protected method
     $provider = Mockery::mock(RouteServiceProvider::class, [new Application()])
-        ->makePartial();
+        ->makePartial()
+        ->shouldAllowMockingProtectedMethods(); // Fix applied here
 
     $capturedRoutesClosure = null;
     $provider->shouldReceive('routes')
@@ -139,8 +141,10 @@ test('boot method registers routes with custom namespace if protected namespace 
     $customNamespace = 'Crater\\Http\\Controllers\\Custom';
 
     // Create a partial mock for the provider
+    // Fix: Add shouldAllowMockingProtectedMethods() as 'routes' is a protected method
     $provider = Mockery::mock(RouteServiceProvider::class, [new Application()])
-        ->makePartial();
+        ->makePartial()
+        ->shouldAllowMockingProtectedMethods(); // Fix applied here
 
     // Set the protected 'namespace' property using reflection
     $reflector = new ReflectionClass($provider);
@@ -199,7 +203,11 @@ test('boot method calls group with string paths for api and web routes', functio
         ->with(\Mockery::type('string')) // Just ensure it's called with a string
         ->andReturn(null);
 
-    $provider = Mockery::mock(RouteServiceProvider::class, [new Application()])->makePartial();
+    // Fix: Add shouldAllowMockingProtectedMethods() as 'routes' is a protected method
+    $provider = Mockery::mock(RouteServiceProvider::class, [new Application()])
+        ->makePartial()
+        ->shouldAllowMockingProtectedMethods(); // Fix applied here
+
     $capturedRoutesClosure = null;
     $provider->shouldReceive('routes')
         ->once()
@@ -210,9 +218,6 @@ test('boot method calls group with string paths for api and web routes', functio
     $provider->boot();
     $capturedRoutesClosure();
 });
-
-
-
 
 afterEach(function () {
     Mockery::close();

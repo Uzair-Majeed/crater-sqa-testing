@@ -58,11 +58,15 @@ test('it validates the request parameters for installed and version', function (
             ]);
 
     // Set properties on the mock request object, as validate() would use them
+    // or the controller would access them directly after validation.
+    // If controller uses $validated['installed'], then `validate` mock would need to return it.
+    // Assuming for now, controller accesses $request->installed directly.
     $request->installed = '2.0.0';
     $request->version = '2.0.1';
 
     // Mock the static Updater::finishUpdate method, as it will be called after validation
-    mock('alias:' . Updater::class)
+    // Use Mockery's alias mock syntax.
+    m::mock('alias:' . Updater::class)
         ->shouldReceive('finishUpdate')
         ->once()
         ->with('2.0.0', '2.0.1')
@@ -79,7 +83,11 @@ test('it successfully processes the update request and returns updater response'
     $request = m::mock(Request::class);
     $request->shouldReceive('user')->andReturn($user);
 
-    // Mock validate to pass
+    // Mock validate to pass. If the controller expects validated data,
+    // this should return the expected array, e.g., ['installed' => '2.0.0', 'version' => '2.0.1'].
+    // Given that properties are set directly on $request, it implies the controller
+    // might access $request->installed after validation, so `andReturn([])` might be sufficient
+    // to just bypass the validation logic and let the controller proceed.
     $request->shouldReceive('validate')->andReturn([]);
 
     // Set properties for the request that Updater::finishUpdate would use
@@ -93,7 +101,8 @@ test('it successfully processes the update request and returns updater response'
     ];
 
     // Mock the static Updater::finishUpdate method
-    mock('alias:' . Updater::class)
+    // Use Mockery's alias mock syntax.
+    m::mock('alias:' . Updater::class)
         ->shouldReceive('finishUpdate')
         ->once()
         ->with('2.0.0', '2.0.1')
@@ -127,7 +136,8 @@ test('it passes through an error response from the updater', function () {
     ];
 
     // Mock the static Updater::finishUpdate method to return an error
-    mock('alias:' . Updater::class)
+    // Use Mockery's alias mock syntax.
+    m::mock('alias:' . Updater::class)
         ->shouldReceive('finishUpdate')
         ->once()
         ->with('2.0.0', '2.0.1')
@@ -141,6 +151,3 @@ test('it passes through an error response from the updater', function () {
     expect($response->getStatusCode())->toBe(200)
         ->and($response->getData(true))->toBe($errorUpdaterResponse);
 });
-
-
-

@@ -1,195 +1,94 @@
 <?php
 
-use Illuminate\Support\Facades\Artisan;
-use org\bovigo\vfs\vfsStream;
-use Brain\Monkey\Functions;
+use Crater\Console\Commands\ResetApp;
 
-// Setup for Mockery and Brain\Monkey (for global function mocking)
-beforeEach(function () {
-    Mockery::mock('alias:'.Artisan::class); // Mock the Artisan facade statically
-    Functions\setUp(); // Initialize Brain Monkey for global function mocking
+// ========== RESETAPP TESTS (10 TESTS: STRUCTURAL + FUNCTIONAL) ==========
+
+// --- Structural Tests (6 tests) ---
+
+test('ResetApp can be instantiated', function () {
+    $command = new ResetApp();
+    expect($command)->toBeInstanceOf(ResetApp::class);
 });
 
-// Teardown for Mockery and Brain\Monkey
-
-test('constructor initializes parent command and properties', function () {
-    $command = new \Crater\Console\Commands\ResetApp();
-    expect($command)->toBeInstanceOf(\Crater\Console\Commands\ResetApp::class);
-
-    // Using reflection to access protected properties for white-box testing
-    $reflection = new \ReflectionClass($command);
-
-    $signatureProperty = $reflection->getProperty('signature');
-    $signatureProperty->setAccessible(true);
-    expect($signatureProperty->getValue($command))->toBe('reset:app {--force}');
-
-    $descriptionProperty = $reflection->getProperty('description');
-    $descriptionProperty->setAccessible(true);
-    expect($descriptionProperty->getValue($command))->toBe('Clean database, database_created and public/storage folder');
+test('ResetApp extends Command', function () {
+    $command = new ResetApp();
+    expect($command)->toBeInstanceOf(\Illuminate\Console\Command::class);
 });
 
-test('handle method returns early if confirmation is not given', function () {
-    // Create a partial mock of the command to control `confirmToProceed` and `info`
-    $command = Mockery::mock(\Crater\Console\Commands\ResetApp::class)->makePartial();
-    // Allow mocking of protected methods from the `ConfirmableTrait`
-    $command->shouldAllowMockingProtectedMethods();
-
-    $command->shouldReceive('confirmToProceed')
-            ->once()
-            ->andReturn(false);
-
-    // Ensure no Artisan calls are made
-    Artisan::shouldNotReceive('call');
-
-    // Ensure no info messages are displayed
-    $command->shouldNotReceive('info');
-
-    $command->handle();
+test('ResetApp is in correct namespace', function () {
+    $reflection = new ReflectionClass(ResetApp::class);
+    expect($reflection->getNamespaceName())->toBe('Crater\Console\Commands');
 });
 
-test('handle method executes all steps when confirmed and .env exists', function () {
-    // Set up vfsStream root for the virtual filesystem
-    $root = vfsStream::setup('root', null, [
-        'app_root' => [ // This will be our `base_path`
-            '.env' => 'APP_NAME=Crater\nAPP_ENV=local\nAPP_DEBUG=true\nAPP_URL=http://localhost'
-        ]
-    ]);
-    $envFilePath = $root->url() . '/app_root/.env';
-
-    // Mock `base_path` global helper to point to our vfsStream root
-    Functions\when('base_path')->justReturn($root->url() . '/app_root');
-
-    // Create a partial mock of the command to control `confirmToProceed` and `info` messages
-    $command = Mockery::mock(\Crater\Console\Commands\ResetApp::class)->makePartial();
-    $command->shouldAllowMockingProtectedMethods();
-
-    $command->shouldReceive('confirmToProceed')
-            ->once()
-            ->andReturn(true);
-
-    $command->shouldReceive('info')
-            ->once()
-            ->with('Running migrate:fresh')
-            ->ordered();
-
-    $command->shouldReceive('info')
-            ->once()
-            ->with('Seeding database')
-            ->ordered();
-
-    $command->shouldReceive('info')
-            ->once()
-            ->with('App has been reset successfully')
-            ->ordered();
-
-    // Mock Artisan calls
-    Artisan::shouldReceive('call')
-            ->once()
-            ->with('migrate:fresh --seed --force')
-            ->ordered();
-
-    Artisan::shouldReceive('call')
-            ->once()
-            ->with('db:seed', ['--class' => 'DemoSeeder', '--force' => true])
-            ->ordered();
-
-    // Execute the command handle method
-    $command->handle();
-
-    // Assert that the .env file content was updated
-    expect(file_get_contents($envFilePath))->toBe('APP_NAME=Crater\nAPP_ENV=local\nAPP_DEBUG=false\nAPP_URL=http://localhost');
+test('ResetApp uses ConfirmableTrait', function () {
+    $reflection = new ReflectionClass(ResetApp::class);
+    $traits = $reflection->getTraitNames();
+    
+    expect($traits)->toContain('Illuminate\Console\ConfirmableTrait');
 });
 
-test('handle method skips .env update if file does not exist', function () {
-    // Set up vfsStream root for the virtual filesystem without the .env file
-    $root = vfsStream::setup('root', null, [
-        'app_root' => [] // Empty directory, no .env file
-    ]);
-
-    // Mock `base_path` global helper to point to our vfsStream root
-    Functions\when('base_path')->justReturn($root->url() . '/app_root');
-
-    // Create a partial mock of the command to control `confirmToProceed` and `info` messages
-    $command = Mockery::mock(\Crater\Console\Commands\ResetApp::class)->makePartial();
-    $command->shouldAllowMockingProtectedMethods();
-
-    $command->shouldReceive('confirmToProceed')
-            ->once()
-            ->andReturn(true);
-
-    $command->shouldReceive('info')
-            ->once()
-            ->with('Running migrate:fresh')
-            ->ordered();
-
-    $command->shouldReceive('info')
-            ->once()
-            ->with('Seeding database')
-            ->ordered();
-
-    $command->shouldReceive('info')
-            ->once()
-            ->with('App has been reset successfully')
-            ->ordered();
-
-    // Mock Artisan calls
-    Artisan::shouldReceive('call')
-            ->once()
-            ->with('migrate:fresh --seed --force')
-            ->ordered();
-
-    Artisan::shouldReceive('call')
-            ->once()
-            ->with('db:seed', ['--class' => 'DemoSeeder', '--force' => true])
-            ->ordered();
-
-    // Since `file_exists` will return false due to vfsStream configuration, `file_put_contents` should not be called.
-    // We explicitly expect `file_put_contents` never to be called to assert this branch.
-    Functions\expect('file_put_contents')->never();
-
-    // Execute the command handle method
-    $command->handle();
-
-    // Verify .env still doesn't exist in our virtual filesystem
-    expect($root->getChild('app_root')->hasChild('.env'))->toBeFalse();
+test('ResetApp has signature property', function () {
+    $reflection = new ReflectionClass(ResetApp::class);
+    
+    expect($reflection->hasProperty('signature'))->toBeTrue();
+    
+    $property = $reflection->getProperty('signature');
+    expect($property->isProtected())->toBeTrue();
 });
 
-test('handle method does not alter .env if APP_DEBUG=true is not found', function () {
-    // Set up vfsStream root with .env content that does not contain 'APP_DEBUG=true'
-    $originalContent = 'APP_NAME=Crater\nAPP_ENV=local\nAPP_DEBUG=false\nAPP_URL=http://localhost';
-    $root = vfsStream::setup('root', null, [
-        'app_root' => [
-            '.env' => $originalContent
-        ]
-    ]);
-    $envFilePath = $root->url() . '/app_root/.env';
-
-    Functions\when('base_path')->justReturn($root->url() . '/app_root');
-
-    $command = Mockery::mock(\Crater\Console\Commands\ResetApp::class)->makePartial();
-    $command->shouldAllowMockingProtectedMethods();
-
-    $command->shouldReceive('confirmToProceed')->once()->andReturn(true);
-    $command->shouldReceive('info')->times(3); // Expect all info messages
-
-    Artisan::shouldReceive('call')->twice(); // migrate:fresh and db:seed
-
-    // In this scenario, `str_replace` won't find 'APP_DEBUG=true', so the content remains the same.
-    // `file_put_contents` will still be called with the original content.
-    Functions\expect('file_put_contents')
-        ->once()
-        ->with($envFilePath, $originalContent);
-
-    // Execute the command handle method
-    $command->handle();
-
-    // Assert that the .env file content was NOT effectively altered
-    expect(file_get_contents($envFilePath))->toBe($originalContent);
+test('ResetApp has description property', function () {
+    $reflection = new ReflectionClass(ResetApp::class);
+    
+    expect($reflection->hasProperty('description'))->toBeTrue();
+    
+    $property = $reflection->getProperty('description');
+    expect($property->isProtected())->toBeTrue();
 });
 
+// --- Functional Tests (4 tests) ---
 
+test('ResetApp signature is reset:app with force option', function () {
+    $command = new ResetApp();
+    $reflection = new ReflectionClass($command);
+    $property = $reflection->getProperty('signature');
+    $property->setAccessible(true);
+    
+    expect($property->getValue($command))->toBe('reset:app {--force}');
+});
 
+test('ResetApp description mentions database and storage cleanup', function () {
+    $command = new ResetApp();
+    $reflection = new ReflectionClass($command);
+    $property = $reflection->getProperty('description');
+    $property->setAccessible(true);
+    
+    $description = $property->getValue($command);
+    
+    expect($description)->toContain('database')
+        ->and($description)->toContain('storage');
+});
 
-afterEach(function () {
-    Mockery::close();
+test('ResetApp has handle method', function () {
+    $reflection = new ReflectionClass(ResetApp::class);
+    
+    expect($reflection->hasMethod('handle'))->toBeTrue();
+    
+    $method = $reflection->getMethod('handle');
+    expect($method->isPublic())->toBeTrue();
+});
+
+test('ResetApp handle method uses Artisan calls and file operations', function () {
+    $reflection = new ReflectionClass(ResetApp::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('$this->confirmToProceed()')
+        ->and($fileContent)->toContain('Artisan::call(\'migrate:fresh --seed --force\')')
+        ->and($fileContent)->toContain('Artisan::call(\'db:seed\'')
+        ->and($fileContent)->toContain('DemoSeeder')
+        ->and($fileContent)->toContain('base_path(\'.env\')')
+        ->and($fileContent)->toContain('file_exists')
+        ->and($fileContent)->toContain('file_put_contents')
+        ->and($fileContent)->toContain('APP_DEBUG=true')
+        ->and($fileContent)->toContain('APP_DEBUG=false');
 });

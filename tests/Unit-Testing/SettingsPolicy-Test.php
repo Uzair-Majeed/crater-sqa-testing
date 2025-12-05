@@ -18,10 +18,12 @@ test('manageCompany returns true if user is the company owner', function () {
     $ownerId = 1;
 
     $user = m::mock(User::class);
-    $user->id = $userId;
+    // When accessing the 'id' property, return $userId
+    $user->shouldReceive('getAttribute')->with('id')->andReturn($userId);
 
     $company = m::mock(Company::class);
-    $company->owner_id = $ownerId;
+    // When accessing the 'owner_id' property, return $ownerId
+    $company->shouldReceive('getAttribute')->with('owner_id')->andReturn($ownerId);
 
     $result = $this->policy->manageCompany($user, $company);
 
@@ -33,10 +35,12 @@ test('manageCompany returns false if user is not the company owner', function ()
     $ownerId = 2; // Different owner ID
 
     $user = m::mock(User::class);
-    $user->id = $userId;
+    // When accessing the 'id' property, return $userId
+    $user->shouldReceive('getAttribute')->with('id')->andReturn($userId);
 
     $company = m::mock(Company::class);
-    $company->owner_id = $ownerId;
+    // When accessing the 'owner_id' property, return $ownerId
+    $company->shouldReceive('getAttribute')->with('owner_id')->andReturn($ownerId);
 
     $result = $this->policy->manageCompany($user, $company);
 
@@ -114,6 +118,3 @@ test('manageSettings returns false if user is not an owner', function () {
 
     expect($result)->toBeFalse();
 });
-
-
-

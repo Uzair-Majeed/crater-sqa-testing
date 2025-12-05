@@ -21,8 +21,8 @@ test('rules method returns correct validation rules', function () {
     expect($request->rules())->toEqual($expectedRules);
 });
 
- 
-
 afterEach(function () {
-    Mockery::close();
+    if (class_exists('Mockery')) {
+        \Mockery::close();
+    }
 });

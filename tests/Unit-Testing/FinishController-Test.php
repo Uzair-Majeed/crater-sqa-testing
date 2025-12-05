@@ -29,8 +29,7 @@ test('it successfully creates the database_created file and returns a success re
     expect($response)->toBeInstanceOf(JsonResponse::class);
     expect($response->getData(true))->toEqual(['success' => true]);
 
-    // Ensure Mockery expectations are met (handled by Pest/PHPUnit runner, but explicit close is good for isolated tests)
-    Mockery::close();
+    // Mockery expectations are met and closed by the afterEach hook.
 });
 
 test('it returns success even if storage put operation fails (current implementation behavior)', function () {
@@ -57,11 +56,8 @@ test('it returns success even if storage put operation fails (current implementa
     expect($response)->toBeInstanceOf(JsonResponse::class);
     expect($response->getData(true))->toEqual(['success' => true]);
 
-    // Ensure Mockery expectations are met
-    Mockery::close();
+    // Mockery expectations are met and closed by the afterEach hook.
 });
-
-
 
 
 afterEach(function () {

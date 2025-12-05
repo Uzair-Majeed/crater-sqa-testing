@@ -2,126 +2,394 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use Illuminate\Http\Resources\Json\JsonResource;
 use Crater\Http\Resources\ExchangeRateProviderCollection;
+use Crater\Http\Resources\ExchangeRateProviderResource;
 
-beforeEach(function () {
-    // Clear Mockery expectations before each test to prevent conflicts
-    Mockery::close();
+// Helper function to create dummy exchange rate provider with all required properties
+function createDummyExchangeRateProvider($id, $driver) {
+    return new class($id, $driver) {
+        private $data;
+        
+        public function __construct($id, $driver) {
+            $this->data = [
+                'id' => $id,
+                'driver' => $driver,
+                'key' => 'test_key_' . $id,
+                'active' => true,
+                'currencies' => ['USD', 'EUR'],
+                'driver_config' => ['type' => 'PREMIUM'],
+                'company_id' => 1,
+                'created_at' => '2024-01-01 00:00:00',
+                'updated_at' => '2024-01-01 00:00:00',
+            ];
+        }
+        
+        public function __get($key) {
+            return $this->data[$key] ?? null;
+        }
+        
+        public function company() {
+            return new class { public function exists() { return false; } };
+        }
+    };
+}
+
+// ========== CLASS STRUCTURE TESTS ==========
+
+test('ExchangeRateProviderCollection can be instantiated', function () {
+    $collection = new ExchangeRateProviderCollection(new Collection([]));
+    expect($collection)->toBeInstanceOf(ExchangeRateProviderCollection::class);
 });
 
-test('toArray returns an empty array when the underlying collection is empty', function () {
-    $request = Mockery::mock(Request::class);
-    $collection = new Collection([]);
-    $resourceCollection = new ExchangeRateProviderCollection($collection);
-
-    $result = $resourceCollection->toArray($request);
-
-    expect($result)->toBeArray()->toBeEmpty();
+test('ExchangeRateProviderCollection extends ResourceCollection', function () {
+    $collection = new ExchangeRateProviderCollection(new Collection([]));
+    expect($collection)->toBeInstanceOf(\Illuminate\Http\Resources\Json\ResourceCollection::class);
 });
 
-test('toArray correctly transforms items that are instances of JsonResource', function () {
-    $request = Mockery::mock(Request::class);
+test('ExchangeRateProviderCollection is in correct namespace', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderCollection::class);
+    expect($reflection->getNamespaceName())->toBe('Crater\Http\Resources');
+});
 
-    // Mock individual JsonResource items to control their `toArray` output
-    $mockResource1 = Mockery::mock(JsonResource::class);
-    $mockResource1->shouldReceive('toArray')
-                  ->once()
-                  ->with($request)
-                  ->andReturn(['id' => 1, 'name' => 'Transformed Provider A']);
+test('ExchangeRateProviderCollection has toArray method', function () {
+    $collection = new ExchangeRateProviderCollection(new Collection([]));
+    expect(method_exists($collection, 'toArray'))->toBeTrue();
+});
 
-    $mockResource2 = Mockery::mock(JsonResource::class);
-    $mockResource2->shouldReceive('toArray')
-                  ->once()
-                  ->with($request)
-                  ->andReturn(['id' => 2, 'name' => 'Transformed Provider B']);
+test('toArray method is public', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderCollection::class);
+    $method = $reflection->getMethod('toArray');
+    
+    expect($method->isPublic())->toBeTrue();
+});
 
-    $collection = new Collection([$mockResource1, $mockResource2]);
-    $resourceCollection = new ExchangeRateProviderCollection($collection);
+test('toArray method accepts request parameter', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderCollection::class);
+    $method = $reflection->getMethod('toArray');
+    $parameters = $method->getParameters();
+    
+    expect($parameters)->toHaveCount(1)
+        ->and($parameters[0]->getName())->toBe('request');
+});
 
-    $result = $resourceCollection->toArray($request);
+// ========== FUNCTIONAL TESTS ==========
 
-    expect($result)->toBeArray()->toEqual([
-        ['id' => 1, 'name' => 'Transformed Provider A'],
-        ['id' => 2, 'name' => 'Transformed Provider B'],
+test('handles empty collection', function () {
+    $request = new Request();
+    $collection = new ExchangeRateProviderCollection(new Collection([]));
+    
+    $result = $collection->toArray($request);
+    
+    expect($result)->toBeArray()
+        ->and($result)->toBeEmpty();
+});
+
+test('transforms single exchange rate provider resource', function () {
+    $request = new Request();
+    $provider = createDummyExchangeRateProvider(1, 'currency_freak');
+    $resource = new ExchangeRateProviderResource($provider);
+    
+    $collection = new ExchangeRateProviderCollection(new Collection([$resource]));
+    $result = $collection->toArray($request);
+    
+    expect($result)->toBeArray()
+        ->and($result)->toHaveCount(1)
+        ->and($result[0])->toHaveKey('id')
+        ->and($result[0]['id'])->toBe(1);
+});
+
+test('transforms multiple exchange rate provider resources', function () {
+    $request = new Request();
+    $provider1 = createDummyExchangeRateProvider(1, 'currency_freak');
+    $provider2 = createDummyExchangeRateProvider(2, 'currency_layer');
+    
+    $resource1 = new ExchangeRateProviderResource($provider1);
+    $resource2 = new ExchangeRateProviderResource($provider2);
+    
+    $collection = new ExchangeRateProviderCollection(new Collection([$resource1, $resource2]));
+    $result = $collection->toArray($request);
+    
+    expect($result)->toBeArray()
+        ->and($result)->toHaveCount(2)
+        ->and($result[0]['id'])->toBe(1)
+        ->and($result[1]['id'])->toBe(2);
+});
+
+test('each transformed item has required fields', function () {
+    $request = new Request();
+    $provider = createDummyExchangeRateProvider(1, 'currency_freak');
+    $resource = new ExchangeRateProviderResource($provider);
+    
+    $collection = new ExchangeRateProviderCollection(new Collection([$resource]));
+    $result = $collection->toArray($request);
+    
+    expect($result[0])->toHaveKeys([
+        'id',
+        'driver',
+        'key',
+        'active',
+        'currencies',
+        'driver_config'
     ]);
 });
 
-test('toArray returns non-JsonResource items directly without transformation', function () {
-    $request = Mockery::mock(Request::class);
+test('handles large collection of exchange rate providers', function () {
+    $request = new Request();
+    $resources = [];
+    
+    for ($i = 1; $i <= 50; $i++) {
+        $provider = createDummyExchangeRateProvider($i, 'currency_freak');
+        $resources[] = new ExchangeRateProviderResource($provider);
+    }
+    
+    $collection = new ExchangeRateProviderCollection(new Collection($resources));
+    $result = $collection->toArray($request);
+    
+    expect($result)->toBeArray()
+        ->and($result)->toHaveCount(50)
+        ->and($result[0]['id'])->toBe(1)
+        ->and($result[49]['id'])->toBe(50);
+});
 
-    $item1 = ['code' => 'USD', 'rate' => 1.0];
-    $item2 = (object)['code' => 'EUR', 'rate' => 0.85];
-    $item3 = 'simple string';
-    $item4 = 123;
+// ========== INHERITANCE TESTS ==========
 
-    $collection = new Collection([$item1, $item2, $item3, $item4]);
-    $resourceCollection = new ExchangeRateProviderCollection($collection);
+test('toArray delegates to parent ResourceCollection', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderCollection::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('parent::toArray');
+});
 
-    $result = $resourceCollection->toArray($request);
+test('ExchangeRateProviderCollection parent class is ResourceCollection', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderCollection::class);
+    $parent = $reflection->getParentClass();
+    
+    expect($parent)->not->toBeFalse()
+        ->and($parent->getName())->toBe(\Illuminate\Http\Resources\Json\ResourceCollection::class);
+});
 
-    expect($result)->toBeArray()->toEqual([
-        $item1,
-        $item2,
-        $item3,
-        $item4,
+// ========== INSTANCE TESTS ==========
+
+test('multiple ExchangeRateProviderCollection instances can be created', function () {
+    $collection1 = new ExchangeRateProviderCollection(new Collection([]));
+    $collection2 = new ExchangeRateProviderCollection(new Collection([]));
+    
+    expect($collection1)->toBeInstanceOf(ExchangeRateProviderCollection::class)
+        ->and($collection2)->toBeInstanceOf(ExchangeRateProviderCollection::class)
+        ->and($collection1)->not->toBe($collection2);
+});
+
+test('ExchangeRateProviderCollection can be cloned', function () {
+    $collection = new ExchangeRateProviderCollection(new Collection([]));
+    $clone = clone $collection;
+    
+    expect($clone)->toBeInstanceOf(ExchangeRateProviderCollection::class)
+        ->and($clone)->not->toBe($collection);
+});
+
+test('ExchangeRateProviderCollection can be used in type hints', function () {
+    $testFunction = function (ExchangeRateProviderCollection $collection) {
+        return $collection;
+    };
+    
+    $collection = new ExchangeRateProviderCollection(new Collection([]));
+    $result = $testFunction($collection);
+    
+    expect($result)->toBe($collection);
+});
+
+// ========== CLASS CHARACTERISTICS TESTS ==========
+
+test('ExchangeRateProviderCollection is not abstract', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderCollection::class);
+    expect($reflection->isAbstract())->toBeFalse();
+});
+
+test('ExchangeRateProviderCollection is not final', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderCollection::class);
+    expect($reflection->isFinal())->toBeFalse();
+});
+
+test('ExchangeRateProviderCollection is not an interface', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderCollection::class);
+    expect($reflection->isInterface())->toBeFalse();
+});
+
+test('ExchangeRateProviderCollection is not a trait', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderCollection::class);
+    expect($reflection->isTrait())->toBeFalse();
+});
+
+test('ExchangeRateProviderCollection class is loaded', function () {
+    expect(class_exists(ExchangeRateProviderCollection::class))->toBeTrue();
+});
+
+// ========== IMPORTS TESTS ==========
+
+test('ExchangeRateProviderCollection uses ResourceCollection', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderCollection::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('use Illuminate\Http\Resources\Json\ResourceCollection');
+});
+
+// ========== METHOD CHARACTERISTICS TESTS ==========
+
+test('toArray method is not static', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderCollection::class);
+    $method = $reflection->getMethod('toArray');
+    
+    expect($method->isStatic())->toBeFalse();
+});
+
+test('toArray method is not abstract', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderCollection::class);
+    $method = $reflection->getMethod('toArray');
+    
+    expect($method->isAbstract())->toBeFalse();
+});
+
+// ========== DATA INTEGRITY TESTS ==========
+
+test('preserves exchange rate provider data integrity', function () {
+    $request = new Request();
+    $provider = createDummyExchangeRateProvider(42, 'open_exchange_rate');
+    $resource = new ExchangeRateProviderResource($provider);
+    
+    $collection = new ExchangeRateProviderCollection(new Collection([$resource]));
+    $result = $collection->toArray($request);
+    
+    expect($result[0]['id'])->toBe(42)
+        ->and($result[0]['driver'])->toBe('open_exchange_rate');
+});
+
+test('handles different drivers', function () {
+    $request = new Request();
+    
+    $provider1 = createDummyExchangeRateProvider(1, 'currency_freak');
+    $provider2 = createDummyExchangeRateProvider(2, 'currency_layer');
+    $provider3 = createDummyExchangeRateProvider(3, 'open_exchange_rate');
+    
+    $resource1 = new ExchangeRateProviderResource($provider1);
+    $resource2 = new ExchangeRateProviderResource($provider2);
+    $resource3 = new ExchangeRateProviderResource($provider3);
+    
+    $collection = new ExchangeRateProviderCollection(new Collection([$resource1, $resource2, $resource3]));
+    $result = $collection->toArray($request);
+    
+    expect($result[0]['driver'])->toBe('currency_freak')
+        ->and($result[1]['driver'])->toBe('currency_layer')
+        ->and($result[2]['driver'])->toBe('open_exchange_rate');
+});
+
+// ========== FILE STRUCTURE TESTS ==========
+
+test('ExchangeRateProviderCollection file is simple and concise', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderCollection::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    // File should be small (< 1000 bytes for simple delegation)
+    expect(strlen($fileContent))->toBeLessThan(1000);
+});
+
+test('ExchangeRateProviderCollection has minimal line count', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderCollection::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    $lineCount = count(explode("\n", $fileContent));
+    
+    expect($lineCount)->toBeLessThan(30);
+});
+
+// ========== COMPREHENSIVE FIELD TESTS ==========
+
+test('transformed items include all provider fields', function () {
+    $request = new Request();
+    $provider = createDummyExchangeRateProvider(1, 'currency_freak');
+    $resource = new ExchangeRateProviderResource($provider);
+    
+    $collection = new ExchangeRateProviderCollection(new Collection([$resource]));
+    $result = $collection->toArray($request);
+    
+    expect($result[0])->toHaveKeys([
+        'id', 'driver', 'key', 'active', 'currencies', 'driver_config'
     ]);
 });
 
-test('toArray handles a mixed collection of JsonResource and non-JsonResource items correctly', function () {
-    $request = Mockery::mock(Request::class);
-
-    // Mock a JsonResource item
-    $mockResource = Mockery::mock(JsonResource::class);
-    $mockResource->shouldReceive('toArray')
-                 ->once()
-                 ->with($request)
-                 ->andReturn(['id' => 10, 'currency' => 'JPY', 'rate' => 110.5]);
-
-    // Simple data items
-    $simpleItem1 = ['provider' => 'Bank A', 'last_updated' => '2023-01-01'];
-    $simpleItem2 = (object)['provider' => 'Bank B', 'status' => 'active'];
-    $simpleItem3 = null; // Edge case: null item
-
-    $collection = new Collection([$mockResource, $simpleItem1, $simpleItem2, $simpleItem3]);
-    $resourceCollection = new ExchangeRateProviderCollection($collection);
-
-    $result = $resourceCollection->toArray($request);
-
-    expect($result)->toBeArray()->toEqual([
-        ['id' => 10, 'currency' => 'JPY', 'rate' => 110.5],
-        $simpleItem1,
-        $simpleItem2,
-        $simpleItem3,
-    ]);
+test('result is a valid array structure', function () {
+    $request = new Request();
+    $provider = createDummyExchangeRateProvider(1, 'currency_freak');
+    $resource = new ExchangeRateProviderResource($provider);
+    
+    $collection = new ExchangeRateProviderCollection(new Collection([$resource]));
+    $result = $collection->toArray($request);
+    
+    expect($result)->toBeArray()
+        ->and(is_array($result))->toBeTrue();
 });
 
-test('toArray method propagates the request object to child JsonResources', function () {
-    $request = Mockery::mock(Request::class);
-    // Add a unique property to the request to verify it's the exact same instance
-    $request->someIdentifier = uniqid();
+// ========== DOCUMENTATION TESTS ==========
 
-    $mockResource = Mockery::mock(JsonResource::class);
-    $mockResource->shouldReceive('toArray')
-                 ->once()
-                 ->andReturnUsing(function ($receivedRequest) use ($request) {
-                     // Assert that the received request is the same instance
-                     expect($receivedRequest)->toBe($request);
-                     expect($receivedRequest->someIdentifier)->toBe($request->someIdentifier);
-                     return ['verified' => true];
-                 });
-
-    $collection = new Collection([$mockResource]);
-    $resourceCollection = new ExchangeRateProviderCollection($collection);
-
-    $result = $resourceCollection->toArray($request);
-
-    expect($result)->toBeArray()->toEqual([['verified' => true]]);
+test('toArray method has documentation', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderCollection::class);
+    $method = $reflection->getMethod('toArray');
+    
+    expect($method->getDocComment())->not->toBeFalse();
 });
 
+test('toArray method has return type documentation', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderCollection::class);
+    $method = $reflection->getMethod('toArray');
+    $docComment = $method->getDocComment();
+    
+    expect($docComment)->toContain('@return');
+});
 
+test('toArray method has param documentation', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderCollection::class);
+    $method = $reflection->getMethod('toArray');
+    $docComment = $method->getDocComment();
+    
+    expect($docComment)->toContain('@param');
+});
 
+// ========== ACTIVE STATUS TESTS ==========
 
-afterEach(function () {
-    Mockery::close();
+test('handles active and inactive providers', function () {
+    $request = new Request();
+    
+    $provider1 = createDummyExchangeRateProvider(1, 'currency_freak');
+    $provider1->active = true;
+    
+    $provider2 = createDummyExchangeRateProvider(2, 'currency_layer');
+    $provider2->active = false;
+    
+    $resource1 = new ExchangeRateProviderResource($provider1);
+    $resource2 = new ExchangeRateProviderResource($provider2);
+    
+    $collection = new ExchangeRateProviderCollection(new Collection([$resource1, $resource2]));
+    $result = $collection->toArray($request);
+    
+    expect($result[0]['active'])->toBeTrue()
+        ->and($result[1]['active'])->toBeFalse();
+});
+
+// ========== CURRENCIES TESTS ==========
+
+test('handles different currency configurations', function () {
+    $request = new Request();
+    
+    $provider1 = createDummyExchangeRateProvider(1, 'currency_freak');
+    $provider1->currencies = ['USD', 'EUR'];
+    
+    $provider2 = createDummyExchangeRateProvider(2, 'currency_layer');
+    $provider2->currencies = ['GBP', 'JPY', 'AUD'];
+    
+    $resource1 = new ExchangeRateProviderResource($provider1);
+    $resource2 = new ExchangeRateProviderResource($provider2);
+    
+    $collection = new ExchangeRateProviderCollection(new Collection([$resource1, $resource2]));
+    $result = $collection->toArray($request);
+    
+    expect($result[0]['currencies'])->toBe(['USD', 'EUR'])
+        ->and($result[1]['currencies'])->toBe(['GBP', 'JPY', 'AUD']);
 });

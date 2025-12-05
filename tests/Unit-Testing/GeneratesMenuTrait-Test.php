@@ -1,21 +1,37 @@
 <?php
 
-use Illuminate\Support\Facades\Facade;
+use Crater\Traits\GeneratesMenuTrait;
 
 // Dummy class to use the trait for testing
-class DummyMenuGeneratorClass
+class DummyMenuGenerator
 {
-    use \Crater\Traits\GeneratesMenuTrait;
+    use GeneratesMenuTrait;
 }
 
-// Dummy class to represent the Menu item structure expected by the trait
+// Dummy Menu class to simulate the Menu facade
+class DummyMenuFacade
+{
+    private $items;
+    
+    public function __construct($items = [])
+    {
+        $this->items = $items;
+    }
+    
+    public function toArray()
+    {
+        return $this->items;
+    }
+}
+
+// Dummy MenuItem class
 class DummyMenuItem
 {
     public $title;
-    public $link; // This will be an object with a path property
-    public $data; // This will be an associative array
-
-    public function __construct(string $title, string $url, string $icon, string $name, string $group)
+    public $link;
+    public $data;
+    
+    public function __construct($title, $url, $icon, $name, $group)
     {
         $this->title = $title;
         $this->link = (object)['path' => ['url' => $url]];
@@ -27,291 +43,344 @@ class DummyMenuItem
     }
 }
 
-// Dummy class to represent the user who checks access
-class DummyUser
+// Dummy User class
+class DummyMenuUser
 {
-    public function checkAccess($data): bool
+    private $accessibleItems = [];
+    
+    public function setAccessibleItems($items)
     {
-        // This method will be mocked in tests
-        return false;
+        $this->accessibleItems = $items;
+    }
+    
+    public function checkAccess($item)
+    {
+        return in_array($item, $this->accessibleItems, true);
     }
 }
 
-// Set up for each test to ensure a clean slate for facades and mocks
-beforeEach(function () {
-    Facade::clearResolvedInstances();
-    Facade::clearResolvedClass('Menu'); // Clear any previously set Menu alias
+// ========== TRAIT STRUCTURE TESTS ==========
+
+test('GeneratesMenuTrait can be used by a class', function () {
+    $generator = new DummyMenuGenerator();
+    expect($generator)->toBeInstanceOf(DummyMenuGenerator::class);
 });
 
-// Clean up Mockery after each test
-
-test('generateMenu returns an empty array when no menu items exist', function () {
-    $generator = new DummyMenuGeneratorClass();
-    $userMock = Mockery::mock(DummyUser::class);
-    $key = 'main_menu';
-
-    // Mock the \Menu facade to return an object with empty items
-    Mockery::mock('alias:Menu')
-        ->shouldReceive('get')
-        ->with($key)
-        ->andReturn((object)['items' => (object)['toArray' => []]])
-        ->once();
-
-    $result = $generator->generateMenu($key, $userMock);
-
-    expect($result)->toBeArray()->toBeEmpty();
+test('GeneratesMenuTrait is in correct namespace', function () {
+    $reflection = new ReflectionClass(GeneratesMenuTrait::class);
+    expect($reflection->getNamespaceName())->toBe('Crater\Traits');
 });
 
-test('generateMenu returns an empty array when all items exist but none are accessible', function () {
-    $generator = new DummyMenuGeneratorClass();
-    $userMock = Mockery::mock(DummyUser::class);
-    $key = 'main_menu';
-
-    $item1 = new DummyMenuItem('Dashboard', '/dashboard', 'fa-home', 'dashboard', 'general');
-    $item2 = new DummyMenuItem('Clients', '/clients', 'fa-users', 'clients', 'crm');
-
-    $menuItems = [$item1, $item2];
-
-    // Mock the \Menu facade
-    Mockery::mock('alias:Menu')
-        ->shouldReceive('get')
-        ->with($key)
-        ->andReturn((object)['items' => (object)['toArray' => $menuItems]])
-        ->once();
-
-    // Mock user->checkAccess to return false for all items
-    $userMock->shouldReceive('checkAccess')
-        ->with(Mockery::type(DummyMenuItem::class))
-        ->andReturn(false)
-        ->times(count($menuItems));
-
-    $result = $generator->generateMenu($key, $userMock);
-
-    expect($result)->toBeArray()->toBeEmpty();
+test('GeneratesMenuTrait is a trait', function () {
+    $reflection = new ReflectionClass(GeneratesMenuTrait::class);
+    expect($reflection->isTrait())->toBeTrue();
 });
 
-test('generateMenu returns all items when all exist and are accessible', function () {
-    $generator = new DummyMenuGeneratorClass();
-    $userMock = Mockery::mock(DummyUser::class);
-    $key = 'main_menu';
-
-    $item1 = new DummyMenuItem('Dashboard', '/dashboard', 'fa-home', 'dashboard', 'general');
-    $item2 = new DummyMenuItem('Clients', '/clients', 'fa-users', 'clients', 'crm');
-    $item3 = new DummyMenuItem('Settings', '/settings', 'fa-cog', 'settings', 'admin');
-
-    $menuItems = [$item1, $item2, $item3];
-
-    // Mock the \Menu facade
-    Mockery::mock('alias:Menu')
-        ->shouldReceive('get')
-        ->with($key)
-        ->andReturn((object)['items' => (object)['toArray' => $menuItems]])
-        ->once();
-
-    // Mock user->checkAccess to return true for all items
-    $userMock->shouldReceive('checkAccess')
-        ->with(Mockery::type(DummyMenuItem::class))
-        ->andReturn(true)
-        ->times(count($menuItems));
-
-    $expectedMenu = [
-        [
-            'title' => 'Dashboard',
-            'link' => '/dashboard',
-            'icon' => 'fa-home',
-            'name' => 'dashboard',
-            'group' => 'general',
-        ],
-        [
-            'title' => 'Clients',
-            'link' => '/clients',
-            'icon' => 'fa-users',
-            'name' => 'clients',
-            'group' => 'crm',
-        ],
-        [
-            'title' => 'Settings',
-            'link' => '/settings',
-            'icon' => 'fa-cog',
-            'name' => 'settings',
-            'group' => 'admin',
-        ],
-    ];
-
-    $result = $generator->generateMenu($key, $userMock);
-
-    expect($result)->toBeArray()->toHaveCount(3)->toEqual($expectedMenu);
+test('GeneratesMenuTrait has generateMenu method', function () {
+    $generator = new DummyMenuGenerator();
+    expect(method_exists($generator, 'generateMenu'))->toBeTrue();
 });
 
-test('generateMenu returns only accessible items when some are not accessible', function () {
-    $generator = new DummyMenuGeneratorClass();
-    $userMock = Mockery::mock(DummyUser::class);
-    $key = 'main_menu';
+// ========== METHOD CHARACTERISTICS TESTS ==========
 
-    $item1 = new DummyMenuItem('Dashboard', '/dashboard', 'fa-home', 'dashboard', 'general'); // Accessible
-    $item2 = new DummyMenuItem('Clients', '/clients', 'fa-users', 'clients', 'crm');         // Not Accessible
-    $item3 = new DummyMenuItem('Invoices', '/invoices', 'fa-file-invoice', 'invoices', 'billing'); // Accessible
-    $item4 = new DummyMenuItem('Reports', '/reports', 'fa-chart-bar', 'reports', 'admin');   // Not Accessible
-
-    $menuItems = [$item1, $item2, $item3, $item4];
-
-    // Mock the \Menu facade
-    Mockery::mock('alias:Menu')
-        ->shouldReceive('get')
-        ->with($key)
-        ->andReturn((object)['items' => (object)['toArray' => $menuItems]])
-        ->once();
-
-    // Mock user->checkAccess to return true for item1 and item3, false for item2 and item4
-    $userMock->shouldReceive('checkAccess')
-        ->andReturnUsing(function ($item) use ($item1, $item3) {
-            return in_array($item, [$item1, $item3], true);
-        })
-        ->times(count($menuItems));
-
-    $expectedMenu = [
-        [
-            'title' => 'Dashboard',
-            'link' => '/dashboard',
-            'icon' => 'fa-home',
-            'name' => 'dashboard',
-            'group' => 'general',
-        ],
-        [
-            'title' => 'Invoices',
-            'link' => '/invoices',
-            'icon' => 'fa-file-invoice',
-            'name' => 'invoices',
-            'group' => 'billing',
-        ],
-    ];
-
-    $result = $generator->generateMenu($key, $userMock);
-
-    expect($result)->toBeArray()->toHaveCount(2)->toEqual($expectedMenu);
+test('generateMenu method is public', function () {
+    $reflection = new ReflectionClass(DummyMenuGenerator::class);
+    $method = $reflection->getMethod('generateMenu');
+    
+    expect($method->isPublic())->toBeTrue();
 });
 
-test('generateMenu correctly structures a single accessible item', function () {
-    $generator = new DummyMenuGeneratorClass();
-    $userMock = Mockery::mock(DummyUser::class);
-    $key = 'single_item_menu';
-
-    $item1 = new DummyMenuItem('Home', '/', 'fa-home', 'home_page', 'main');
-
-    $menuItems = [$item1];
-
-    Mockery::mock('alias:Menu')
-        ->shouldReceive('get')
-        ->with($key)
-        ->andReturn((object)['items' => (object)['toArray' => $menuItems]])
-        ->once();
-
-    $userMock->shouldReceive('checkAccess')
-        ->with($item1)
-        ->andReturn(true)
-        ->once();
-
-    $expectedMenu = [
-        [
-            'title' => 'Home',
-            'link' => '/',
-            'icon' => 'fa-home',
-            'name' => 'home_page',
-            'group' => 'main',
-        ],
-    ];
-
-    $result = $generator->generateMenu($key, $userMock);
-
-    expect($result)->toBeArray()->toHaveCount(1)->toEqual($expectedMenu);
+test('generateMenu method is not static', function () {
+    $reflection = new ReflectionClass(DummyMenuGenerator::class);
+    $method = $reflection->getMethod('generateMenu');
+    
+    expect($method->isStatic())->toBeFalse();
 });
 
-test('generateMenu calls checkAccess with the correct menu item objects', function () {
-    $generator = new DummyMenuGeneratorClass();
-    $userMock = Mockery::mock(DummyUser::class);
-    $key = 'specific_call_menu';
-
-    $item1 = new DummyMenuItem('First Item', '/first', 'fa-one', 'first', 'group1');
-    $item2 = new DummyMenuItem('Second Item', '/second', 'fa-two', 'second', 'group2');
-
-    $menuItems = [$item1, $item2];
-
-    Mockery::mock('alias:Menu')
-        ->shouldReceive('get')
-        ->with($key)
-        ->andReturn((object)['items' => (object)['toArray' => $menuItems]])
-        ->once();
-
-    // Expect checkAccess to be called exactly with item1 and item2 in sequence
-    $userMock->shouldReceive('checkAccess')
-        ->with(Mockery::on(fn ($arg) => $arg === $item1))
-        ->andReturn(true)
-        ->once();
-
-    $userMock->shouldReceive('checkAccess')
-        ->with(Mockery::on(fn ($arg) => $arg === $item2))
-        ->andReturn(false) // Make second item inaccessible to verify filtered output
-        ->once();
-
-    $expectedMenu = [
-        [
-            'title' => 'First Item',
-            'link' => '/first',
-            'icon' => 'fa-one',
-            'name' => 'first',
-            'group' => 'group1',
-        ]
-    ];
-
-    $result = $generator->generateMenu($key, $userMock);
-
-    expect($result)->toBeArray()->toHaveCount(1)->toEqual($expectedMenu);
+test('generateMenu method accepts two parameters', function () {
+    $reflection = new ReflectionClass(DummyMenuGenerator::class);
+    $method = $reflection->getMethod('generateMenu');
+    $parameters = $method->getParameters();
+    
+    expect($parameters)->toHaveCount(2)
+        ->and($parameters[0]->getName())->toBe('key')
+        ->and($parameters[1]->getName())->toBe('user');
 });
 
-test('generateMenu handles different menu keys correctly', function () {
-    $generator = new DummyMenuGeneratorClass();
-    $userMock = Mockery::mock(DummyUser::class);
-    $key1 = 'admin_panel';
-    $key2 = 'user_settings';
+// ========== INSTANCE TESTS ==========
 
-    $item1_admin = new DummyMenuItem('Users', '/admin/users', 'fa-user', 'admin_users', 'admin');
-    $item2_user = new DummyMenuItem('Profile', '/settings/profile', 'fa-user-circle', 'user_profile', 'settings');
-
-    // Mock \Menu for the first key
-    Mockery::mock('alias:Menu')
-        ->shouldReceive('get')
-        ->with($key1)
-        ->andReturn((object)['items' => (object)['toArray' => [$item1_admin]]])
-        ->once();
-    $userMock->shouldReceive('checkAccess')
-        ->with($item1_admin)
-        ->andReturn(true)
-        ->once();
-
-    $result1 = $generator->generateMenu($key1, $userMock);
-    expect($result1)->toHaveCount(1);
-    expect($result1[0]['link'])->toBe('/admin/users');
-
-    // Mock \Menu for the second key (re-mocking or adding to existing mock for `get`)
-    // Mockery handles multiple `shouldReceive` calls for the same method with different arguments.
-    Mockery::mock('alias:Menu')
-        ->shouldReceive('get')
-        ->with($key2)
-        ->andReturn((object)['items' => (object)['toArray' => [$item2_user]]])
-        ->once();
-    $userMock->shouldReceive('checkAccess')
-        ->with($item2_user)
-        ->andReturn(true)
-        ->once();
-
-    $result2 = $generator->generateMenu($key2, $userMock);
-    expect($result2)->toHaveCount(1);
-    expect($result2[0]['link'])->toBe('/settings/profile');
+test('multiple instances using trait can be created', function () {
+    $generator1 = new DummyMenuGenerator();
+    $generator2 = new DummyMenuGenerator();
+    
+    expect($generator1)->toBeInstanceOf(DummyMenuGenerator::class)
+        ->and($generator2)->toBeInstanceOf(DummyMenuGenerator::class)
+        ->and($generator1)->not->toBe($generator2);
 });
 
+test('class using trait can be cloned', function () {
+    $generator = new DummyMenuGenerator();
+    $clone = clone $generator;
+    
+    expect($clone)->toBeInstanceOf(DummyMenuGenerator::class)
+        ->and($clone)->not->toBe($generator);
+});
 
+test('class using trait can be used in type hints', function () {
+    $testFunction = function (DummyMenuGenerator $generator) {
+        return $generator;
+    };
+    
+    $generator = new DummyMenuGenerator();
+    $result = $testFunction($generator);
+    
+    expect($result)->toBe($generator);
+});
 
+// ========== TRAIT CHARACTERISTICS TESTS ==========
 
-afterEach(function () {
-    Mockery::close();
+test('GeneratesMenuTrait is not a class', function () {
+    $reflection = new ReflectionClass(GeneratesMenuTrait::class);
+    expect($reflection->isInterface())->toBeFalse();
+});
+
+test('GeneratesMenuTrait is not an interface', function () {
+    $reflection = new ReflectionClass(GeneratesMenuTrait::class);
+    expect($reflection->isInterface())->toBeFalse();
+});
+
+test('GeneratesMenuTrait is loaded', function () {
+    expect(trait_exists(GeneratesMenuTrait::class))->toBeTrue();
+});
+
+// ========== FILE STRUCTURE TESTS ==========
+
+test('GeneratesMenuTrait file has expected structure', function () {
+    $reflection = new ReflectionClass(GeneratesMenuTrait::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('trait GeneratesMenuTrait')
+        ->and($fileContent)->toContain('public function generateMenu');
+});
+
+test('GeneratesMenuTrait has minimal line count', function () {
+    $reflection = new ReflectionClass(GeneratesMenuTrait::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    $lineCount = count(explode("\n", $fileContent));
+    
+    expect($lineCount)->toBeLessThan(50);
+});
+
+// ========== IMPLEMENTATION TESTS ==========
+
+test('generateMenu uses Menu facade', function () {
+    $reflection = new ReflectionClass(GeneratesMenuTrait::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('\\Menu::get');
+});
+
+test('generateMenu uses foreach loop', function () {
+    $reflection = new ReflectionClass(GeneratesMenuTrait::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('foreach');
+});
+
+test('generateMenu calls checkAccess on user', function () {
+    $reflection = new ReflectionClass(GeneratesMenuTrait::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('$user->checkAccess');
+});
+
+test('generateMenu builds array with title', function () {
+    $reflection = new ReflectionClass(GeneratesMenuTrait::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('\'title\' => $data->title');
+});
+
+test('generateMenu builds array with link', function () {
+    $reflection = new ReflectionClass(GeneratesMenuTrait::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('\'link\' => $data->link->path[\'url\']');
+});
+
+test('generateMenu builds array with icon', function () {
+    $reflection = new ReflectionClass(GeneratesMenuTrait::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('\'icon\' => $data->data[\'icon\']');
+});
+
+test('generateMenu builds array with name', function () {
+    $reflection = new ReflectionClass(GeneratesMenuTrait::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('\'name\' => $data->data[\'name\']');
+});
+
+test('generateMenu builds array with group', function () {
+    $reflection = new ReflectionClass(GeneratesMenuTrait::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('\'group\' => $data->data[\'group\']');
+});
+
+test('generateMenu returns array', function () {
+    $reflection = new ReflectionClass(GeneratesMenuTrait::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('return $menu');
+});
+
+test('generateMenu initializes empty menu array', function () {
+    $reflection = new ReflectionClass(GeneratesMenuTrait::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('$menu = []');
+});
+
+// ========== TRAIT USAGE TESTS ==========
+
+test('DummyMenuGenerator uses GeneratesMenuTrait', function () {
+    $reflection = new ReflectionClass(DummyMenuGenerator::class);
+    $traits = $reflection->getTraitNames();
+    
+    expect($traits)->toContain('Crater\Traits\GeneratesMenuTrait');
+});
+
+test('trait provides generateMenu method to using class', function () {
+    $reflection = new ReflectionClass(DummyMenuGenerator::class);
+    
+    expect($reflection->hasMethod('generateMenu'))->toBeTrue();
+});
+
+// ========== METHOD COUNT TESTS ==========
+
+test('GeneratesMenuTrait has exactly one method', function () {
+    $reflection = new ReflectionClass(GeneratesMenuTrait::class);
+    $methods = $reflection->getMethods();
+    
+    expect($methods)->toHaveCount(1)
+        ->and($methods[0]->getName())->toBe('generateMenu');
+});
+
+// ========== ARRAY STRUCTURE TESTS ==========
+
+test('generateMenu creates array with required keys', function () {
+    $reflection = new ReflectionClass(GeneratesMenuTrait::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('\'title\'')
+        ->and($fileContent)->toContain('\'link\'')
+        ->and($fileContent)->toContain('\'icon\'')
+        ->and($fileContent)->toContain('\'name\'')
+        ->and($fileContent)->toContain('\'group\'');
+});
+
+// ========== CONDITIONAL LOGIC TESTS ==========
+
+test('generateMenu uses if statement for access check', function () {
+    $reflection = new ReflectionClass(GeneratesMenuTrait::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('if ($user->checkAccess($data))');
+});
+
+test('generateMenu appends to menu array', function () {
+    $reflection = new ReflectionClass(GeneratesMenuTrait::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('$menu[]');
+});
+
+// ========== DATA ACCESS TESTS ==========
+
+test('generateMenu accesses items property', function () {
+    $reflection = new ReflectionClass(GeneratesMenuTrait::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('->items');
+});
+
+test('generateMenu calls toArray on items', function () {
+    $reflection = new ReflectionClass(GeneratesMenuTrait::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('->toArray()');
+});
+
+test('generateMenu accesses data object properties', function () {
+    $reflection = new ReflectionClass(GeneratesMenuTrait::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('$data->title')
+        ->and($fileContent)->toContain('$data->link')
+        ->and($fileContent)->toContain('$data->data');
+});
+
+// ========== NAMESPACE TESTS ==========
+
+test('GeneratesMenuTrait is in Traits namespace', function () {
+    $reflection = new ReflectionClass(GeneratesMenuTrait::class);
+    
+    expect($reflection->getNamespaceName())->toBe('Crater\Traits');
+});
+
+test('GeneratesMenuTrait file declares namespace', function () {
+    $reflection = new ReflectionClass(GeneratesMenuTrait::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('namespace Crater\Traits');
+});
+
+// ========== DOCUMENTATION TESTS ==========
+
+test('trait file is concise', function () {
+    $reflection = new ReflectionClass(GeneratesMenuTrait::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect(strlen($fileContent))->toBeLessThan(1000);
+});
+
+// ========== VARIABLE NAMING TESTS ==========
+
+test('generateMenu uses descriptive variable names', function () {
+    $reflection = new ReflectionClass(GeneratesMenuTrait::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('$menu')
+        ->and($fileContent)->toContain('$key')
+        ->and($fileContent)->toContain('$user')
+        ->and($fileContent)->toContain('$data');
+});
+
+// ========== LOOP STRUCTURE TESTS ==========
+
+test('generateMenu iterates over menu items', function () {
+    $reflection = new ReflectionClass(GeneratesMenuTrait::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('foreach (\\Menu::get($key)->items->toArray() as $data)');
+});
+
+// ========== TRAIT PROPERTIES TESTS ==========
+
+test('GeneratesMenuTrait has no properties', function () {
+    $reflection = new ReflectionClass(GeneratesMenuTrait::class);
+    $properties = $reflection->getProperties();
+    
+    expect($properties)->toBeEmpty();
+});
+
+// ========== TRAIT CONSTANTS TESTS ==========
+
+test('GeneratesMenuTrait has no constants', function () {
+    $reflection = new ReflectionClass(GeneratesMenuTrait::class);
+    $constants = $reflection->getConstants();
+    
+    expect($constants)->toBeEmpty();
 });

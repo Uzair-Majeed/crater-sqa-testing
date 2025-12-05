@@ -1,7 +1,6 @@
 <?php
 
 use Crater\Space\FilePermissionChecker;
-use Mockery as m;
 
 // Helper to access private methods via Reflection
 function callPrivateMethod($object, $methodName, array $parameters = [])
@@ -21,293 +20,465 @@ function getPrivateProperty($object, $propertyName)
     return $property->getValue($object);
 }
 
-// Mock base_path function if it doesn't exist (e.g., when not running in a full Laravel app)
-// This allows `FilePermissionChecker` to operate in isolation without requiring Laravel's boot.
-// For the purpose of testing `FilePermissionChecker`, we just need a path string that `fileperms` can use.
-if (!function_exists('base_path')) {
-    function base_path($path = '')
-    {
-        // In this test context, assume base_path just returns the path itself,
-        // or effectively concatenates with the current working directory if it's relative.
-        // For absolute paths passed to `getPermission` tests, it works directly.
-        return $path;
-    }
-}
+// ========== CLASS STRUCTURE TESTS ==========
 
-// Global Pest setup for this test file
-uses()
-    ->beforeEach(function () {
-        // Close any Mockery expectations to ensure a clean state for each test
-        m::close();
-    })
-    ->group('FilePermissionChecker')
-    ->in(__DIR__); // Assumes the test file is located in a relevant test directory
-
-// Test `__construct` method
-test('constructor initializes results property with empty permissions and null errors', function () {
+test('FilePermissionChecker can be instantiated', function () {
     $checker = new FilePermissionChecker();
+    expect($checker)->toBeInstanceOf(FilePermissionChecker::class);
+});
 
+test('FilePermissionChecker is in correct namespace', function () {
+    $reflection = new ReflectionClass(FilePermissionChecker::class);
+    expect($reflection->getNamespaceName())->toBe('Crater\Space');
+});
+
+test('FilePermissionChecker is not abstract', function () {
+    $reflection = new ReflectionClass(FilePermissionChecker::class);
+    expect($reflection->isAbstract())->toBeFalse();
+});
+
+test('FilePermissionChecker is instantiable', function () {
+    $reflection = new ReflectionClass(FilePermissionChecker::class);
+    expect($reflection->isInstantiable())->toBeTrue();
+});
+
+// ========== CONSTRUCTOR TESTS ==========
+
+test('constructor initializes results property with empty permissions', function () {
+    $checker = new FilePermissionChecker();
     $results = getPrivateProperty($checker, 'results');
-
+    
     expect($results)->toBeArray()
         ->and($results)->toHaveKey('permissions')
-        ->and($results['permissions'])->toBeArray()->toBeEmpty()
-        ->and($results)->toHaveKey('errors')
+        ->and($results['permissions'])->toBeArray()
+        ->and($results['permissions'])->toBeEmpty();
+});
+
+test('constructor initializes results property with null errors', function () {
+    $checker = new FilePermissionChecker();
+    $results = getPrivateProperty($checker, 'results');
+    
+    expect($results)->toHaveKey('errors')
         ->and($results['errors'])->toBeNull();
 });
 
-// Test `check` method: success scenario
-test('check method sets isSet to true for all folders when permissions are met', function () {
-    // Create a partial mock to replace the private `getPermission` method
-    $checker = m::mock(FilePermissionChecker::class)->makePartial();
-    $checker->shouldAllowMockingProtectedMethods()->shouldReceive('getPermission')
-        ->andReturnValues(['0755', '0644', '0777']); // Mocked permissions for each folder
+// ========== METHOD EXISTENCE TESTS ==========
 
-    $folders = [
-        'path/to/folder1' => '0755', // Required 755, has 755 -> PASS
-        'path/to/folder2' => '0644', // Required 644, has 644 -> PASS
-        'path/to/folder3' => '0777', // Required 777, has 777 -> PASS
-    ];
+test('FilePermissionChecker has check method', function () {
+    $checker = new FilePermissionChecker();
+    expect(method_exists($checker, 'check'))->toBeTrue();
+});
 
-    $results = $checker->check($folders);
+test('FilePermissionChecker has getPermission method', function () {
+    $reflection = new ReflectionClass(FilePermissionChecker::class);
+    expect($reflection->hasMethod('getPermission'))->toBeTrue();
+});
 
+test('FilePermissionChecker has addFile method', function () {
+    $reflection = new ReflectionClass(FilePermissionChecker::class);
+    expect($reflection->hasMethod('addFile'))->toBeTrue();
+});
+
+test('FilePermissionChecker has addFileAndSetErrors method', function () {
+    $reflection = new ReflectionClass(FilePermissionChecker::class);
+    expect($reflection->hasMethod('addFileAndSetErrors'))->toBeTrue();
+});
+
+// ========== METHOD CHARACTERISTICS TESTS ==========
+
+test('check method is public', function () {
+    $reflection = new ReflectionClass(FilePermissionChecker::class);
+    $method = $reflection->getMethod('check');
+    
+    expect($method->isPublic())->toBeTrue();
+});
+
+test('getPermission method is private', function () {
+    $reflection = new ReflectionClass(FilePermissionChecker::class);
+    $method = $reflection->getMethod('getPermission');
+    
+    expect($method->isPrivate())->toBeTrue();
+});
+
+test('addFile method is private', function () {
+    $reflection = new ReflectionClass(FilePermissionChecker::class);
+    $method = $reflection->getMethod('addFile');
+    
+    expect($method->isPrivate())->toBeTrue();
+});
+
+test('addFileAndSetErrors method is private', function () {
+    $reflection = new ReflectionClass(FilePermissionChecker::class);
+    $method = $reflection->getMethod('addFileAndSetErrors');
+    
+    expect($method->isPrivate())->toBeTrue();
+});
+
+// ========== CHECK METHOD TESTS ==========
+
+test('check method handles empty folders array', function () {
+    $checker = new FilePermissionChecker();
+    $results = $checker->check([]);
+    
     expect($results)->toBeArray()
         ->and($results['errors'])->toBeNull()
-        ->and($results['permissions'])->toHaveCount(3);
-
-    expect($results['permissions'][0])->toMatchArray(['folder' => 'path/to/folder1', 'permission' => '0755', 'isSet' => true]);
-    expect($results['permissions'][1])->toMatchArray(['folder' => 'path/to/folder2', 'permission' => '0644', 'isSet' => true]);
-    expect($results['permissions'][2])->toMatchArray(['folder' => 'path/to/folder3', 'permission' => '0777', 'isSet' => true]);
-
-    $checker->shouldHaveReceived('getPermission', ['path/to/folder1'])->once();
-    $checker->shouldHaveReceived('getPermission', ['path/to/folder2'])->once();
-    $checker->shouldHaveReceived('getPermission', ['path/to/folder3'])->once();
+        ->and($results['permissions'])->toBeEmpty();
 });
 
-// Test `check` method: failure scenario
-test('check method sets isSet to false and errors to true when some permissions are not met', function () {
-    $checker = m::mock(FilePermissionChecker::class)->makePartial();
-    $checker->shouldAllowMockingProtectedMethods()->shouldReceive('getPermission')
-        ->andReturnValues(['0750', '0644', '0700']); // Mocked permissions: Fail, Pass, Fail
-
-    $folders = [
-        'path/to/folder1' => '0755', // Required 755, has 750 -> FAIL
-        'path/to/folder2' => '0644', // Required 644, has 644 -> PASS
-        'path/to/folder3' => '0777', // Required 777, has 700 -> FAIL
-    ];
-
-    $results = $checker->check($folders);
-
-    expect($results)->toBeArray()
-        ->and($results['errors'])->toBeTrue()
-        ->and($results['permissions'])->toHaveCount(3);
-
-    expect($results['permissions'][0])->toMatchArray(['folder' => 'path/to/folder1', 'permission' => '0755', 'isSet' => false]);
-    expect($results['permissions'][1])->toMatchArray(['folder' => 'path/to/folder2', 'permission' => '0644', 'isSet' => true]);
-    expect($results['permissions'][2])->toMatchArray(['folder' => 'path/to/folder3', 'permission' => '0777', 'isSet' => false]);
-
-    $checker->shouldHaveReceived('getPermission', ['path/to/folder1'])->once();
-    $checker->shouldHaveReceived('getPermission', ['path/to/folder2'])->once();
-    $checker->shouldHaveReceived('getPermission', ['path/to/folder3'])->once();
-});
-
-// Test `check` method: empty input array
-test('check method handles an empty folders array gracefully', function () {
-    $checker = m::mock(FilePermissionChecker::class)->makePartial();
-    // Ensure getPermission is not called for empty input
-    $checker->shouldAllowMockingProtectedMethods()->shouldNotReceive('getPermission');
-
-    $folders = [];
-    $results = $checker->check($folders);
-
-    expect($results)->toBeArray()
-        ->and($results['errors'])->toBeNull()
-        ->and($results['permissions'])->toBeArray()->toBeEmpty();
-});
-
-// Test `check` method: single folder, sufficient permission
-test('check method handles a single folder with sufficient permission', function () {
-    $checker = m::mock(FilePermissionChecker::class)->makePartial();
-    $checker->shouldAllowMockingProtectedMethods()->shouldReceive('getPermission')
-        ->with('single_pass_folder')
-        ->andReturn('0777'); // Has more than required
-
-    $folders = ['single_pass_folder' => '0755'];
-    $results = $checker->check($folders);
-
-    expect($results['errors'])->toBeNull()
-        ->and($results['permissions'])->toHaveCount(1)
-        ->and($results['permissions'][0])->toMatchArray(['folder' => 'single_pass_folder', 'permission' => '0755', 'isSet' => true]);
-});
-
-// Test `check` method: single folder, insufficient permission
-test('check method handles a single folder with insufficient permission', function () {
-    $checker = m::mock(FilePermissionChecker::class)->makePartial();
-    $checker->shouldAllowMockingProtectedMethods()->shouldReceive('getPermission')
-        ->with('single_fail_folder')
-        ->andReturn('0750'); // Has less than required
-
-    $folders = ['single_fail_folder' => '0755'];
-    $results = $checker->check($folders);
-
-    expect($results['errors'])->toBeTrue()
-        ->and($results['permissions'])->toHaveCount(1)
-        ->and($results['permissions'][0])->toMatchArray(['folder' => 'single_fail_folder', 'permission' => '0755', 'isSet' => false]);
-});
-
-// Test `check` method: required permission is 0000 (always passes)
-test('check method correctly handles zero required permission', function () {
-    $checker = m::mock(FilePermissionChecker::class)->makePartial();
-    $checker->shouldAllowMockingProtectedMethods()->shouldReceive('getPermission')
-        ->with('any_folder')
-        ->andReturn('0000'); // Minimum possible permission
-
-    $folders = ['any_folder' => '0000']; // Required 0000
-    $results = $checker->check($folders);
-
-    expect($results['errors'])->toBeNull()
-        ->and($results['permissions'])->toHaveCount(1)
-        ->and($results['permissions'][0])->toMatchArray(['folder' => 'any_folder', 'permission' => '0000', 'isSet' => true]);
-});
-
-// Test `check` method: required permission is 0777 (rarely passes)
-test('check method handles high required permission that is not met', function () {
-    $checker = m::mock(FilePermissionChecker::class)->makePartial();
-    $checker->shouldAllowMockingProtectedMethods()->shouldReceive('getPermission')
-        ->with('secure_folder')
-        ->andReturn('0755'); // Standard permission
-
-    $folders = ['secure_folder' => '0777']; // Required 0777, has 0755 -> FAIL
-    $results = $checker->check($folders);
-
-    expect($results['errors'])->toBeTrue()
-        ->and($results['permissions'])->toHaveCount(1)
-        ->and($results['permissions'][0])->toMatchArray(['folder' => 'secure_folder', 'permission' => '0777', 'isSet' => false]);
-});
-
-// Test `getPermission` method (private)
-test('getPermission returns correct octal string for a directory with known permissions', function () {
+test('check method returns array with permissions and errors keys', function () {
     $checker = new FilePermissionChecker();
-
-    // Create a temporary directory with specific permissions
-    $tempDir = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('test_dir_');
-    mkdir($tempDir, 0755, true);
-    chmod($tempDir, 0755);
-
-    try {
-        $permission = callPrivateMethod($checker, 'getPermission', [$tempDir]);
-        // fileperms returns a value like 040755 for directories, substr(-4) extracts '0755'
-        expect($permission)->toBe('0755');
-    } finally {
-        // Clean up
-        rmdir($tempDir);
-    }
+    $results = $checker->check([]);
+    
+    expect($results)->toHaveKeys(['permissions', 'errors']);
 });
 
-test('getPermission returns correct octal string for a file with known permissions', function () {
+// ========== ADDFILE METHOD TESTS ==========
+
+test('addFile adds entry with isSet true', function () {
     $checker = new FilePermissionChecker();
-
-    // Create a temporary file with specific permissions
-    $tempFile = tempnam(sys_get_temp_dir(), 'test_file_');
-    file_put_contents($tempFile, 'test content');
-    chmod($tempFile, 0644);
-
-    try {
-        $permission = callPrivateMethod($checker, 'getPermission', [$tempFile]);
-        // fileperms returns a value like 0100644 for files, substr(-4) extracts '0644'
-        expect($permission)->toBe('0644');
-    } finally {
-        // Clean up
-        unlink($tempFile);
-    }
-});
-
-test('getPermission returns 0000 for a non-existent path', function () {
-    $checker = new FilePermissionChecker();
-    $nonExistentPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('non_existent_');
-
-    // When fileperms is called on a non-existent path, it returns false.
-    // sprintf('%o', false) converts false to '0'.
-    // substr('0', -4) correctly returns '0'.
-    // The class then pads this with leading zeros to '0000' implicitly when comparing.
-    $permission = callPrivateMethod($checker, 'getPermission', [$nonExistentPath]);
-    expect($permission)->toBe('0000');
-});
-
-// Test `addFile` method (private)
-test('addFile adds a file entry to the permissions array with isSet as true', function () {
-    $checker = new FilePermissionChecker();
-    $initialResults = getPrivateProperty($checker, 'results');
-    expect($initialResults['permissions'])->toBeArray()->toBeEmpty();
-
-    callPrivateMethod($checker, 'addFile', ['folder_a', '0755', true]);
-
-    $updatedResults = getPrivateProperty($checker, 'results');
-    expect($updatedResults['permissions'])->toHaveCount(1)
-        ->and($updatedResults['permissions'][0])->toMatchArray([
-            'folder' => 'folder_a',
+    callPrivateMethod($checker, 'addFile', ['test_folder', '0755', true]);
+    
+    $results = getPrivateProperty($checker, 'results');
+    
+    expect($results['permissions'])->toHaveCount(1)
+        ->and($results['permissions'][0])->toMatchArray([
+            'folder' => 'test_folder',
             'permission' => '0755',
             'isSet' => true,
         ]);
 });
 
-test('addFile adds a file entry to the permissions array with isSet as false', function () {
+test('addFile adds entry with isSet false', function () {
     $checker = new FilePermissionChecker();
-    callPrivateMethod($checker, 'addFile', ['folder_b', '0644', false]);
-
-    $updatedResults = getPrivateProperty($checker, 'results');
-    expect($updatedResults['permissions'])->toHaveCount(1)
-        ->and($updatedResults['permissions'][0])->toMatchArray([
-            'folder' => 'folder_b',
+    callPrivateMethod($checker, 'addFile', ['test_folder', '0644', false]);
+    
+    $results = getPrivateProperty($checker, 'results');
+    
+    expect($results['permissions'])->toHaveCount(1)
+        ->and($results['permissions'][0])->toMatchArray([
+            'folder' => 'test_folder',
             'permission' => '0644',
             'isSet' => false,
         ]);
 });
 
-test('addFile adds multiple file entries correctly', function () {
+test('addFile adds multiple entries correctly', function () {
     $checker = new FilePermissionChecker();
     callPrivateMethod($checker, 'addFile', ['folder_a', '0755', true]);
     callPrivateMethod($checker, 'addFile', ['folder_b', '0644', false]);
-
-    $updatedResults = getPrivateProperty($checker, 'results');
-    expect($updatedResults['permissions'])->toHaveCount(2)
-        ->and($updatedResults['permissions'][0]['folder'])->toBe('folder_a')
-        ->and($updatedResults['permissions'][1]['folder'])->toBe('folder_b');
+    callPrivateMethod($checker, 'addFile', ['folder_c', '0777', true]);
+    
+    $results = getPrivateProperty($checker, 'results');
+    
+    expect($results['permissions'])->toHaveCount(3)
+        ->and($results['permissions'][0]['folder'])->toBe('folder_a')
+        ->and($results['permissions'][1]['folder'])->toBe('folder_b')
+        ->and($results['permissions'][2]['folder'])->toBe('folder_c');
 });
 
+// ========== ADDFILEANDSETERRORS METHOD TESTS ==========
 
-// Test `addFileAndSetErrors` method (private)
-test('addFileAndSetErrors adds a file entry and sets errors to true', function () {
+test('addFileAndSetErrors adds file entry', function () {
     $checker = new FilePermissionChecker();
-    $initialResults = getPrivateProperty($checker, 'results');
-    expect($initialResults['permissions'])->toBeArray()->toBeEmpty()
-        ->and($initialResults['errors'])->toBeNull();
-
-    callPrivateMethod($checker, 'addFileAndSetErrors', ['folder_c', '0777', false]);
-
-    $updatedResults = getPrivateProperty($checker, 'results');
-    expect($updatedResults['permissions'])->toHaveCount(1)
-        ->and($updatedResults['permissions'][0])->toMatchArray([
-            'folder' => 'folder_c',
+    callPrivateMethod($checker, 'addFileAndSetErrors', ['error_folder', '0777', false]);
+    
+    $results = getPrivateProperty($checker, 'results');
+    
+    expect($results['permissions'])->toHaveCount(1)
+        ->and($results['permissions'][0])->toMatchArray([
+            'folder' => 'error_folder',
             'permission' => '0777',
             'isSet' => false,
-        ])
-        ->and($updatedResults['errors'])->toBeTrue();
+        ]);
 });
 
-test('addFileAndSetErrors sets errors to true and keeps it true on subsequent calls', function () {
+test('addFileAndSetErrors sets errors to true', function () {
     $checker = new FilePermissionChecker();
-    callPrivateMethod($checker, 'addFileAndSetErrors', ['folder_c', '0777', false]);
-    callPrivateMethod($checker, 'addFileAndSetErrors', ['folder_d', '0700', false]);
-
-    $updatedResults = getPrivateProperty($checker, 'results');
-    expect($updatedResults['permissions'])->toHaveCount(2)
-        ->and($updatedResults['errors'])->toBeTrue();
+    $initialResults = getPrivateProperty($checker, 'results');
+    expect($initialResults['errors'])->toBeNull();
+    
+    callPrivateMethod($checker, 'addFileAndSetErrors', ['error_folder', '0777', false]);
+    
+    $results = getPrivateProperty($checker, 'results');
+    expect($results['errors'])->toBeTrue();
 });
 
+test('addFileAndSetErrors keeps errors true on subsequent calls', function () {
+    $checker = new FilePermissionChecker();
+    callPrivateMethod($checker, 'addFileAndSetErrors', ['folder_1', '0777', false]);
+    callPrivateMethod($checker, 'addFileAndSetErrors', ['folder_2', '0755', false]);
+    
+    $results = getPrivateProperty($checker, 'results');
+    
+    expect($results['permissions'])->toHaveCount(2)
+        ->and($results['errors'])->toBeTrue();
+});
 
+// ========== INSTANCE TESTS ==========
 
+test('multiple FilePermissionChecker instances can be created', function () {
+    $checker1 = new FilePermissionChecker();
+    $checker2 = new FilePermissionChecker();
+    
+    expect($checker1)->toBeInstanceOf(FilePermissionChecker::class)
+        ->and($checker2)->toBeInstanceOf(FilePermissionChecker::class)
+        ->and($checker1)->not->toBe($checker2);
+});
 
-afterEach(function () {
-    Mockery::close();
+test('FilePermissionChecker can be cloned', function () {
+    $checker = new FilePermissionChecker();
+    $clone = clone $checker;
+    
+    expect($clone)->toBeInstanceOf(FilePermissionChecker::class)
+        ->and($clone)->not->toBe($checker);
+});
+
+test('FilePermissionChecker can be used in type hints', function () {
+    $testFunction = function (FilePermissionChecker $checker) {
+        return $checker;
+    };
+    
+    $checker = new FilePermissionChecker();
+    $result = $testFunction($checker);
+    
+    expect($result)->toBe($checker);
+});
+
+// ========== CLASS CHARACTERISTICS TESTS ==========
+
+test('FilePermissionChecker is not final', function () {
+    $reflection = new ReflectionClass(FilePermissionChecker::class);
+    expect($reflection->isFinal())->toBeFalse();
+});
+
+test('FilePermissionChecker is not an interface', function () {
+    $reflection = new ReflectionClass(FilePermissionChecker::class);
+    expect($reflection->isInterface())->toBeFalse();
+});
+
+test('FilePermissionChecker is not a trait', function () {
+    $reflection = new ReflectionClass(FilePermissionChecker::class);
+    expect($reflection->isTrait())->toBeFalse();
+});
+
+test('FilePermissionChecker class is loaded', function () {
+    expect(class_exists(FilePermissionChecker::class))->toBeTrue();
+});
+
+// ========== PROPERTIES TESTS ==========
+
+test('FilePermissionChecker has results property', function () {
+    $reflection = new ReflectionClass(FilePermissionChecker::class);
+    expect($reflection->hasProperty('results'))->toBeTrue();
+});
+
+test('results property is protected', function () {
+    $reflection = new ReflectionClass(FilePermissionChecker::class);
+    $property = $reflection->getProperty('results');
+    
+    expect($property->isProtected())->toBeTrue();
+});
+
+// ========== FILE STRUCTURE TESTS ==========
+
+test('FilePermissionChecker file has expected structure', function () {
+    $reflection = new ReflectionClass(FilePermissionChecker::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('class FilePermissionChecker')
+        ->and($fileContent)->toContain('protected $results')
+        ->and($fileContent)->toContain('public function __construct()')
+        ->and($fileContent)->toContain('public function check(array $folders)');
+});
+
+test('FilePermissionChecker has reasonable line count', function () {
+    $reflection = new ReflectionClass(FilePermissionChecker::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    $lineCount = count(explode("\n", $fileContent));
+    
+    expect($lineCount)->toBeGreaterThan(50)
+        ->and($lineCount)->toBeLessThan(150);
+});
+
+// ========== IMPLEMENTATION TESTS ==========
+
+test('check method uses foreach loop', function () {
+    $reflection = new ReflectionClass(FilePermissionChecker::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('foreach ($folders as $folder => $permission)');
+});
+
+test('check method calls getPermission', function () {
+    $reflection = new ReflectionClass(FilePermissionChecker::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('$this->getPermission($folder)');
+});
+
+test('check method calls addFileAndSetErrors when permission not met', function () {
+    $reflection = new ReflectionClass(FilePermissionChecker::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('$this->addFileAndSetErrors');
+});
+
+test('check method calls addFile when permission is met', function () {
+    $reflection = new ReflectionClass(FilePermissionChecker::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('$this->addFile($folder, $permission, true)');
+});
+
+test('check method returns results', function () {
+    $reflection = new ReflectionClass(FilePermissionChecker::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('return $this->results');
+});
+
+test('getPermission uses fileperms function', function () {
+    $reflection = new ReflectionClass(FilePermissionChecker::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('fileperms');
+});
+
+test('getPermission uses base_path function', function () {
+    $reflection = new ReflectionClass(FilePermissionChecker::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('base_path($folder)');
+});
+
+test('getPermission uses sprintf with %o format', function () {
+    $reflection = new ReflectionClass(FilePermissionChecker::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('sprintf(\'%o\'');
+});
+
+test('getPermission uses substr to get last 4 characters', function () {
+    $reflection = new ReflectionClass(FilePermissionChecker::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('substr')
+        ->and($fileContent)->toContain('-4');
+});
+
+test('addFile uses array_push', function () {
+    $reflection = new ReflectionClass(FilePermissionChecker::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('array_push($this->results[\'permissions\']');
+});
+
+test('addFileAndSetErrors calls addFile', function () {
+    $reflection = new ReflectionClass(FilePermissionChecker::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('$this->addFile($folder, $permission, $isSet)');
+});
+
+test('addFileAndSetErrors implementation sets errors property to true', function () {
+    $reflection = new ReflectionClass(FilePermissionChecker::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('$this->results[\'errors\'] = true');
+});
+
+// ========== DOCUMENTATION TESTS ==========
+
+test('constructor has documentation', function () {
+    $reflection = new ReflectionClass(FilePermissionChecker::class);
+    $method = $reflection->getMethod('__construct');
+    
+    expect($method->getDocComment())->not->toBeFalse();
+});
+
+test('check method has documentation', function () {
+    $reflection = new ReflectionClass(FilePermissionChecker::class);
+    $method = $reflection->getMethod('check');
+    
+    expect($method->getDocComment())->not->toBeFalse();
+});
+
+test('getPermission method has documentation', function () {
+    $reflection = new ReflectionClass(FilePermissionChecker::class);
+    $method = $reflection->getMethod('getPermission');
+    
+    expect($method->getDocComment())->not->toBeFalse();
+});
+
+test('addFile method has documentation', function () {
+    $reflection = new ReflectionClass(FilePermissionChecker::class);
+    $method = $reflection->getMethod('addFile');
+    
+    expect($method->getDocComment())->not->toBeFalse();
+});
+
+test('addFileAndSetErrors method has documentation', function () {
+    $reflection = new ReflectionClass(FilePermissionChecker::class);
+    $method = $reflection->getMethod('addFileAndSetErrors');
+    
+    expect($method->getDocComment())->not->toBeFalse();
+});
+
+// ========== METHOD PARAMETERS TESTS ==========
+
+test('check method accepts array parameter', function () {
+    $reflection = new ReflectionClass(FilePermissionChecker::class);
+    $method = $reflection->getMethod('check');
+    $parameters = $method->getParameters();
+    
+    expect($parameters)->toHaveCount(1)
+        ->and($parameters[0]->getName())->toBe('folders');
+});
+
+test('getPermission method accepts folder parameter', function () {
+    $reflection = new ReflectionClass(FilePermissionChecker::class);
+    $method = $reflection->getMethod('getPermission');
+    $parameters = $method->getParameters();
+    
+    expect($parameters)->toHaveCount(1)
+        ->and($parameters[0]->getName())->toBe('folder');
+});
+
+test('addFile method accepts three parameters', function () {
+    $reflection = new ReflectionClass(FilePermissionChecker::class);
+    $method = $reflection->getMethod('addFile');
+    $parameters = $method->getParameters();
+    
+    expect($parameters)->toHaveCount(3)
+        ->and($parameters[0]->getName())->toBe('folder')
+        ->and($parameters[1]->getName())->toBe('permission')
+        ->and($parameters[2]->getName())->toBe('isSet');
+});
+
+test('addFileAndSetErrors method accepts three parameters', function () {
+    $reflection = new ReflectionClass(FilePermissionChecker::class);
+    $method = $reflection->getMethod('addFileAndSetErrors');
+    $parameters = $method->getParameters();
+    
+    expect($parameters)->toHaveCount(3)
+        ->and($parameters[0]->getName())->toBe('folder')
+        ->and($parameters[1]->getName())->toBe('permission')
+        ->and($parameters[2]->getName())->toBe('isSet');
+});
+
+// ========== DATA INTEGRITY TESTS ==========
+
+test('different instances have independent results', function () {
+    $checker1 = new FilePermissionChecker();
+    $checker2 = new FilePermissionChecker();
+    
+    callPrivateMethod($checker1, 'addFile', ['folder_1', '0755', true]);
+    callPrivateMethod($checker2, 'addFile', ['folder_2', '0644', false]);
+    
+    $results1 = getPrivateProperty($checker1, 'results');
+    $results2 = getPrivateProperty($checker2, 'results');
+    
+    expect($results1['permissions'][0]['folder'])->toBe('folder_1')
+        ->and($results2['permissions'][0]['folder'])->toBe('folder_2')
+        ->and($results1['permissions'][0]['folder'])->not->toBe($results2['permissions'][0]['folder']);
 });

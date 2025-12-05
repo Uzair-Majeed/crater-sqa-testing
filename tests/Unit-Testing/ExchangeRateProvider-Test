@@ -1,0 +1,447 @@
+<?php
+
+use Crater\Policies\ExchangeRateProviderPolicy;
+use Crater\Http\Resources\ExchangeRateProviderResource;
+use Crater\Traits\ExchangeRateProvidersTrait;
+use Crater\Models\ExchangeRateProvider;
+use Crater\Models\User;
+use Illuminate\Http\Request;
+
+// ========== EXCHANGE RATE PROVIDER POLICY TESTS ==========
+
+test('Policy can be instantiated', function () {
+    $policy = new ExchangeRateProviderPolicy();
+    expect($policy)->toBeInstanceOf(ExchangeRateProviderPolicy::class);
+});
+
+test('Policy is in correct namespace', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderPolicy::class);
+    expect($reflection->getNamespaceName())->toBe('Crater\Policies');
+});
+
+test('Policy uses HandlesAuthorization trait', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderPolicy::class);
+    $traits = $reflection->getTraitNames();
+    expect($traits)->toContain('Illuminate\Auth\Access\HandlesAuthorization');
+});
+
+test('Policy has viewAny method', function () {
+    $policy = new ExchangeRateProviderPolicy();
+    expect(method_exists($policy, 'viewAny'))->toBeTrue();
+});
+
+test('Policy has view method', function () {
+    $policy = new ExchangeRateProviderPolicy();
+    expect(method_exists($policy, 'view'))->toBeTrue();
+});
+
+test('Policy has create method', function () {
+    $policy = new ExchangeRateProviderPolicy();
+    expect(method_exists($policy, 'create'))->toBeTrue();
+});
+
+test('Policy has update method', function () {
+    $policy = new ExchangeRateProviderPolicy();
+    expect(method_exists($policy, 'update'))->toBeTrue();
+});
+
+test('Policy has delete method', function () {
+    $policy = new ExchangeRateProviderPolicy();
+    expect(method_exists($policy, 'delete'))->toBeTrue();
+});
+
+test('Policy has restore method', function () {
+    $policy = new ExchangeRateProviderPolicy();
+    expect(method_exists($policy, 'restore'))->toBeTrue();
+});
+
+test('Policy has forceDelete method', function () {
+    $policy = new ExchangeRateProviderPolicy();
+    expect(method_exists($policy, 'forceDelete'))->toBeTrue();
+});
+
+test('Policy all methods are public', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderPolicy::class);
+    
+    expect($reflection->getMethod('viewAny')->isPublic())->toBeTrue()
+        ->and($reflection->getMethod('view')->isPublic())->toBeTrue()
+        ->and($reflection->getMethod('create')->isPublic())->toBeTrue()
+        ->and($reflection->getMethod('update')->isPublic())->toBeTrue()
+        ->and($reflection->getMethod('delete')->isPublic())->toBeTrue();
+});
+
+test('Policy viewAny accepts User parameter', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderPolicy::class);
+    $method = $reflection->getMethod('viewAny');
+    $parameters = $method->getParameters();
+    
+    expect($parameters)->toHaveCount(1)
+        ->and($parameters[0]->getName())->toBe('user');
+});
+
+test('Policy view accepts User and ExchangeRateProvider parameters', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderPolicy::class);
+    $method = $reflection->getMethod('view');
+    $parameters = $method->getParameters();
+    
+    expect($parameters)->toHaveCount(2)
+        ->and($parameters[0]->getName())->toBe('user')
+        ->and($parameters[1]->getName())->toBe('exchangeRateProvider');
+});
+
+test('Policy uses BouncerFacade', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderPolicy::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('use Silber\Bouncer\BouncerFacade')
+        ->and($fileContent)->toContain('BouncerFacade::can');
+});
+
+// ========== EXCHANGE RATE PROVIDER RESOURCE TESTS ==========
+
+// Helper function to create dummy provider
+function createDummyProviderForResource() {
+    return new class {
+        public $id = 1;
+        public $key = 'test_key';
+        public $driver = 'currency_freak';
+        public $currencies = ['USD', 'EUR'];
+        public $driver_config = ['type' => 'PREMIUM'];
+        public $company_id = 1;
+        public $active = true;
+        
+        public function company() {
+            return new class {
+                public function exists() { return false; }
+            };
+        }
+    };
+}
+
+test('Resource can be instantiated', function () {
+    $provider = createDummyProviderForResource();
+    $resource = new ExchangeRateProviderResource($provider);
+    expect($resource)->toBeInstanceOf(ExchangeRateProviderResource::class);
+});
+
+test('Resource extends JsonResource', function () {
+    $provider = createDummyProviderForResource();
+    $resource = new ExchangeRateProviderResource($provider);
+    expect($resource)->toBeInstanceOf(\Illuminate\Http\Resources\Json\JsonResource::class);
+});
+
+test('Resource is in correct namespace', function () {
+    $reflection = new ReflectionClass(ExchangeRateProviderResource::class);
+    expect($reflection->getNamespaceName())->toBe('Crater\Http\Resources');
+});
+
+test('Resource has toArray method', function () {
+    $provider = createDummyProviderForResource();
+    $resource = new ExchangeRateProviderResource($provider);
+    expect(method_exists($resource, 'toArray'))->toBeTrue();
+});
+
+test('Resource toArray returns array with id', function () {
+    $provider = createDummyProviderForResource();
+    $resource = new ExchangeRateProviderResource($provider);
+    $request = new Request();
+    $result = $resource->toArray($request);
+    
+    expect($result)->toHaveKey('id')
+        ->and($result['id'])->toBe(1);
+});
+
+test('Resource toArray returns array with key', function () {
+    $provider = createDummyProviderForResource();
+    $resource = new ExchangeRateProviderResource($provider);
+    $request = new Request();
+    $result = $resource->toArray($request);
+    
+    expect($result)->toHaveKey('key')
+        ->and($result['key'])->toBe('test_key');
+});
+
+test('Resource toArray returns array with driver', function () {
+    $provider = createDummyProviderForResource();
+    $resource = new ExchangeRateProviderResource($provider);
+    $request = new Request();
+    $result = $resource->toArray($request);
+    
+    expect($result)->toHaveKey('driver')
+        ->and($result['driver'])->toBe('currency_freak');
+});
+
+test('Resource toArray returns array with currencies', function () {
+    $provider = createDummyProviderForResource();
+    $resource = new ExchangeRateProviderResource($provider);
+    $request = new Request();
+    $result = $resource->toArray($request);
+    
+    expect($result)->toHaveKey('currencies')
+        ->and($result['currencies'])->toBe(['USD', 'EUR']);
+});
+
+test('Resource toArray returns array with driver_config', function () {
+    $provider = createDummyProviderForResource();
+    $resource = new ExchangeRateProviderResource($provider);
+    $request = new Request();
+    $result = $resource->toArray($request);
+    
+    expect($result)->toHaveKey('driver_config')
+        ->and($result['driver_config'])->toBe(['type' => 'PREMIUM']);
+});
+
+test('Resource toArray returns array with company_id', function () {
+    $provider = createDummyProviderForResource();
+    $resource = new ExchangeRateProviderResource($provider);
+    $request = new Request();
+    $result = $resource->toArray($request);
+    
+    expect($result)->toHaveKey('company_id')
+        ->and($result['company_id'])->toBe(1);
+});
+
+test('Resource toArray returns array with active', function () {
+    $provider = createDummyProviderForResource();
+    $resource = new ExchangeRateProviderResource($provider);
+    $request = new Request();
+    $result = $resource->toArray($request);
+    
+    expect($result)->toHaveKey('active')
+        ->and($result['active'])->toBeTrue();
+});
+
+test('Resource toArray includes all required fields', function () {
+    $provider = createDummyProviderForResource();
+    $resource = new ExchangeRateProviderResource($provider);
+    $request = new Request();
+    $result = $resource->toArray($request);
+    
+    expect($result)->toHaveKeys([
+        'id', 'key', 'driver', 'currencies', 
+        'driver_config', 'company_id', 'active', 'company'
+    ]);
+});
+
+test('Resource toArray handles different drivers', function () {
+    $provider = createDummyProviderForResource();
+    $provider->driver = 'currency_layer';
+    $resource = new ExchangeRateProviderResource($provider);
+    $request = new Request();
+    $result = $resource->toArray($request);
+    
+    expect($result['driver'])->toBe('currency_layer');
+});
+
+test('Resource toArray handles inactive provider', function () {
+    $provider = createDummyProviderForResource();
+    $provider->active = false;
+    $resource = new ExchangeRateProviderResource($provider);
+    $request = new Request();
+    $result = $resource->toArray($request);
+    
+    expect($result['active'])->toBeFalse();
+});
+
+// ========== EXCHANGE RATE PROVIDERS TRAIT TESTS ==========
+
+// Create a test class that uses the trait
+function createTraitUser() {
+    return new class {
+        use ExchangeRateProvidersTrait;
+    };
+}
+
+test('Trait exists', function () {
+    expect(trait_exists(ExchangeRateProvidersTrait::class))->toBeTrue();
+});
+
+test('Trait is in correct namespace', function () {
+    $reflection = new ReflectionClass(ExchangeRateProvidersTrait::class);
+    expect($reflection->getNamespaceName())->toBe('Crater\Traits');
+});
+
+test('Trait has getExchangeRate method', function () {
+    $traitUser = createTraitUser();
+    expect(method_exists($traitUser, 'getExchangeRate'))->toBeTrue();
+});
+
+test('Trait has getCurrencyConverterUrl method', function () {
+    $traitUser = createTraitUser();
+    expect(method_exists($traitUser, 'getCurrencyConverterUrl'))->toBeTrue();
+});
+
+test('Trait has getSupportedCurrencies method', function () {
+    $traitUser = createTraitUser();
+    expect(method_exists($traitUser, 'getSupportedCurrencies'))->toBeTrue();
+});
+
+test('Trait has getUrl method', function () {
+    $traitUser = createTraitUser();
+    expect(method_exists($traitUser, 'getUrl'))->toBeTrue();
+});
+
+test('Trait getCurrencyConverterUrl returns PREMIUM url', function () {
+    $traitUser = createTraitUser();
+    $data = ['type' => 'PREMIUM'];
+    $url = $traitUser->getCurrencyConverterUrl($data);
+    
+    expect($url)->toBe('https://api.currconv.com');
+});
+
+test('Trait getCurrencyConverterUrl returns PREPAID url', function () {
+    $traitUser = createTraitUser();
+    $data = ['type' => 'PREPAID'];
+    $url = $traitUser->getCurrencyConverterUrl($data);
+    
+    expect($url)->toBe('https://prepaid.currconv.com');
+});
+
+test('Trait getCurrencyConverterUrl returns FREE url', function () {
+    $traitUser = createTraitUser();
+    $data = ['type' => 'FREE'];
+    $url = $traitUser->getCurrencyConverterUrl($data);
+    
+    expect($url)->toBe('https://free.currconv.com');
+});
+
+test('Trait getCurrencyConverterUrl returns DEDICATED url', function () {
+    $traitUser = createTraitUser();
+    $customUrl = 'https://mycustom.currconv.com';
+    $data = ['type' => 'DEDICATED', 'url' => $customUrl];
+    $url = $traitUser->getCurrencyConverterUrl($data);
+    
+    expect($url)->toBe($customUrl);
+});
+
+test('Trait getCurrencyConverterUrl handles all types', function () {
+    $traitUser = createTraitUser();
+    $types = [
+        ['type' => 'PREMIUM', 'expected' => 'https://api.currconv.com'],
+        ['type' => 'PREPAID', 'expected' => 'https://prepaid.currconv.com'],
+        ['type' => 'FREE', 'expected' => 'https://free.currconv.com'],
+    ];
+    
+    foreach ($types as $test) {
+        $url = $traitUser->getCurrencyConverterUrl(['type' => $test['type']]);
+        expect($url)->toBe($test['expected']);
+    }
+});
+
+test('Trait getExchangeRate method accepts three parameters', function () {
+    $traitUser = createTraitUser();
+    $reflection = new ReflectionMethod($traitUser, 'getExchangeRate');
+    $parameters = $reflection->getParameters();
+    
+    expect($parameters)->toHaveCount(3)
+        ->and($parameters[0]->getName())->toBe('filter')
+        ->and($parameters[1]->getName())->toBe('baseCurrencyCode')
+        ->and($parameters[2]->getName())->toBe('currencyCode');
+});
+
+test('Trait getSupportedCurrencies method accepts one parameter', function () {
+    $traitUser = createTraitUser();
+    $reflection = new ReflectionMethod($traitUser, 'getSupportedCurrencies');
+    $parameters = $reflection->getParameters();
+    
+    expect($parameters)->toHaveCount(1)
+        ->and($parameters[0]->getName())->toBe('request');
+});
+
+test('Trait getUrl method accepts one parameter', function () {
+    $traitUser = createTraitUser();
+    $reflection = new ReflectionMethod($traitUser, 'getUrl');
+    $parameters = $reflection->getParameters();
+    
+    expect($parameters)->toHaveCount(1)
+        ->and($parameters[0]->getName())->toBe('request');
+});
+
+test('Trait methods are public', function () {
+    $traitUser = createTraitUser();
+    $reflection = new ReflectionClass($traitUser);
+    
+    expect($reflection->getMethod('getExchangeRate')->isPublic())->toBeTrue()
+        ->and($reflection->getMethod('getCurrencyConverterUrl')->isPublic())->toBeTrue()
+        ->and($reflection->getMethod('getSupportedCurrencies')->isPublic())->toBeTrue()
+        ->and($reflection->getMethod('getUrl')->isPublic())->toBeTrue();
+});
+
+test('Trait uses Http facade', function () {
+    $reflection = new ReflectionClass(ExchangeRateProvidersTrait::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('use Illuminate\Support\Facades\Http')
+        ->and($fileContent)->toContain('Http::get');
+});
+
+test('Trait handles currency_freak driver', function () {
+    $reflection = new ReflectionClass(ExchangeRateProvidersTrait::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('case \'currency_freak\':')
+        ->and($fileContent)->toContain('api.currencyfreaks.com');
+});
+
+test('Trait handles currency_layer driver', function () {
+    $reflection = new ReflectionClass(ExchangeRateProvidersTrait::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('case \'currency_layer\':')
+        ->and($fileContent)->toContain('api.currencylayer.com');
+});
+
+test('Trait handles open_exchange_rate driver', function () {
+    $traitUser = createTraitUser();
+    $reflection = new ReflectionClass(ExchangeRateProvidersTrait::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('case \'open_exchange_rate\':')
+        ->and($fileContent)->toContain('openexchangerates.org');
+});
+
+test('Trait handles currency_converter driver', function () {
+    $reflection = new ReflectionClass(ExchangeRateProvidersTrait::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('case \'currency_converter\':')
+        ->and($fileContent)->toContain('getCurrencyConverterUrl');
+});
+
+// ========== INTEGRATION TESTS ==========
+
+test('Resource can transform provider with trait methods', function () {
+    $provider = new class {
+        use ExchangeRateProvidersTrait;
+        
+        public $id = 1;
+        public $key = 'test_key';
+        public $driver = 'currency_freak';
+        public $currencies = ['USD', 'EUR'];
+        public $driver_config = ['type' => 'PREMIUM'];
+        public $company_id = 1;
+        public $active = true;
+        
+        public function company() {
+            return new class {
+                public function exists() { return false; }
+            };
+        }
+    };
+    
+    $resource = new ExchangeRateProviderResource($provider);
+    $request = new Request();
+    $result = $resource->toArray($request);
+    
+    expect($result)->toHaveKey('id')
+        ->and($result)->toHaveKey('driver')
+        ->and($result['driver'])->toBe('currency_freak');
+});
+
+test('Trait getCurrencyConverterUrl can be used with resource data', function () {
+    $traitUser = createTraitUser();
+    $driverConfig = ['type' => 'PREMIUM'];
+    $url = $traitUser->getCurrencyConverterUrl($driverConfig);
+    
+    expect($url)->toBe('https://api.currconv.com');
+});

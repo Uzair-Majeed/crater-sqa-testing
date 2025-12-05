@@ -16,7 +16,7 @@ test('managedByOwner returns true if the user is an owner', function () {
     // Assert
     expect($result)->toBeTrue();
 
-    // Verify mocks
+    // Verify mocks (redundant due to afterEach, but kept as per original logic)
     Mockery::close();
 });
 
@@ -33,12 +33,9 @@ test('managedByOwner returns false if the user is not an owner', function () {
     // Assert
     expect($result)->toBeFalse();
 
-    // Verify mocks
+    // Verify mocks (redundant due to afterEach, but kept as per original logic)
     Mockery::close();
 });
-
-
-
 
 afterEach(function () {
     Mockery::close();

@@ -36,4 +36,15 @@ RUN useradd -G www-data,root -u $uid -d /home/$user $user \
 # Set working directory
 WORKDIR /var/www
 
+# Copy entrypoint script
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+# Set user
 USER $user
+
+# Use the entrypoint
+ENTRYPOINT ["docker-entrypoint.sh"]
+
+# Default command
+CMD ["php-fpm"]

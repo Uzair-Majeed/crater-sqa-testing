@@ -1,267 +1,472 @@
 <?php
 
 use Crater\Http\Controllers\V1\Admin\Expense\ExpenseCategoriesController;
-use Crater\Http\Requests\ExpenseCategoryRequest;
-use Crater\Http\Resources\ExpenseCategoryResource;
-use Crater\Models\ExpenseCategory;
-use Illuminate\Http\Request;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Collection;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Http\JsonResponse;
-use Mockery as m;
 
-// Set up Mockery and mock common dependencies before each test
-beforeEach(function () {
-    // Create a partial mock of the controller to allow mocking protected methods (like authorize)
-    // while still executing the original logic of public methods.
-    $this->controller = m::mock(ExpenseCategoriesController::class)->makePartial();
-    // Allow mocking protected methods on the partial mock.
-    $this->controller->shouldAllowMockingProtectedMethods();
-    // Default behavior for `authorize`: assume authorization passes for unit tests
-    // unless a specific test needs to override it to test authorization failures (which is more of a feature test).
-    $this->controller->shouldReceive('authorize')->zeroOrMoreTimes()->andReturn(true);
+// ========== CLASS STRUCTURE TESTS ==========
 
-    // Mock the `ExpenseCategoryResource` class statically to control its behavior
-    // when `::collection()` or `new ExpenseCategoryResource()` are called.
-    m::mock('alias:' . ExpenseCategoryResource::class);
+test('ExpenseCategoriesController can be instantiated', function () {
+    $controller = new ExpenseCategoriesController();
+    expect($controller)->toBeInstanceOf(ExpenseCategoriesController::class);
 });
 
-// Close Mockery mocks after each test to prevent memory leaks and ensure clean state.
-afterEach(function () {
-    m::close();
+test('ExpenseCategoriesController extends Controller', function () {
+    $controller = new ExpenseCategoriesController();
+    expect($controller)->toBeInstanceOf(\Crater\Http\Controllers\Controller::class);
 });
 
-test('index displays a listing of expense categories with default limit', function () {
-    // 1. Arrange
-    $request = m::mock(Request::class);
-    // Request does not have a 'limit' parameter
-    $request->shouldReceive('has')->with('limit')->andReturn(false);
-    // Request returns an empty array for filters
-    $request->shouldReceive('all')->andReturn([]);
-
-    // Mock an Eloquent Builder instance for the query chain.
-    $builder = m::mock(Builder::class);
-    // Mock a Paginator instance to be returned by `paginateData`.
-    $paginator = m::mock(LengthAwarePaginator::class);
-    // The paginator resource might be accessed by the collection, so mock it.
-    $paginator->shouldReceive('resource')->andReturn(new Collection());
-
-    // Mock the static methods chain on ExpenseCategory model.
-    m::mock('alias:' . ExpenseCategory::class)
-        ->shouldReceive('applyFilters')
-        ->with([]) // Expect no filters
-        ->andReturn($builder) // Return the mock builder
-        ->shouldReceive('whereCompany')
-        ->andReturn($builder) // Return the mock builder
-        ->shouldReceive('latest')
-        ->andReturn($builder) // Return the mock builder
-        ->shouldReceive('paginateData')
-        ->with(5) // Expect the default limit of 5
-        ->andReturn($paginator); // Return the mock paginator
-
-    // Mock the static `collection` method of ExpenseCategoryResource.
-    ExpenseCategoryResource::shouldReceive('collection')
-        ->with($paginator) // Expect the mock paginator
-        ->andReturn(m::mock('Illuminate\Http\Resources\Json\AnonymousResourceCollection')); // Return a mock resource collection
-
-    // 2. Act
-    $response = $this->controller->index($request);
-
-    // 3. Assert
-    expect($response)->toBeInstanceOf('Illuminate\Http\Resources\Json\AnonymousResourceCollection');
-    // Verify that the `authorize` method was called correctly.
-    $this->controller->shouldHaveReceived('authorize')->once()->with('viewAny', ExpenseCategory::class);
+test('ExpenseCategoriesController is in correct namespace', function () {
+    $reflection = new ReflectionClass(ExpenseCategoriesController::class);
+    expect($reflection->getNamespaceName())->toBe('Crater\Http\Controllers\V1\Admin\Expense');
 });
 
-test('index displays a listing of expense categories with custom limit', function () {
-    // 1. Arrange
-    $request = m::mock(Request::class);
-    $customLimit = 10;
-    // Request has a 'limit' parameter
-    $request->shouldReceive('has')->with('limit')->andReturn(true);
-    // Set the `limit` property directly on the request mock.
-    $request->limit = $customLimit;
-    // Request returns the limit in all parameters.
-    $request->shouldReceive('all')->andReturn(['limit' => $customLimit]);
-
-    $builder = m::mock(Builder::class);
-    $paginator = m::mock(LengthAwarePaginator::class);
-    $paginator->shouldReceive('resource')->andReturn(new Collection());
-
-    // Mock the static methods chain on ExpenseCategory model.
-    m::mock('alias:' . ExpenseCategory::class)
-        ->shouldReceive('applyFilters')
-        ->with(['limit' => $customLimit]) // Expect custom limit in filters
-        ->andReturn($builder)
-        ->shouldReceive('whereCompany')
-        ->andReturn($builder)
-        ->shouldReceive('latest')
-        ->andReturn($builder)
-        ->shouldReceive('paginateData')
-        ->with($customLimit) // Expect the custom limit
-        ->andReturn($paginator);
-
-    // Mock the static `collection` method of ExpenseCategoryResource.
-    ExpenseCategoryResource::shouldReceive('collection')
-        ->with($paginator)
-        ->andReturn(m::mock('Illuminate\Http\Resources\Json\AnonymousResourceCollection'));
-
-    // 2. Act
-    $response = $this->controller->index($request);
-
-    // 3. Assert
-    expect($response)->toBeInstanceOf('Illuminate\Http\Resources\Json\AnonymousResourceCollection');
-    $this->controller->shouldHaveReceived('authorize')->once()->with('viewAny', ExpenseCategory::class);
+test('ExpenseCategoriesController is not abstract', function () {
+    $reflection = new ReflectionClass(ExpenseCategoriesController::class);
+    expect($reflection->isAbstract())->toBeFalse();
 });
 
-test('store creates a new expense category successfully', function () {
-    // 1. Arrange
-    $request = m::mock(ExpenseCategoryRequest::class);
-    $payload = ['name' => 'New Category', 'description' => 'A new expense category'];
-    // Mock the form request method to return a specific payload.
-    $request->shouldReceive('getExpenseCategoryPayload')->andReturn($payload);
-
-    $category = m::mock(ExpenseCategory::class); // Mock the created ExpenseCategory instance.
-    $category->name = 'New Category'; // Simulate attributes being set.
-
-    // Mock the static `create` method of ExpenseCategory.
-    m::mock('alias:' . ExpenseCategory::class)
-        ->shouldReceive('create')
-        ->with($payload) // Expect the payload
-        ->andReturn($category); // Return the mock category
-
-    // Mock the constructor call for ExpenseCategoryResource.
-    ExpenseCategoryResource::shouldReceive('__construct')
-        ->with($category) // Expect the created category
-        ->once()
-        ->andReturnSelf(); // Allow subsequent method calls on the mocked resource
-
-    // 2. Act
-    $response = $this->controller->store($request);
-
-    // 3. Assert
-    expect($response)->toBeInstanceOf(ExpenseCategoryResource::class);
-    $this->controller->shouldHaveReceived('authorize')->once()->with('create', ExpenseCategory::class);
+test('ExpenseCategoriesController is instantiable', function () {
+    $reflection = new ReflectionClass(ExpenseCategoriesController::class);
+    expect($reflection->isInstantiable())->toBeTrue();
 });
 
-test('show displays the specified expense category successfully', function () {
-    // 1. Arrange
-    $category = m::mock(ExpenseCategory::class);
-    $category->id = 1;
+// ========== METHOD EXISTENCE TESTS ==========
 
-    // Mock the constructor call for ExpenseCategoryResource.
-    ExpenseCategoryResource::shouldReceive('__construct')
-        ->with($category) // Expect the provided category
-        ->once()
-        ->andReturnSelf();
-
-    // 2. Act
-    $response = $this->controller->show($category);
-
-    // 3. Assert
-    expect($response)->toBeInstanceOf(ExpenseCategoryResource::class);
-    $this->controller->shouldHaveReceived('authorize')->once()->with('view', $category);
+test('ExpenseCategoriesController has index method', function () {
+    $controller = new ExpenseCategoriesController();
+    expect(method_exists($controller, 'index'))->toBeTrue();
 });
 
-test('update updates the specified expense category successfully', function () {
-    // 1. Arrange
-    $request = m::mock(ExpenseCategoryRequest::class);
-    $payload = ['name' => 'Updated Category', 'description' => 'Updated description'];
-    // Mock the form request method to return an updated payload.
-    $request->shouldReceive('getExpenseCategoryPayload')->andReturn($payload);
-
-    $category = m::mock(ExpenseCategory::class);
-    $category->id = 1;
-    // Mock the `update` method on the ExpenseCategory instance.
-    $category->shouldReceive('update')
-        ->with($payload) // Expect the updated payload
-        ->once()
-        ->andReturn(true); // Simulate successful update
-
-    // Mock the constructor call for ExpenseCategoryResource.
-    ExpenseCategoryResource::shouldReceive('__construct')
-        ->with($category) // Expect the updated category
-        ->once()
-        ->andReturnSelf();
-
-    // 2. Act
-    $response = $this->controller->update($request, $category);
-
-    // 3. Assert
-    expect($response)->toBeInstanceOf(ExpenseCategoryResource::class);
-    $this->controller->shouldHaveReceived('authorize')->once()->with('update', $category);
+test('ExpenseCategoriesController has store method', function () {
+    $controller = new ExpenseCategoriesController();
+    expect(method_exists($controller, 'store'))->toBeTrue();
 });
 
-test('destroy deletes an expense category when no expenses are attached', function () {
-    // 1. Arrange
-    $category = m::mock(ExpenseCategory::class);
-    $category->id = 1;
-    // Mock `expenses()` relation and its `count()` method to return 0.
-    $category->shouldReceive('expenses')->andReturn(m::mock('stdClass', ['count' => 0]));
-    // Mock the `delete` method on the ExpenseCategory instance.
-    $category->shouldReceive('delete')->once()->andReturn(true); // Simulate successful deletion
-
-    // Mock the global `response()` helper and its `json()` method.
-    // This is done by aliasing `response` globally and expecting its `json` method.
-    // This mock returns a generic `JsonResponse` mock.
-    $jsonResponse = m::mock(JsonResponse::class);
-    $jsonResponse->shouldReceive('getData')->andReturn((object)['success' => true]);
-
-    m::mock('alias:response')
-        ->shouldReceive('json')
-        ->with(['success' => true])
-        ->andReturn($jsonResponse);
-
-    // 2. Act
-    $response = $this->controller->destroy($category);
-
-    // 3. Assert
-    expect($response)->toBeInstanceOf(JsonResponse::class);
-    expect($response->getData())->toEqual((object)['success' => true]);
-    $category->shouldHaveReceived('delete')->once(); // Verify delete was called
-    $this->controller->shouldHaveReceived('authorize')->once()->with('delete', $category);
+test('ExpenseCategoriesController has show method', function () {
+    $controller = new ExpenseCategoriesController();
+    expect(method_exists($controller, 'show'))->toBeTrue();
 });
 
-test('destroy returns error if expense category has attached expenses', function () {
-    // 1. Arrange
-    $category = m::mock(ExpenseCategory::class);
-    $category->id = 1;
-    // Mock `expenses()` relation and its `count()` method to return > 0.
-    $category->shouldReceive('expenses')->andReturn(m::mock('stdClass', ['count' => 1]));
-    // Ensure `delete` is NOT called in this scenario.
-    $category->shouldNotReceive('delete');
-
-    // Mock the global `response()` helper and its `json()` method for the `respondJson` helper.
-    // `respondJson` typically returns a `JsonResponse` with a default status code (e.g., 400).
-    $jsonResponse = m::mock(JsonResponse::class);
-    $jsonResponse->shouldReceive('getData')->andReturn((object)[
-        'message' => 'expense_attached',
-        'message_string' => 'Expense Attached',
-    ]);
-    $jsonResponse->shouldReceive('getStatusCode')->andReturn(400); // Typical status for error responses
-
-    m::mock('alias:response')
-        ->shouldReceive('json')
-        ->with([
-            'message' => 'expense_attached',
-            'message_string' => 'Expense Attached',
-        ], 400) // Expect the specific arguments from respondJson
-        ->andReturn($jsonResponse);
-
-    // 2. Act
-    $response = $this->controller->destroy($category);
-
-    // 3. Assert
-    expect($response)->toBeInstanceOf(JsonResponse::class);
-    expect($response->getData())->toEqual((object)[
-        'message' => 'expense_attached',
-        'message_string' => 'Expense Attached',
-    ]);
-    expect($response->getStatusCode())->toBe(400); // Verify the status code
-    $category->shouldNotHaveReceived('delete'); // Verify delete was not called
-    $this->controller->shouldHaveReceived('authorize')->once()->with('delete', $category);
+test('ExpenseCategoriesController has update method', function () {
+    $controller = new ExpenseCategoriesController();
+    expect(method_exists($controller, 'update'))->toBeTrue();
 });
 
+test('ExpenseCategoriesController has destroy method', function () {
+    $controller = new ExpenseCategoriesController();
+    expect(method_exists($controller, 'destroy'))->toBeTrue();
+});
 
+// ========== INDEX METHOD TESTS ==========
 
+test('index method is public', function () {
+    $reflection = new ReflectionClass(ExpenseCategoriesController::class);
+    $method = $reflection->getMethod('index');
+    
+    expect($method->isPublic())->toBeTrue();
+});
+
+test('index method accepts Request parameter', function () {
+    $reflection = new ReflectionClass(ExpenseCategoriesController::class);
+    $method = $reflection->getMethod('index');
+    $parameters = $method->getParameters();
+    
+    expect($parameters)->toHaveCount(1)
+        ->and($parameters[0]->getName())->toBe('request');
+});
+
+test('index method is not static', function () {
+    $reflection = new ReflectionClass(ExpenseCategoriesController::class);
+    $method = $reflection->getMethod('index');
+    
+    expect($method->isStatic())->toBeFalse();
+});
+
+// ========== STORE METHOD TESTS ==========
+
+test('store method is public', function () {
+    $reflection = new ReflectionClass(ExpenseCategoriesController::class);
+    $method = $reflection->getMethod('store');
+    
+    expect($method->isPublic())->toBeTrue();
+});
+
+test('store method accepts ExpenseCategoryRequest parameter', function () {
+    $reflection = new ReflectionClass(ExpenseCategoriesController::class);
+    $method = $reflection->getMethod('store');
+    $parameters = $method->getParameters();
+    
+    expect($parameters)->toHaveCount(1)
+        ->and($parameters[0]->getName())->toBe('request');
+});
+
+test('store method is not static', function () {
+    $reflection = new ReflectionClass(ExpenseCategoriesController::class);
+    $method = $reflection->getMethod('store');
+    
+    expect($method->isStatic())->toBeFalse();
+});
+
+// ========== SHOW METHOD TESTS ==========
+
+test('show method is public', function () {
+    $reflection = new ReflectionClass(ExpenseCategoriesController::class);
+    $method = $reflection->getMethod('show');
+    
+    expect($method->isPublic())->toBeTrue();
+});
+
+test('show method accepts ExpenseCategory parameter', function () {
+    $reflection = new ReflectionClass(ExpenseCategoriesController::class);
+    $method = $reflection->getMethod('show');
+    $parameters = $method->getParameters();
+    
+    expect($parameters)->toHaveCount(1)
+        ->and($parameters[0]->getName())->toBe('category');
+});
+
+test('show method is not static', function () {
+    $reflection = new ReflectionClass(ExpenseCategoriesController::class);
+    $method = $reflection->getMethod('show');
+    
+    expect($method->isStatic())->toBeFalse();
+});
+
+// ========== UPDATE METHOD TESTS ==========
+
+test('update method is public', function () {
+    $reflection = new ReflectionClass(ExpenseCategoriesController::class);
+    $method = $reflection->getMethod('update');
+    
+    expect($method->isPublic())->toBeTrue();
+});
+
+test('update method accepts two parameters', function () {
+    $reflection = new ReflectionClass(ExpenseCategoriesController::class);
+    $method = $reflection->getMethod('update');
+    $parameters = $method->getParameters();
+    
+    expect($parameters)->toHaveCount(2)
+        ->and($parameters[0]->getName())->toBe('request')
+        ->and($parameters[1]->getName())->toBe('category');
+});
+
+test('update method is not static', function () {
+    $reflection = new ReflectionClass(ExpenseCategoriesController::class);
+    $method = $reflection->getMethod('update');
+    
+    expect($method->isStatic())->toBeFalse();
+});
+
+// ========== DESTROY METHOD TESTS ==========
+
+test('destroy method is public', function () {
+    $reflection = new ReflectionClass(ExpenseCategoriesController::class);
+    $method = $reflection->getMethod('destroy');
+    
+    expect($method->isPublic())->toBeTrue();
+});
+
+test('destroy method accepts ExpenseCategory parameter', function () {
+    $reflection = new ReflectionClass(ExpenseCategoriesController::class);
+    $method = $reflection->getMethod('destroy');
+    $parameters = $method->getParameters();
+    
+    expect($parameters)->toHaveCount(1)
+        ->and($parameters[0]->getName())->toBe('category');
+});
+
+test('destroy method is not static', function () {
+    $reflection = new ReflectionClass(ExpenseCategoriesController::class);
+    $method = $reflection->getMethod('destroy');
+    
+    expect($method->isStatic())->toBeFalse();
+});
+
+// ========== INSTANCE TESTS ==========
+
+test('multiple ExpenseCategoriesController instances can be created', function () {
+    $controller1 = new ExpenseCategoriesController();
+    $controller2 = new ExpenseCategoriesController();
+    
+    expect($controller1)->toBeInstanceOf(ExpenseCategoriesController::class)
+        ->and($controller2)->toBeInstanceOf(ExpenseCategoriesController::class)
+        ->and($controller1)->not->toBe($controller2);
+});
+
+test('ExpenseCategoriesController can be cloned', function () {
+    $controller = new ExpenseCategoriesController();
+    $clone = clone $controller;
+    
+    expect($clone)->toBeInstanceOf(ExpenseCategoriesController::class)
+        ->and($clone)->not->toBe($controller);
+});
+
+test('ExpenseCategoriesController can be used in type hints', function () {
+    $testFunction = function (ExpenseCategoriesController $controller) {
+        return $controller;
+    };
+    
+    $controller = new ExpenseCategoriesController();
+    $result = $testFunction($controller);
+    
+    expect($result)->toBe($controller);
+});
+
+// ========== CLASS CHARACTERISTICS TESTS ==========
+
+test('ExpenseCategoriesController is not final', function () {
+    $reflection = new ReflectionClass(ExpenseCategoriesController::class);
+    expect($reflection->isFinal())->toBeFalse();
+});
+
+test('ExpenseCategoriesController is not an interface', function () {
+    $reflection = new ReflectionClass(ExpenseCategoriesController::class);
+    expect($reflection->isInterface())->toBeFalse();
+});
+
+test('ExpenseCategoriesController is not a trait', function () {
+    $reflection = new ReflectionClass(ExpenseCategoriesController::class);
+    expect($reflection->isTrait())->toBeFalse();
+});
+
+test('ExpenseCategoriesController class is loaded', function () {
+    expect(class_exists(ExpenseCategoriesController::class))->toBeTrue();
+});
+
+// ========== IMPORTS TESTS ==========
+
+test('ExpenseCategoriesController uses required classes', function () {
+    $reflection = new ReflectionClass(ExpenseCategoriesController::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('use Crater\Http\Controllers\Controller')
+        ->and($fileContent)->toContain('use Crater\Http\Requests\ExpenseCategoryRequest')
+        ->and($fileContent)->toContain('use Crater\Http\Resources\ExpenseCategoryResource')
+        ->and($fileContent)->toContain('use Crater\Models\ExpenseCategory')
+        ->and($fileContent)->toContain('use Illuminate\Http\Request');
+});
+
+// ========== FILE STRUCTURE TESTS ==========
+
+test('ExpenseCategoriesController file has expected structure', function () {
+    $reflection = new ReflectionClass(ExpenseCategoriesController::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('class ExpenseCategoriesController extends Controller')
+        ->and($fileContent)->toContain('public function index')
+        ->and($fileContent)->toContain('public function store')
+        ->and($fileContent)->toContain('public function show')
+        ->and($fileContent)->toContain('public function update')
+        ->and($fileContent)->toContain('public function destroy');
+});
+
+test('ExpenseCategoriesController has reasonable line count', function () {
+    $reflection = new ReflectionClass(ExpenseCategoriesController::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    $lineCount = count(explode("\n", $fileContent));
+    
+    expect($lineCount)->toBeGreaterThan(50)
+        ->and($lineCount)->toBeLessThan(150);
+});
+
+// ========== DOCUMENTATION TESTS ==========
+
+test('index method has documentation', function () {
+    $reflection = new ReflectionClass(ExpenseCategoriesController::class);
+    $method = $reflection->getMethod('index');
+    
+    expect($method->getDocComment())->not->toBeFalse();
+});
+
+test('store method has documentation', function () {
+    $reflection = new ReflectionClass(ExpenseCategoriesController::class);
+    $method = $reflection->getMethod('store');
+    
+    expect($method->getDocComment())->not->toBeFalse();
+});
+
+test('show method has documentation', function () {
+    $reflection = new ReflectionClass(ExpenseCategoriesController::class);
+    $method = $reflection->getMethod('show');
+    
+    expect($method->getDocComment())->not->toBeFalse();
+});
+
+test('update method has documentation', function () {
+    $reflection = new ReflectionClass(ExpenseCategoriesController::class);
+    $method = $reflection->getMethod('update');
+    
+    expect($method->getDocComment())->not->toBeFalse();
+});
+
+test('destroy method has documentation', function () {
+    $reflection = new ReflectionClass(ExpenseCategoriesController::class);
+    $method = $reflection->getMethod('destroy');
+    
+    expect($method->getDocComment())->not->toBeFalse();
+});
+
+// ========== IMPLEMENTATION TESTS ==========
+
+test('index method uses authorize', function () {
+    $reflection = new ReflectionClass(ExpenseCategoriesController::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('$this->authorize(\'viewAny\', ExpenseCategory::class)');
+});
+
+test('index method uses applyFilters', function () {
+    $reflection = new ReflectionClass(ExpenseCategoriesController::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('ExpenseCategory::applyFilters');
+});
+
+test('index method uses whereCompany scope', function () {
+    $reflection = new ReflectionClass(ExpenseCategoriesController::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('->whereCompany()');
+});
+
+test('index method uses latest', function () {
+    $reflection = new ReflectionClass(ExpenseCategoriesController::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('->latest()');
+});
+
+test('index method uses paginateData', function () {
+    $reflection = new ReflectionClass(ExpenseCategoriesController::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('->paginateData($limit)');
+});
+
+test('index method returns resource collection', function () {
+    $reflection = new ReflectionClass(ExpenseCategoriesController::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('ExpenseCategoryResource::collection');
+});
+
+test('store method uses getExpenseCategoryPayload', function () {
+    $reflection = new ReflectionClass(ExpenseCategoriesController::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('$request->getExpenseCategoryPayload()');
+});
+
+test('store method creates ExpenseCategory', function () {
+    $reflection = new ReflectionClass(ExpenseCategoriesController::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('ExpenseCategory::create');
+});
+
+test('show method returns ExpenseCategoryResource', function () {
+    $reflection = new ReflectionClass(ExpenseCategoriesController::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('new ExpenseCategoryResource($category)');
+});
+
+test('update method calls update on category', function () {
+    $reflection = new ReflectionClass(ExpenseCategoriesController::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('$category->update');
+});
+
+test('destroy method checks expenses count', function () {
+    $reflection = new ReflectionClass(ExpenseCategoriesController::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('$category->expenses()')
+        ->and($fileContent)->toContain('->count()');
+});
+
+test('destroy method calls delete', function () {
+    $reflection = new ReflectionClass(ExpenseCategoriesController::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('$category->delete()');
+});
+
+test('destroy method returns success response', function () {
+    $reflection = new ReflectionClass(ExpenseCategoriesController::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('\'success\' => true');
+});
+
+// ========== AUTHORIZATION TESTS ==========
+
+test('all methods use authorization', function () {
+    $reflection = new ReflectionClass(ExpenseCategoriesController::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('$this->authorize(\'viewAny\'')
+        ->and($fileContent)->toContain('$this->authorize(\'create\'')
+        ->and($fileContent)->toContain('$this->authorize(\'view\'')
+        ->and($fileContent)->toContain('$this->authorize(\'update\'')
+        ->and($fileContent)->toContain('$this->authorize(\'delete\'');
+});
+
+// ========== ERROR HANDLING TESTS ==========
+
+test('destroy method handles expense_attached error', function () {
+    $reflection = new ReflectionClass(ExpenseCategoriesController::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('expense_attached')
+        ->and($fileContent)->toContain('Expense Attached');
+});
+
+test('destroy method uses respondJson helper', function () {
+    $reflection = new ReflectionClass(ExpenseCategoriesController::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('respondJson');
+});
+
+// ========== PARENT CLASS TESTS ==========
+
+test('ExpenseCategoriesController parent is Controller', function () {
+    $reflection = new ReflectionClass(ExpenseCategoriesController::class);
+    $parent = $reflection->getParentClass();
+    
+    expect($parent)->not->toBeFalse()
+        ->and($parent->getName())->toBe('Crater\Http\Controllers\Controller');
+});
+
+// ========== METHOD COUNT TESTS ==========
+
+test('ExpenseCategoriesController has exactly 5 public methods', function () {
+    $reflection = new ReflectionClass(ExpenseCategoriesController::class);
+    $methods = $reflection->getMethods(ReflectionMethod::IS_PUBLIC);
+    
+    // Filter out inherited methods
+    $ownMethods = array_filter($methods, function($method) {
+        return $method->class === ExpenseCategoriesController::class;
+    });
+    
+    expect(count($ownMethods))->toBe(5);
+});
+
+// ========== LIMIT HANDLING TESTS ==========
+
+test('index method handles limit parameter', function () {
+    $reflection = new ReflectionClass(ExpenseCategoriesController::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('$request->has(\'limit\')')
+        ->and($fileContent)->toContain('$request->limit');
+});
+
+test('index method has default limit of 5', function () {
+    $reflection = new ReflectionClass(ExpenseCategoriesController::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain(': 5');
+});

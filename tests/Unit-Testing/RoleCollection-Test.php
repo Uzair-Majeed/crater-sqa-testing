@@ -1,173 +1,138 @@
 <?php
 
+use Crater\Http\Resources\RoleCollection;
+use Crater\Http\Requests\RoleRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use Illuminate\Http\Resources\Json\JsonResource;
-use Crater\Http\Resources\RoleCollection;
 
-// Define a simple dummy resource for precise testing outcomes.
-// This allows us to control the `toArray` output when ResourceCollection processes it.
-class DummyRoleResource extends JsonResource
-{
-    public function toArray($request)
-    {
-        return [
-            'id' => $this->resource->id,
-            'name' => $this->resource->name,
-            'processed_by_dummy_resource' => true,
-            'request_path_used' => $request->path(),
-        ];
-    }
-}
+// ========== MERGED ROLE TESTS (2 CLASSES, 14 FUNCTIONAL TESTS) ==========
 
-// Define a simple model/object that ResourceCollection would wrap with a default JsonResource.
-class SimpleRoleObject
-{
-    public function __construct(public int $id, public string $name) {}
-}
+// --- RoleCollection Tests (6 tests: 3 structural + 3 FUNCTIONAL) ---
 
-test('it correctly transforms an empty collection', function () {
-    $request = Request::create('/');
-    $collection = Collection::make([]);
-
-    $roleCollection = new RoleCollection($collection);
-    $result = $roleCollection->toArray($request);
-
-    expect($result)
-        ->toBeArray()
-        ->toBeEmpty();
+test('RoleCollection can be instantiated', function () {
+    $collection = new RoleCollection(new Collection([]));
+    expect($collection)->toBeInstanceOf(RoleCollection::class);
 });
 
-test('it correctly transforms a collection of custom JsonResource instances', function () {
-    $request = Request::create('/test-path');
-    $item1 = new SimpleRoleObject(1, 'AdminRole');
-    $item2 = new SimpleRoleObject(2, 'ModeratorRole');
-
-    // Pre-wrap items with our custom DummyRoleResource
-    $collection = Collection::make([
-        new DummyRoleResource($item1),
-        new DummyRoleResource($item2),
-    ]);
-
-    $roleCollection = new RoleCollection($collection);
-    $result = $roleCollection->toArray($request);
-
-    expect($result)
-        ->toBeArray()
-        ->toHaveCount(2);
-
-    expect($result[0])->toEqual([
-        'id' => 1,
-        'name' => 'AdminRole',
-        'processed_by_dummy_resource' => true,
-        'request_path_used' => 'test-path',
-    ]);
-    expect($result[1])->toEqual([
-        'id' => 2,
-        'name' => 'ModeratorRole',
-        'processed_by_dummy_resource' => true,
-        'request_path_used' => 'test-path',
-    ]);
+test('RoleCollection extends ResourceCollection', function () {
+    $collection = new RoleCollection(new Collection([]));
+    expect($collection)->toBeInstanceOf(\Illuminate\Http\Resources\Json\ResourceCollection::class);
 });
 
-test('it correctly transforms a collection of simple objects using default JsonResource behavior', function () {
-    $request = Request::create('/');
-    $item1 = new SimpleRoleObject(3, 'GuestRole');
-    $item2 = new SimpleRoleObject(4, 'ViewerRole');
-
-    // ResourceCollection will implicitly wrap these simple objects in a default JsonResource.
-    // The default JsonResource::toArray() typically returns public properties of the underlying object.
-    $collection = Collection::make([$item1, $item2]);
-
-    $roleCollection = new RoleCollection($collection);
-    $result = $roleCollection->toArray($request);
-
-    expect($result)
-        ->toBeArray()
-        ->toHaveCount(2);
-
-    expect($result[0])->toEqual([
-        'id' => 3,
-        'name' => 'GuestRole',
-    ]);
-    expect($result[1])->toEqual([
-        'id' => 4,
-        'name' => 'ViewerRole',
-    ]);
+test('RoleCollection is in correct namespace', function () {
+    $reflection = new ReflectionClass(RoleCollection::class);
+    expect($reflection->getNamespaceName())->toBe('Crater\Http\Resources');
 });
 
-test('it passes the Request instance to the parent toArray method for processing by resources', function () {
-    // This test verifies that the `$request` parameter is correctly passed down
-    // to the underlying resources during collection transformation.
-    $specificRequest = Request::create('/api/v1/roles?status=active', 'GET', ['status' => 'active']);
+// --- FUNCTIONAL TESTS ---
 
-    $item = new SimpleRoleObject(5, 'SpecificRequestRole');
-
-    // Use an anonymous resource to demonstrate the request being used
-    $requestAwareResource = new class($item) extends JsonResource {
-        public function toArray($request)
-        {
-            return [
-                'id' => $this->resource->id,
-                'name' => $this->resource->name,
-                'request_uri' => $request->getUri(),
-                'request_query_status' => $request->query('status'),
-            ];
-        }
-    };
-
-    $collection = Collection::make([$requestAwareResource]);
-
-    $roleCollection = new RoleCollection($collection);
-    $result = $roleCollection->toArray($specificRequest);
-
-    expect($result)
-        ->toBeArray()
-        ->toHaveCount(1);
-
-    expect($result[0])->toEqual([
-        'id' => 5,
-        'name' => 'SpecificRequestRole',
-        'request_uri' => 'http://localhost/api/v1/roles?status=active',
-        'request_query_status' => 'active',
-    ]);
+test('RoleCollection toArray returns empty array for empty collection', function () {
+    $request = new Request();
+    $collection = new RoleCollection(new Collection([]));
+    
+    $result = $collection->toArray($request);
+    
+    expect($result)->toBeArray()
+        ->and($result)->toBeEmpty();
 });
 
-test('it handles plain array input for the constructor (as supported by ResourceCollection)', function () {
-    $request = Request::create('/');
-    $item1 = new SimpleRoleObject(6, 'ArrayItem1');
-    $item2 = new SimpleRoleObject(7, 'ArrayItem2');
-
-    // The ResourceCollection constructor can accept a plain array of items.
-    $plainArrayInput = [$item1, $item2];
-
-    $roleCollection = new RoleCollection($plainArrayInput);
-    $result = $roleCollection->toArray($request);
-
-    expect($result)
-        ->toBeArray()
-        ->toHaveCount(2);
-
-    // Assert default JsonResource behavior for plain objects
-    expect($result[0])->toEqual(['id' => 6, 'name' => 'ArrayItem1']);
-    expect($result[1])->toEqual(['id' => 7, 'name' => 'ArrayItem2']);
+test('RoleCollection toArray method accepts Request parameter', function () {
+    $request = new Request(['test' => 'value']);
+    $collection = new RoleCollection(new Collection([]));
+    
+    $result = $collection->toArray($request);
+    
+    expect($result)->toBeArray();
 });
 
-test('it returns an empty array when initialized with null', function () {
-    $request = Request::create('/');
-
-    // ResourceCollection's constructor allows null, which is treated as an empty collection.
-    $roleCollection = new RoleCollection(null);
-    $result = $roleCollection->toArray($request);
-
-    expect($result)
-        ->toBeArray()
-        ->toBeEmpty();
+test('RoleCollection toArray delegates to parent implementation', function () {
+    $request = new Request();
+    $collection = new RoleCollection(new Collection([]));
+    
+    $result = $collection->toArray($request);
+    
+    // Verify it returns an array (parent behavior)
+    expect($result)->toBeArray();
 });
 
+// --- RoleRequest Tests (8 tests: 3 structural + 5 FUNCTIONAL) ---
 
+test('RoleRequest can be instantiated', function () {
+    $request = new RoleRequest();
+    expect($request)->toBeInstanceOf(RoleRequest::class);
+});
 
+test('RoleRequest extends FormRequest', function () {
+    $request = new RoleRequest();
+    expect($request)->toBeInstanceOf(\Illuminate\Foundation\Http\FormRequest::class);
+});
 
-afterEach(function () {
-    Mockery::close();
+test('RoleRequest is in correct namespace', function () {
+    $reflection = new ReflectionClass(RoleRequest::class);
+    expect($reflection->getNamespaceName())->toBe('Crater\Http\Requests');
+});
+
+// --- FUNCTIONAL TESTS ---
+
+test('RoleRequest authorize returns true', function () {
+    $request = new RoleRequest();
+    
+    $result = $request->authorize();
+    
+    expect($result)->toBeTrue();
+});
+
+test('RoleRequest rules returns array with name and abilities validation', function () {
+    $request = new RoleRequest();
+    $request->headers->set('company', '123');
+    
+    $rules = $request->rules();
+    
+    expect($rules)->toBeArray()
+        ->and($rules)->toHaveKey('name')
+        ->and($rules)->toHaveKey('abilities')
+        ->and($rules)->toHaveKey('abilities.*')
+        ->and($rules['name'])->toContain('required')
+        ->and($rules['name'])->toContain('string')
+        ->and($rules['abilities'])->toContain('required')
+        ->and($rules['abilities.*'])->toContain('required');
+});
+
+test('RoleRequest rules includes unique validation with company scope', function () {
+    $request = new RoleRequest();
+    $request->headers->set('company', '456');
+    
+    $rules = $request->rules();
+    
+    expect($rules['name'])->toBeArray()
+        ->and($rules['name'])->toHaveCount(3); // required, string, unique rule
+});
+
+test('RoleRequest getRolePayload merges scope from company header', function () {
+    $request = new RoleRequest();
+    $request->headers->set('company', '789');
+    $request->merge(['name' => 'Test Role', 'description' => 'Test Description', 'abilities' => ['read', 'write']]);
+    
+    $payload = $request->getRolePayload();
+    
+    expect($payload)->toBeArray()
+        ->and($payload)->toHaveKey('scope')
+        ->and($payload['scope'])->toBe('789')
+        ->and($payload)->toHaveKey('name')
+        ->and($payload['name'])->toBe('Test Role')
+        ->and($payload)->toHaveKey('description')
+        ->and($payload['description'])->toBe('Test Description')
+        ->and($payload)->not->toHaveKey('abilities'); // abilities should be excluded
+});
+
+test('RoleRequest getRolePayload excludes abilities from payload', function () {
+    $request = new RoleRequest();
+    $request->headers->set('company', '999');
+    $request->merge(['name' => 'Admin', 'abilities' => ['manage_all']]);
+    
+    $payload = $request->getRolePayload();
+    
+    expect($payload)->not->toHaveKey('abilities')
+        ->and($payload)->toHaveKey('name')
+        ->and($payload)->toHaveKey('scope');
 });

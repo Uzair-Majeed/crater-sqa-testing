@@ -23,11 +23,9 @@ test('it clears the optimize cache and returns success when environment variable
            ->andReturn(0); // Simulate successful Artisan command execution (exit code 0).
 
     // Mock the DomainEnvironmentRequest instance.
-    // The controller passes this request to EnvironmentManager, but doesn't directly use its validated data for its own logic.
     $mockRequest = m::mock(DomainEnvironmentRequest::class);
 
     // Mock the EnvironmentManager class using Mockery's `overload` feature.
-    // This allows us to intercept `new EnvironmentManager()` calls within the controller.
     $mockEnvironmentManager = m::mock('overload:' . EnvironmentManager::class);
 
     // Expect the constructor of EnvironmentManager to be called once when the controller instantiates it.
@@ -47,8 +45,8 @@ test('it clears the optimize cache and returns success when environment variable
 
     // Assert: Verify the behavior and the returned response.
     expect($response)->toBeInstanceOf(JsonResponse::class); // Ensure a JsonResponse is returned.
-    $response->assertSuccessful(); // Assert that the HTTP status code is in the 2xx range (e.g., 200 OK).
-    expect($response->json())->toEqual(['success' => true]); // Assert the specific JSON payload.
+    expect($response->getStatusCode())->toBeGreaterThanOrEqual(200)->toBeLessThan(300); // Assert that the HTTP status code is in the 2xx range.
+    expect($response->getData(true))->toEqual(['success' => true]); // Assert the specific JSON payload.
 });
 
 test('it clears the optimize cache and returns errors when environment variables fail to save', function () {
@@ -85,10 +83,8 @@ test('it clears the optimize cache and returns errors when environment variables
 
     // Assert: Verify the behavior and the returned response.
     expect($response)->toBeInstanceOf(JsonResponse::class); // Ensure a JsonResponse is returned.
-    // The controller's logic returns 200 OK even if `saveDomainVariables` indicates an error,
-    // as long as the 'error' string is found in the results array.
-    $response->assertOk(); // Assert that the HTTP status code is 200 OK.
-    expect($response->json())->toEqual($expectedErrorResults); // Assert the specific error JSON payload.
+    expect($response->getStatusCode())->toBe(200); // Assert that the HTTP status code is 200 OK.
+    expect($response->getData(true))->toEqual($expectedErrorResults); // Assert the specific error JSON payload.
 });
 
 // This `afterEach` hook will run after each test in this file.
@@ -96,4 +92,3 @@ test('it clears the optimize cache and returns errors when environment variables
 afterEach(function () {
     m::close();
 });
-

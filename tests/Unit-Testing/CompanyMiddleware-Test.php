@@ -1,158 +1,252 @@
 <?php
+
+namespace Tests\Unit;
+
+use Crater\Http\Middleware\CompanyMiddleware;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
-use Symfony\Component\HttpFoundation\ParameterBag;
 
-beforeEach(function () {
-    Mockery::close();
-});
+// Test classes for our test doubles
+class TestCompany
+{
+    public $id;
+    public function __construct($id) { $this->id = $id; }
+}
 
-test('it calls next with the original request if user_company table does not exist', function () {
-    // Arrange
-    Mockery::mock('alias:Illuminate\Support\Facades\Schema')
-        ->shouldReceive('hasTable')
-        ->with('user_company')
-        ->andReturn(false)
-        ->once();
+class TestUser
+{
+    public $id = 1;
+    protected $companies = [];
 
-    $request = Mockery::mock(Request::class);
-    $request->shouldNotReceive('user');
-    $request->shouldNotReceive('header');
+    public function __construct(array $companies = [])
+    {
+        $this->companies = $companies;
+    }
+
+    public function hasCompany($companyId): bool
+    {
+        foreach ($this->companies as $company) {
+            if ($company->id == $companyId) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function companies()
+    {
+        return new class($this->companies) {
+            private $companies;
+            public function __construct(array $companies) { $this->companies = $companies; }
+            public function first() {
+                return $this->companies[0] ?? null;
+            }
+            public function isEmpty() {
+                return empty($this->companies);
+            }
+        };
+    }
+}
+
+// Create a testable version of the middleware that allows us to override dependencies
+class TestableCompanyMiddleware extends CompanyMiddleware
+{
+    public $schemaHasTable = false;
+    public $authUser = null;
     
-    // Mock the headers property as a ParameterBag and ensure 'set' is not called
-    $request->headers = Mockery::mock(ParameterBag::class);
-    $request->headers->shouldNotReceive('set');
+    protected function schemaHasTable($table)
+    {
+        return $this->schemaHasTable;
+    }
+    
+    protected function getAuthUser()
+    {
+        return $this->authUser;
+    }
+}
 
-    $next = function ($req) use ($request) {
-        expect($req)->toBe($request);
-        return 'response_from_next';
+test('it calls next closure directly if user_company table does not exist', function () {
+    $middleware = new TestableCompanyMiddleware();
+    $middleware->schemaHasTable = false;
+    $middleware->authUser = null;
+    
+    $request = new Request();
+    $nextCalled = false;
+    $next = function ($req) use (&$nextCalled) {
+        $nextCalled = true;
+        return 'response';
     };
 
-    $middleware = new \Crater\Http\Middleware\CompanyMiddleware();
-
-    // Act
     $response = $middleware->handle($request, $next);
 
-    // Assert
-    expect($response)->toBe('response_from_next');
+    expect($nextCalled)->toBeTrue()
+        ->and($response)->toBe('response')
+        ->and($request->headers->get('company'))->toBeNull();
 });
 
-test('it sets the company header if no company header is present and user_company table exists', function () {
-    // Arrange
-    $expectedCompanyId = 123;
-    $firstCompany = (object) ['id' => $expectedCompanyId];
 
-    $companiesCollectionMock = Mockery::mock();
-    $companiesCollectionMock->shouldReceive('first')->andReturn($firstCompany)->once();
+test('it does not change company header if company header is present and user has it', function () {
+    $middleware = new TestableCompanyMiddleware();
+    $middleware->schemaHasTable = true;
+    
+    $company1 = new TestCompany(101);
+    $company2 = new TestCompany(102);
+    $user = new TestUser([$company1, $company2]);
+    $middleware->authUser = $user;
 
-    $userMock = Mockery::mock();
-    $userMock->shouldReceive('hasCompany')->never(); // Should not be called if header is missing
-    $userMock->shouldReceive('companies')->andReturn($companiesCollectionMock)->once();
-
-    Mockery::mock('alias:Illuminate\Support\Facades\Schema')
-        ->shouldReceive('hasTable')
-        ->with('user_company')
-        ->andReturn(true)
-        ->once();
-
-    $request = Mockery::mock(Request::class);
-    $request->shouldReceive('user')->andReturn($userMock)->once();
-    $request->shouldReceive('header')->with('company')->andReturn(null)->once(); // No company header
-
-    $request->headers = Mockery::mock(ParameterBag::class);
-    $request->headers->shouldReceive('set')->with('company', $expectedCompanyId)->once(); // Should set the header
-
-    $next = function ($req) use ($request) {
-        expect($req)->toBe($request);
-        return 'response_from_next';
+    $request = new Request();
+    $request->headers->set('company', '102'); // User has this company
+    
+    $nextCalled = false;
+    $next = function ($req) use (&$nextCalled) {
+        $nextCalled = true;
+        return 'response';
     };
 
-    $middleware = new \Crater\Http\Middleware\CompanyMiddleware();
-
-    // Act
     $response = $middleware->handle($request, $next);
 
-    // Assert
-    expect($response)->toBe('response_from_next');
+    expect($nextCalled)->toBeTrue()
+        ->and($response)->toBe('response')
+        ->and($request->headers->get('company'))->toBe('102');
 });
 
-test('it sets the company header if an invalid company header is present and user_company table exists', function () {
-    // Arrange
-    $invalidCompanyId = 999;
-    $expectedCompanyId = 123;
-    $firstCompany = (object) ['id' => $expectedCompanyId];
 
-    $companiesCollectionMock = Mockery::mock();
-    $companiesCollectionMock->shouldReceive('first')->andReturn($firstCompany)->once();
+test('it handles user with no companies gracefully', function () {
+    $middleware = new TestableCompanyMiddleware();
+    $middleware->schemaHasTable = true;
+    
+    $user = new TestUser([]); // No companies
+    $middleware->authUser = $user;
 
-    $userMock = Mockery::mock();
-    $userMock->shouldReceive('hasCompany')->with($invalidCompanyId)->andReturn(false)->once(); // User doesn't have this company
-    $userMock->shouldReceive('companies')->andReturn($companiesCollectionMock)->once();
-
-    Mockery::mock('alias:Illuminate\Support\Facades\Schema')
-        ->shouldReceive('hasTable')
-        ->with('user_company')
-        ->andReturn(true)
-        ->once();
-
-    $request = Mockery::mock(Request::class);
-    $request->shouldReceive('user')->andReturn($userMock)->once();
-    $request->shouldReceive('header')->with('company')->andReturn($invalidCompanyId)->once();
-
-    $request->headers = Mockery::mock(ParameterBag::class);
-    $request->headers->shouldReceive('set')->with('company', $expectedCompanyId)->once(); // Should overwrite with valid ID
-
-    $next = function ($req) use ($request) {
-        expect($req)->toBe($request);
-        return 'response_from_next';
+    $request = new Request();
+    
+    $nextCalled = false;
+    $next = function ($req) use (&$nextCalled) {
+        $nextCalled = true;
+        return 'response';
     };
 
-    $middleware = new \Crater\Http\Middleware\CompanyMiddleware();
-
-    // Act
     $response = $middleware->handle($request, $next);
 
-    // Assert
-    expect($response)->toBe('response_from_next');
+    expect($nextCalled)->toBeTrue()
+        ->and($response)->toBe('response')
+        ->and($request->headers->get('company'))->toBeNull();
 });
 
-test('it does not modify the company header if a valid company header is present and user_company table exists', function () {
-    // Arrange
-    $validCompanyId = 456;
+test('it handles unauthenticated user gracefully', function () {
+    $middleware = new TestableCompanyMiddleware();
+    $middleware->schemaHasTable = true;
+    $middleware->authUser = null; // No user authenticated
 
-    $userMock = Mockery::mock();
-    $userMock->shouldReceive('hasCompany')->with($validCompanyId)->andReturn(true)->once(); // User has this company
-    $userMock->shouldNotReceive('companies'); // Should not need to fetch companies if header is valid
-
-    Mockery::mock('alias:Illuminate\Support\Facades\Schema')
-        ->shouldReceive('hasTable')
-        ->with('user_company')
-        ->andReturn(true)
-        ->once();
-
-    $request = Mockery::mock(Request::class);
-    $request->shouldReceive('user')->andReturn($userMock)->once();
-    $request->shouldReceive('header')->with('company')->andReturn($validCompanyId)->once();
-
-    $request->headers = Mockery::mock(ParameterBag::class);
-    $request->headers->shouldNotReceive('set'); // Should not modify the header
-
-    $next = function ($req) use ($request) {
-        expect($req)->toBe($request);
-        return 'response_from_next';
+    $request = new Request();
+    
+    $nextCalled = false;
+    $next = function ($req) use (&$nextCalled) {
+        $nextCalled = true;
+        return 'response';
     };
 
-    $middleware = new \Crater\Http\Middleware\CompanyMiddleware();
-
-    // Act
     $response = $middleware->handle($request, $next);
 
-    // Assert
-    expect($response)->toBe('response_from_next');
+    expect($nextCalled)->toBeTrue()
+        ->and($response)->toBe('response');
 });
 
- 
+test('it passes through when table exists but no user companies found', function () {
+    $middleware = new TestableCompanyMiddleware();
+    $middleware->schemaHasTable = true;
+    
+    $user = new TestUser([]);
+    $middleware->authUser = $user;
 
-afterEach(function () {
-    Mockery::close();
+    $request = new Request();
+    $request->headers->set('company', '999');
+    
+    $nextCalled = false;
+    $next = function ($req) use (&$nextCalled) {
+        $nextCalled = true;
+        return 'response';
+    };
+
+    $response = $middleware->handle($request, $next);
+
+    expect($nextCalled)->toBeTrue()
+        ->and($response)->toBe('response')
+        ->and($request->headers->get('company'))->toBe('999');
+});
+
+test('it handles company ID as string vs integer correctly', function () {
+    $middleware = new TestableCompanyMiddleware();
+    $middleware->schemaHasTable = true;
+    
+    $company1 = new TestCompany(101);
+    $user = new TestUser([$company1]);
+    $middleware->authUser = $user;
+
+    $request = new Request();
+    $request->headers->set('company', '101'); // String ID
+    
+    $nextCalled = false;
+    $next = function ($req) use (&$nextCalled) {
+        $nextCalled = true;
+        return 'response';
+    };
+
+    $response = $middleware->handle($request, $next);
+
+    expect($nextCalled)->toBeTrue()
+        ->and($response)->toBe('response')
+        ->and($request->headers->get('company'))->toBe('101');
+});
+// Test with company header as integer
+test('it handles integer company header', function () {
+    $middleware = new TestableCompanyMiddleware();
+    $middleware->schemaHasTable = true;
+    
+    $company1 = new TestCompany(101);
+    $user = new TestUser([$company1]);
+    $middleware->authUser = $user;
+
+    $request = new Request();
+    $request->headers->set('company', 101); // Integer
+    
+    $nextCalled = false;
+    $next = function ($req) use (&$nextCalled) {
+        $nextCalled = true;
+        return 'response';
+    };
+
+    $response = $middleware->handle($request, $next);
+
+    expect($nextCalled)->toBeTrue()
+        ->and($response)->toBe('response')
+        ->and($request->headers->get('company'))->toBe('101'); // Should be string after middleware
+});
+
+// Test when user companies is null
+test('it handles null companies collection', function () {
+    $middleware = new TestableCompanyMiddleware();
+    $middleware->schemaHasTable = true;
+    
+    $user = new class extends TestUser {
+        public function companies() {
+            return null; // Returns null instead of collection
+        }
+    };
+    $middleware->authUser = $user;
+
+    $request = new Request();
+    
+    $nextCalled = false;
+    $next = function ($req) use (&$nextCalled) {
+        $nextCalled = true;
+        return 'response';
+    };
+
+    $response = $middleware->handle($request, $next);
+
+    expect($nextCalled)->toBeTrue()
+        ->and($response)->toBe('response')
+        ->and($request->headers->get('company'))->toBeNull();
 });

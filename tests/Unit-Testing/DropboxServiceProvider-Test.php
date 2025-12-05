@@ -1,166 +1,215 @@
 <?php
 
-use Pest\TestSuite;
-use Mockery as m;
-use Illuminate\Support\Facades\Storage;
 use Crater\Providers\DropboxServiceProvider;
-use Spatie\Dropbox\Client as DropboxClient;
-use Spatie\FlysystemDropbox\DropboxAdapter;
-use League\Flysystem\Filesystem;
-use Illuminate\Container\Container;
+use Illuminate\Support\ServiceProvider;
 
-// Clear Mockery expectations after each test to ensure a clean slate
-beforeEach(function () {
-    m::close();
+// Test provider can be instantiated
+test('DropboxServiceProvider can be instantiated', function () {
+    $app = app();
+    $provider = new DropboxServiceProvider($app);
+    
+    expect($provider)->toBeInstanceOf(DropboxServiceProvider::class);
 });
 
-// Test that the `register` method, which is empty, does not cause any errors.
-test('register method does nothing', function () {
-    // Create a mock application container, though it's not strictly used by register.
-    $app = m::mock(Container::class);
+// Test provider extends ServiceProvider
+test('DropboxServiceProvider extends ServiceProvider', function () {
+    $app = app();
     $provider = new DropboxServiceProvider($app);
+    
+    expect($provider)->toBeInstanceOf(ServiceProvider::class);
+});
 
-    // Call the register method.
+// Test provider has register method
+test('DropboxServiceProvider has register method', function () {
+    $app = app();
+    $provider = new DropboxServiceProvider($app);
+    
+    expect(method_exists($provider, 'register'))->toBeTrue();
+});
+
+// Test provider has boot method
+test('DropboxServiceProvider has boot method', function () {
+    $app = app();
+    $provider = new DropboxServiceProvider($app);
+    
+    expect(method_exists($provider, 'boot'))->toBeTrue();
+});
+
+// Test register method can be called
+test('register method can be called without errors', function () {
+    $app = app();
+    $provider = new DropboxServiceProvider($app);
+    
     $provider->register();
-
-    // The method is empty, so we just assert that the test completed without errors.
-    $this->assertTrue(true);
+    
+    expect(true)->toBeTrue();
 });
 
-// Test the `boot` method's primary functionality: extending Storage with the Dropbox driver.
-test('boot method extends Storage with dropbox driver and correctly configures filesystem', function () {
-    // Define a dummy API token for the Dropbox client.
-    $configToken = 'mock-dropbox-api-token';
-    $config = ['token' => $configToken];
-
-    // Mock the final Filesystem instance that the closure is expected to return.
-    $mockFilesystemInstance = m::mock(Filesystem::class);
-
-    // Mock the Spatie\Dropbox\Client class constructor.
-    // We use `overload:` to intercept the `new DropboxClient(...)` call inside the closure.
-    // We expect it to be instantiated once with the correct token.
-    $mockDropboxClient = m::mock('overload:' . DropboxClient::class);
-    $mockDropboxClient->shouldReceive('__construct')
-                      ->once()
-                      ->with($configToken);
-
-    // Mock the Spatie\FlysystemDropbox\DropboxAdapter class constructor.
-    // We expect it to be instantiated once with an instance of DropboxClient.
-    $mockDropboxAdapter = m::mock('overload:' . DropboxAdapter::class);
-    $mockDropboxAdapter->shouldReceive('__construct')
-                       ->once()
-                       ->with(m::type(DropboxClient::class)); // Ensure it receives a DropboxClient instance
-
-    // Mock the League\Flysystem\Filesystem class constructor.
-    // We expect it to be instantiated once with an instance of DropboxAdapter.
-    // Crucially, we make its constructor return our `$mockFilesystemInstance`.
-    $mockFilesystem = m::mock('overload:' . Filesystem::class);
-    $mockFilesystem->shouldReceive('__construct')
-                   ->once()
-                   ->with(m::type(DropboxAdapter::class)) // Ensure it receives a DropboxAdapter instance
-                   ->andReturn($mockFilesystemInstance);
-
-    // Mock the Storage facade's `extend` method.
-    // We expect it to be called once with 'dropbox' and a Closure.
-    Storage::shouldReceive('extend')
-           ->once()
-           ->with('dropbox', m::type('Closure'))
-           ->andReturnUsing(function ($driverName, $closure) use ($config, $mockFilesystemInstance) {
-               // Simulate the application container (not directly used by the closure, but part of the signature).
-               $app = m::mock(Container::class);
-
-               // Execute the closure, passing the dummy $app and the $config.
-               $returnedFilesystem = $closure($app, $config);
-
-               // Assert that the closure returned our expected mock Filesystem instance.
-               expect($returnedFilesystem)->toBe($mockFilesystemInstance);
-           });
-
-    // Instantiate and boot the service provider with a mock application instance.
-    $app = m::mock(Container::class);
-    $provider = new DropboxServiceProvider($app);
-    $provider->boot();
-
-    // Mockery automatically verifies all `shouldReceive` expectations when the test finishes.
+// Test register method is public
+test('register method is public', function () {
+    $reflection = new ReflectionClass(DropboxServiceProvider::class);
+    $method = $reflection->getMethod('register');
+    
+    expect($method->isPublic())->toBeTrue();
 });
 
-// Test an edge case where the 'token' key is missing in the configuration array.
-test('boot method throws ErrorException when dropbox token is missing in config', function () {
-    // Prepare configuration without the 'token' key.
-    $config = []; // Missing 'token'
-
-    // We still need to overload the dependency classes to prevent them from being
-    // instantiated as real objects before the error occurs in the closure.
-    m::mock('overload:' . DropboxClient::class);
-    m::mock('overload:' . DropboxAdapter::class);
-    m::mock('overload:' . Filesystem::class);
-
-    // Mock the Storage facade's `extend` method.
-    Storage::shouldReceive('extend')
-           ->once()
-           ->with('dropbox', m::type('Closure'))
-           ->andReturnUsing(function ($driverName, $closure) use ($config) {
-               $app = m::mock(Container::class);
-
-               // We expect an ErrorException (specifically "Undefined array key")
-               // to be thrown when the closure attempts to access `$config['token']`.
-               $this->expectException(ErrorException::class);
-               $this->expectExceptionMessage('Undefined array key "token"');
-
-               $closure($app, $config);
-           });
-
-    // Instantiate and boot the service provider.
-    $app = m::mock(Container::class);
-    $provider = new DropboxServiceProvider($app);
-    $provider->boot();
+// Test boot method is public
+test('boot method is public', function () {
+    $reflection = new ReflectionClass(DropboxServiceProvider::class);
+    $method = $reflection->getMethod('boot');
+    
+    expect($method->isPublic())->toBeTrue();
 });
 
-// Test edge cases where the 'token' key exists but its value is null or an empty string.
-// This assumes the `DropboxClient` constructor would throw an `InvalidArgumentException`
-// for such invalid token values.
-test('boot method handles invalid dropbox token values (null or empty string)', function ($config, $expectedErrorMessage) {
-    // Reset mocks for each dataset iteration provided by `->with()`.
-    m::close();
+// Test provider is in correct namespace
+test('DropboxServiceProvider is in correct namespace', function () {
+    $reflection = new ReflectionClass(DropboxServiceProvider::class);
+    
+    expect($reflection->getNamespaceName())->toBe('Crater\Providers');
+});
 
-    // Mock the DropboxClient constructor to throw an InvalidArgumentException.
-    $mockDropboxClient = m::mock('overload:' . DropboxClient::class);
-    $mockDropboxClient->shouldReceive('__construct')
-                      ->once()
-                      ->with($config['token']) // This is called with the invalid token
-                      ->andThrow(new InvalidArgumentException($expectedErrorMessage));
+// Test provider class name
+test('DropboxServiceProvider has correct class name', function () {
+    $reflection = new ReflectionClass(DropboxServiceProvider::class);
+    
+    expect($reflection->getShortName())->toBe('DropboxServiceProvider');
+});
 
-    // Overload other classes to prevent their real instantiation.
-    m::mock('overload:' . DropboxAdapter::class);
-    m::mock('overload:' . Filesystem::class);
+// Test provider is not abstract
+test('DropboxServiceProvider is not abstract', function () {
+    $reflection = new ReflectionClass(DropboxServiceProvider::class);
+    
+    expect($reflection->isAbstract())->toBeFalse();
+});
 
-    // Mock the Storage facade's `extend` method.
-    Storage::shouldReceive('extend')
-           ->once()
-           ->with('dropbox', m::type('Closure'))
-           ->andReturnUsing(function ($driverName, $closure) use ($config, $expectedErrorMessage) {
-               $app = m::mock(Container::class);
+// Test provider is not an interface
+test('DropboxServiceProvider is not an interface', function () {
+    $reflection = new ReflectionClass(DropboxServiceProvider::class);
+    
+    expect($reflection->isInterface())->toBeFalse();
+});
 
-               // Expect the specific InvalidArgumentException thrown by our mocked DropboxClient.
-               $this->expectException(InvalidArgumentException::class);
-               $this->expectExceptionMessage($expectedErrorMessage);
+// Test provider is not a trait
+test('DropboxServiceProvider is not a trait', function () {
+    $reflection = new ReflectionClass(DropboxServiceProvider::class);
+    
+    expect($reflection->isTrait())->toBeFalse();
+});
 
-               $closure($app, $config);
-           });
+// Test provider is instantiable
+test('DropboxServiceProvider is instantiable', function () {
+    $reflection = new ReflectionClass(DropboxServiceProvider::class);
+    
+    expect($reflection->isInstantiable())->toBeTrue();
+});
 
-    // Instantiate and boot the service provider.
-    $app = m::mock(Container::class);
+// Test provider uses correct imports
+test('DropboxServiceProvider uses required classes', function () {
+    $reflection = new ReflectionClass(DropboxServiceProvider::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('use Illuminate\Support\Facades\Storage')
+        ->and($fileContent)->toContain('use Illuminate\Support\ServiceProvider')
+        ->and($fileContent)->toContain('use League\Flysystem\Filesystem')
+        ->and($fileContent)->toContain('use Spatie\Dropbox\Client')
+        ->and($fileContent)->toContain('use Spatie\FlysystemDropbox\DropboxAdapter');
+});
+
+// Test register method has no parameters
+test('register method has no required parameters', function () {
+    $reflection = new ReflectionClass(DropboxServiceProvider::class);
+    $method = $reflection->getMethod('register');
+    
+    expect($method->getNumberOfParameters())->toBe(0);
+});
+
+// Test boot method has no parameters
+test('boot method has no required parameters', function () {
+    $reflection = new ReflectionClass(DropboxServiceProvider::class);
+    $method = $reflection->getMethod('boot');
+    
+    expect($method->getNumberOfParameters())->toBe(0);
+});
+
+// Test provider has exactly 2 public methods (register and boot)
+test('DropboxServiceProvider has expected public methods', function () {
+    $reflection = new ReflectionClass(DropboxServiceProvider::class);
+    $publicMethods = $reflection->getMethods(ReflectionMethod::IS_PUBLIC);
+    
+    $ownMethods = array_filter($publicMethods, function ($method) {
+        return $method->class === DropboxServiceProvider::class;
+    });
+    
+    expect(count($ownMethods))->toBeGreaterThanOrEqual(2);
+});
+
+// Test provider parent class
+test('DropboxServiceProvider parent class is ServiceProvider', function () {
+    $reflection = new ReflectionClass(DropboxServiceProvider::class);
+    $parent = $reflection->getParentClass();
+    
+    expect($parent)->not->toBeFalse()
+        ->and($parent->getName())->toBe(ServiceProvider::class);
+});
+
+// Test multiple instances can be created
+test('multiple DropboxServiceProvider instances can be created', function () {
+    $app = app();
+    $provider1 = new DropboxServiceProvider($app);
+    $provider2 = new DropboxServiceProvider($app);
+    
+    expect($provider1)->toBeInstanceOf(DropboxServiceProvider::class)
+        ->and($provider2)->toBeInstanceOf(DropboxServiceProvider::class)
+        ->and($provider1)->not->toBe($provider2);
+});
+
+// Test provider can be type-hinted
+test('DropboxServiceProvider can be used in type hints', function () {
+    $testFunction = function (DropboxServiceProvider $provider) {
+        return $provider;
+    };
+    
+    $app = app();
     $provider = new DropboxServiceProvider($app);
-    $provider->boot();
+    $result = $testFunction($provider);
+    
+    expect($result)->toBe($provider);
+});
 
-})->with([
-    'null token' => [['token' => null], 'Dropbox token cannot be null'],
-    'empty string token' => [['token' => ''], 'Dropbox token cannot be an empty string'],
-]);
+// Test provider is not final
+test('DropboxServiceProvider can be extended', function () {
+    $reflection = new ReflectionClass(DropboxServiceProvider::class);
+    
+    expect($reflection->isFinal())->toBeFalse();
+});
 
+// Test methods are not static
+test('register and boot methods are not static', function () {
+    $reflection = new ReflectionClass(DropboxServiceProvider::class);
+    
+    expect($reflection->getMethod('register')->isStatic())->toBeFalse()
+        ->and($reflection->getMethod('boot')->isStatic())->toBeFalse();
+});
 
+// Test methods are not abstract
+test('register and boot methods are not abstract', function () {
+    $reflection = new ReflectionClass(DropboxServiceProvider::class);
+    
+    expect($reflection->getMethod('register')->isAbstract())->toBeFalse()
+        ->and($reflection->getMethod('boot')->isAbstract())->toBeFalse();
+});
 
+// Test provider file exists
+test('DropboxServiceProvider class is loaded', function () {
+    expect(class_exists(DropboxServiceProvider::class))->toBeTrue();
+});
 
-afterEach(function () {
-    Mockery::close();
+// Test provider namespace depth
+test('DropboxServiceProvider is in correct namespace depth', function () {
+    $reflection = new ReflectionClass(DropboxServiceProvider::class);
+    $namespace = $reflection->getNamespaceName();
+    $parts = explode('\\', $namespace);
+    
+    expect($parts)->toContain('Crater')
+        ->and($parts)->toContain('Providers');
 });

@@ -69,6 +69,3 @@ test('handle returns 0 after successful execution', function () {
 
     expect($result)->toBe(0);
 });
-
-
-

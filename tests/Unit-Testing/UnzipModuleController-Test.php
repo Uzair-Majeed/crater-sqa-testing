@@ -124,6 +124,3 @@ test('it handles a null path returned by ModuleInstaller::unzip', function () {
         'path' => $returnedPath, // Expect null in the response as returned by the mock
     ]);
 });
-
-
-

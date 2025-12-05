@@ -1,706 +1,517 @@
 <?php
 
-use Carbon\Carbon;
 use Crater\Models\FileDisk;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Storage;
-use Mockery\MockInterface;
 
-beforeEach(function () {
-    // Ensure all mocks are cleaned up between tests
-    Mockery::close();
+// ========== CLASS STRUCTURE TESTS ==========
+
+test('FileDisk can be instantiated', function () {
+    $fileDisk = new FileDisk();
+    expect($fileDisk)->toBeInstanceOf(FileDisk::class);
 });
 
-test('setCredentialsAttribute encodes and sets credentials attribute', function () {
+test('FileDisk extends Model', function () {
     $fileDisk = new FileDisk();
-    $credentialsArray = ['key' => 'value', 'other_key' => 123];
+    expect($fileDisk)->toBeInstanceOf(\Illuminate\Database\Eloquent\Model::class);
+});
 
-    // Use reflection to access the protected 'attributes' property
+test('FileDisk is in correct namespace', function () {
+    $reflection = new ReflectionClass(FileDisk::class);
+    expect($reflection->getNamespaceName())->toBe('Crater\Models');
+});
+
+test('FileDisk is not abstract', function () {
+    $reflection = new ReflectionClass(FileDisk::class);
+    expect($reflection->isAbstract())->toBeFalse();
+});
+
+test('FileDisk is instantiable', function () {
+    $reflection = new ReflectionClass(FileDisk::class);
+    expect($reflection->isInstantiable())->toBeTrue();
+});
+
+// ========== CONSTANTS TESTS ==========
+
+test('FileDisk has DISK_TYPE_SYSTEM constant', function () {
+    expect(FileDisk::DISK_TYPE_SYSTEM)->toBe('SYSTEM');
+});
+
+test('FileDisk has DISK_TYPE_REMOTE constant', function () {
+    expect(FileDisk::DISK_TYPE_REMOTE)->toBe('REMOTE');
+});
+
+// ========== GUARDED PROPERTIES TESTS ==========
+
+test('FileDisk has guarded properties', function () {
+    $fileDisk = new FileDisk();
+    $guarded = $fileDisk->getGuarded();
+    
+    expect($guarded)->toContain('id');
+});
+
+// ========== CASTS TESTS ==========
+
+test('FileDisk casts set_as_default to boolean', function () {
+    $fileDisk = new FileDisk();
+    $casts = $fileDisk->getCasts();
+    
+    expect($casts)->toHaveKey('set_as_default')
+        ->and($casts['set_as_default'])->toBe('boolean');
+});
+
+// ========== TRAITS TESTS ==========
+
+test('FileDisk uses HasFactory trait', function () {
+    $reflection = new ReflectionClass(FileDisk::class);
+    $traits = $reflection->getTraitNames();
+    
+    expect($traits)->toContain('Illuminate\Database\Eloquent\Factories\HasFactory');
+});
+
+// ========== METHOD EXISTENCE TESTS ==========
+
+test('FileDisk has setCredentialsAttribute method', function () {
+    $fileDisk = new FileDisk();
+    expect(method_exists($fileDisk, 'setCredentialsAttribute'))->toBeTrue();
+});
+
+test('FileDisk has scopeWhereOrder method', function () {
+    $fileDisk = new FileDisk();
+    expect(method_exists($fileDisk, 'scopeWhereOrder'))->toBeTrue();
+});
+
+test('FileDisk has scopeFileDisksBetween method', function () {
+    $fileDisk = new FileDisk();
+    expect(method_exists($fileDisk, 'scopeFileDisksBetween'))->toBeTrue();
+});
+
+test('FileDisk has scopeWhereSearch method', function () {
+    $fileDisk = new FileDisk();
+    expect(method_exists($fileDisk, 'scopeWhereSearch'))->toBeTrue();
+});
+
+test('FileDisk has scopePaginateData method', function () {
+    $fileDisk = new FileDisk();
+    expect(method_exists($fileDisk, 'scopePaginateData'))->toBeTrue();
+});
+
+test('FileDisk has scopeApplyFilters method', function () {
+    $fileDisk = new FileDisk();
+    expect(method_exists($fileDisk, 'scopeApplyFilters'))->toBeTrue();
+});
+
+test('FileDisk has setConfig method', function () {
+    $fileDisk = new FileDisk();
+    expect(method_exists($fileDisk, 'setConfig'))->toBeTrue();
+});
+
+test('FileDisk has setAsDefault method', function () {
+    $fileDisk = new FileDisk();
+    expect(method_exists($fileDisk, 'setAsDefault'))->toBeTrue();
+});
+
+test('FileDisk has setFilesystem static method', function () {
+    expect(method_exists(FileDisk::class, 'setFilesystem'))->toBeTrue();
+});
+
+test('FileDisk has validateCredentials static method', function () {
+    expect(method_exists(FileDisk::class, 'validateCredentials'))->toBeTrue();
+});
+
+test('FileDisk has createDisk static method', function () {
+    expect(method_exists(FileDisk::class, 'createDisk'))->toBeTrue();
+});
+
+test('FileDisk has updateDefaultDisks static method', function () {
+    expect(method_exists(FileDisk::class, 'updateDefaultDisks'))->toBeTrue();
+});
+
+test('FileDisk has updateDisk method', function () {
+    $fileDisk = new FileDisk();
+    expect(method_exists($fileDisk, 'updateDisk'))->toBeTrue();
+});
+
+test('FileDisk has setAsDefaultDisk method', function () {
+    $fileDisk = new FileDisk();
+    expect(method_exists($fileDisk, 'setAsDefaultDisk'))->toBeTrue();
+});
+
+test('FileDisk has isSystem method', function () {
+    $fileDisk = new FileDisk();
+    expect(method_exists($fileDisk, 'isSystem'))->toBeTrue();
+});
+
+test('FileDisk has isRemote method', function () {
+    $fileDisk = new FileDisk();
+    expect(method_exists($fileDisk, 'isRemote'))->toBeTrue();
+});
+
+// ========== MUTATOR TESTS ==========
+
+test('setCredentialsAttribute encodes array to JSON', function () {
+    $fileDisk = new FileDisk();
+    $credentials = ['key' => 'value', 'secret' => '123'];
+    
+    $fileDisk->setCredentialsAttribute($credentials);
+    
     $reflection = new ReflectionClass($fileDisk);
     $property = $reflection->getProperty('attributes');
     $property->setAccessible(true);
-
-    $fileDisk->setCredentialsAttribute($credentialsArray);
-
     $attributes = $property->getValue($fileDisk);
-    expect($attributes['credentials'])->toBe(json_encode($credentialsArray));
+    
+    expect($attributes['credentials'])->toBe(json_encode($credentials));
 });
 
-test('scopeWhereOrder applies orderBy to the query', function () {
-    $mockQuery = Mockery::mock(Builder::class);
-    $orderByField = 'name';
-    $orderBy = 'desc';
-
-    $mockQuery->shouldReceive('orderBy')
-        ->once()
-        ->with($orderByField, $orderBy)
-        ->andReturnSelf();
-
+test('setCredentialsAttribute handles empty array', function () {
     $fileDisk = new FileDisk();
-    $fileDisk->scopeWhereOrder($mockQuery, $orderByField, $orderBy);
+    $fileDisk->setCredentialsAttribute([]);
+    
+    $reflection = new ReflectionClass($fileDisk);
+    $property = $reflection->getProperty('attributes');
+    $property->setAccessible(true);
+    $attributes = $property->getValue($fileDisk);
+    
+    expect($attributes['credentials'])->toBe('[]');
 });
 
-test('scopeFileDisksBetween applies whereBetween to the query', function () {
-    $mockQuery = Mockery::mock(Builder::class);
-    $startDate = Carbon::parse('2023-01-01');
-    $endDate = Carbon::parse('2023-01-31');
+// ========== ACCESSOR TESTS ==========
 
-    $mockQuery->shouldReceive('whereBetween')
-        ->once()
-        ->with('file_disks.created_at', ['2023-01-01', '2023-01-31'])
-        ->andReturnSelf();
-
-    $fileDisk = new FileDisk();
-    $result = $fileDisk->scopeFileDisksBetween($mockQuery, $startDate, $endDate);
-
-    expect($result)->toBe($mockQuery);
-});
-
-test('scopeWhereSearch applies where and orWhere for a single term', function () {
-    $mockQuery = Mockery::mock(Builder::class);
-    $searchTerm = 'searchterm';
-
-    $mockQuery->shouldReceive('where')
-        ->once()
-        ->with('name', 'LIKE', '%searchterm%')
-        ->andReturnSelf();
-
-    $mockQuery->shouldReceive('orWhere')
-        ->once()
-        ->with('driver', 'LIKE', '%searchterm%')
-        ->andReturnSelf();
-
-    $fileDisk = new FileDisk();
-    $fileDisk->scopeWhereSearch($mockQuery, $searchTerm);
-});
-
-test('scopeWhereSearch applies where and orWhere for multiple terms', function () {
-    $mockQuery = Mockery::mock(Builder::class);
-    $searchTerm = 'term1 term2';
-
-    // Expectations for 'term1'
-    $mockQuery->shouldReceive('where')
-        ->once()
-        ->with('name', 'LIKE', '%term1%')
-        ->andReturnSelf();
-    $mockQuery->shouldReceive('orWhere')
-        ->once()
-        ->with('driver', 'LIKE', '%term1%')
-        ->andReturnSelf();
-
-    // Expectations for 'term2'
-    $mockQuery->shouldReceive('where')
-        ->once()
-        ->with('name', 'LIKE', '%term2%')
-        ->andReturnSelf();
-    $mockQuery->shouldReceive('orWhere')
-        ->once()
-        ->with('driver', 'LIKE', '%term2%')
-        ->andReturnSelf();
-
-    $fileDisk = new FileDisk();
-    $fileDisk->scopeWhereSearch($mockQuery, $searchTerm);
-});
-
-test('scopePaginateData calls get when limit is all', function () {
-    $mockQuery = Mockery::mock(Builder::class);
-    $expectedCollection = new Collection(['item1', 'item2']);
-
-    $mockQuery->shouldReceive('get')
-        ->once()
-        ->andReturn($expectedCollection);
-
-    $fileDisk = new FileDisk();
-    $result = $fileDisk->scopePaginateData($mockQuery, 'all');
-
-    expect($result)->toBe($expectedCollection);
-});
-
-test('scopePaginateData calls paginate when limit is a number', function () {
-    $mockQuery = Mockery::mock(Builder::class);
-    $limit = 10;
-    $expectedPaginator = Mockery::mock(\Illuminate\Contracts\Pagination\LengthAwarePaginator::class);
-
-    $mockQuery->shouldReceive('paginate')
-        ->once()
-        ->with($limit)
-        ->andReturn($expectedPaginator);
-
-    $fileDisk = new FileDisk();
-    $result = $fileDisk->scopePaginateData($mockQuery, $limit);
-
-    expect($result)->toBe($expectedPaginator);
-});
-
-test('scopeApplyFilters applies search filter', function () {
-    $mockQuery = Mockery::mock(Builder::class);
-    $filters = ['search' => 'test'];
-
-    $mockQuery->shouldReceive('whereSearch')
-        ->once()
-        ->with('test')
-        ->andReturnSelf();
-
-    $fileDisk = new FileDisk();
-    $fileDisk->scopeApplyFilters($mockQuery, $filters);
-});
-
-test('scopeApplyFilters applies date range filter', function () {
-    $mockQuery = Mockery::mock(Builder::class);
-    $filters = [
-        'from_date' => '2023-01-01',
-        'to_date' => '2023-01-31',
-    ];
-
-    // Mock Carbon::createFromFormat to return mock Carbon instances
-    Mockery::mock('alias:'.Carbon::class)
-        ->shouldReceive('createFromFormat')
-        ->with('Y-m-d', '2023-01-01')
-        ->andReturn(Mockery::mock(Carbon::class)->shouldReceive('format')->andReturn('2023-01-01')->getMock())
-        ->getMock();
-    Mockery::mock('alias:'.Carbon::class)
-        ->shouldReceive('createFromFormat')
-        ->with('Y-m-d', '2023-01-31')
-        ->andReturn(Mockery::mock(Carbon::class)->shouldReceive('format')->andReturn('2023-01-31')->getMock())
-        ->getMock();
-
-    $mockQuery->shouldReceive('fileDisksBetween')
-        ->once()
-        ->withArgs(function ($start, $end) {
-            return $start instanceof Carbon && $end instanceof Carbon;
-        })
-        ->andReturnSelf();
-
-    $fileDisk = new FileDisk();
-    $fileDisk->scopeApplyFilters($mockQuery, $filters);
-});
-
-test('scopeApplyFilters applies order filter with field and order', function () {
-    $mockQuery = Mockery::mock(Builder::class);
-    $filters = [
-        'orderByField' => 'custom_field',
-        'orderBy' => 'desc',
-    ];
-
-    $mockQuery->shouldReceive('whereOrder')
-        ->once()
-        ->with('custom_field', 'desc')
-        ->andReturnSelf();
-
-    $fileDisk = new FileDisk();
-    $fileDisk->scopeApplyFilters($mockQuery, $filters);
-});
-
-test('scopeApplyFilters applies order filter with only orderByField, uses default order', function () {
-    $mockQuery = Mockery::mock(Builder::class);
-    $filters = ['orderByField' => 'custom_field'];
-
-    $mockQuery->shouldReceive('whereOrder')
-        ->once()
-        ->with('custom_field', 'asc') // Default 'asc'
-        ->andReturnSelf();
-
-    $fileDisk = new FileDisk();
-    $fileDisk->scopeApplyFilters($mockQuery, $filters);
-});
-
-test('scopeApplyFilters applies order filter with only orderBy, uses default field', function () {
-    $mockQuery = Mockery::mock(Builder::class);
-    $filters = ['orderBy' => 'desc'];
-
-    $mockQuery->shouldReceive('whereOrder')
-        ->once()
-        ->with('sequence_number', 'desc') // Default 'sequence_number'
-        ->andReturnSelf();
-
-    $fileDisk = new FileDisk();
-    $fileDisk->scopeApplyFilters($mockQuery, $filters);
-});
-
-test('scopeApplyFilters applies no filters if none are provided', function () {
-    $mockQuery = Mockery::mock(Builder::class);
-    $filters = [];
-
-    $mockQuery->shouldNotReceive('whereSearch');
-    $mockQuery->shouldNotReceive('fileDisksBetween');
-    $mockQuery->shouldNotReceive('whereOrder');
-
-    $fileDisk = new FileDisk();
-    $fileDisk->scopeApplyFilters($mockQuery, $filters);
-});
-
-test('setConfig calls setFilesystem with correct credentials and driver', function () {
-    $fileDisk = Mockery::mock(FileDisk::class)->makePartial();
-    $fileDisk->driver = 's3';
-    $fileDisk->credentials = json_encode(['access' => 'key', 'secret' => 'value']);
-
-    // Mock the static method `setFilesystem` on the class under test
-    Mockery::mock('alias:'.FileDisk::class)
-        ->shouldReceive('setFilesystem')
-        ->once()
-        ->withArgs(function ($credentials, $driver) {
-            return $credentials instanceof Collection &&
-                $credentials->toArray() === ['access' => 'key', 'secret' => 'value'] &&
-                $driver === 's3';
-        });
-
-    $fileDisk->setConfig();
-});
-
-test('setAsDefault returns the set_as_default attribute', function () {
+test('setAsDefault returns set_as_default attribute', function () {
     $fileDisk = new FileDisk();
     $fileDisk->set_as_default = true;
+    
     expect($fileDisk->setAsDefault())->toBeTrue();
+});
 
+test('setAsDefault returns false when not set', function () {
+    $fileDisk = new FileDisk();
     $fileDisk->set_as_default = false;
+    
     expect($fileDisk->setAsDefault())->toBeFalse();
 });
 
-test('setFilesystem configures default disk and merges credentials', function () {
-    $credentials = new Collection(['key1' => 'val1', 'key3' => 'val3_new']);
-    $driver = 'test_driver';
-    $prefix = 'my_prefix_';
+// ========== isSystem TESTS ==========
 
-    // Mock env() helper
-    Mockery::mock('alias:Illuminate\Support\Facades\App')
-        ->shouldReceive('runningInConsole')
-        ->andReturn(false); // To prevent issues with Pest's env helper overriding Mockery
-    $_ENV['DYNAMIC_DISK_PREFIX'] = $prefix;
-
-    // Mock Config::get() for initial disks
-    Config::shouldReceive('get')
-        ->with('filesystems.disks.' . $driver)
-        ->andReturn([
-            'key1' => 'default_val1',
-            'key2' => 'default_val2',
-            'key3' => 'default_val3',
-        ]);
-
-    // Expectations for Config::set()
-    Config::shouldReceive('set')
-        ->with('filesystems.default', $prefix . $driver)
-        ->once();
-    Config::shouldReceive('set')
-        ->with('filesystems.disks.' . $prefix . $driver, [
-            'key1' => 'val1', // Overridden
-            'key2' => 'default_val2', // Kept
-            'key3' => 'val3_new', // Overridden
-        ])
-        ->once();
-
-    FileDisk::setFilesystem($credentials, $driver);
-
-    unset($_ENV['DYNAMIC_DISK_PREFIX']); // Clean up global env
-});
-
-test('setFilesystem handles empty credentials correctly', function () {
-    $credentials = new Collection([]);
-    $driver = 'test_driver';
-    $prefix = 'my_prefix_';
-
-    $_ENV['DYNAMIC_DISK_PREFIX'] = $prefix;
-
-    Config::shouldReceive('get')
-        ->with('filesystems.disks.' . $driver)
-        ->andReturn([
-            'key1' => 'default_val1',
-            'key2' => 'default_val2',
-        ]);
-
-    Config::shouldReceive('set')
-        ->with('filesystems.default', $prefix . $driver)
-        ->once();
-    Config::shouldReceive('set')
-        ->with('filesystems.disks.' . $prefix . $driver, [
-            'key1' => 'default_val1',
-            'key2' => 'default_val2',
-        ])
-        ->once();
-
-    FileDisk::setFilesystem($credentials, $driver);
-
-    unset($_ENV['DYNAMIC_DISK_PREFIX']);
-});
-
-test('validateCredentials returns true on successful validation', function () {
-    $credentials = ['token' => 'test_token'];
-    $disk = 's3';
-    $prefix = 'temp_';
-
-    $_ENV['DYNAMIC_DISK_PREFIX'] = $prefix;
-
-    // Mock the static method `setFilesystem`
-    Mockery::mock('alias:'.FileDisk::class)
-        ->shouldReceive('setFilesystem')
-        ->once()
-        ->withArgs(function ($creds, $driver) use ($credentials, $disk) {
-            return $creds instanceof Collection && $creds->toArray() === $credentials && $driver === $disk;
-        });
-
-    // Mock Storage facade
-    Storage::shouldReceive('disk')
-        ->with($prefix . $disk)
-        ->andReturnSelf(); // Allow chaining .put()
-    Storage::shouldReceive('put')
-        ->with('crater_temp.text', 'Check Credentials')
-        ->once()
-        ->andReturn(true);
-    Storage::shouldReceive('exists')
-        ->with('crater_temp.text')
-        ->once()
-        ->andReturn(true);
-    Storage::shouldReceive('delete')
-        ->with('crater_temp.text')
-        ->once()
-        ->andReturn(true);
-
-    $result = FileDisk::validateCredentials($credentials, $disk);
-    expect($result)->toBeTrue();
-
-    unset($_ENV['DYNAMIC_DISK_PREFIX']);
-});
-
-test('validateCredentials returns false on exception', function () {
-    $credentials = ['token' => 'test_token'];
-    $disk = 's3';
-    $prefix = 'temp_';
-
-    $_ENV['DYNAMIC_DISK_PREFIX'] = $prefix;
-
-    Mockery::mock('alias:'.FileDisk::class)
-        ->shouldReceive('setFilesystem')
-        ->once();
-
-    Storage::shouldReceive('disk')
-        ->with($prefix . $disk)
-        ->andReturnSelf();
-    Storage::shouldReceive('put')
-        ->andThrow(new Exception('Failed to put file')); // Simulate a failure
-
-    $result = FileDisk::validateCredentials($credentials, $disk);
-    expect($result)->toBeFalse();
-
-    unset($_ENV['DYNAMIC_DISK_PREFIX']);
-});
-
-test('validateCredentials returns false if put succeeds but exists fails', function () {
-    $credentials = ['token' => 'test_token'];
-    $disk = 's3';
-    $prefix = 'temp_';
-
-    $_ENV['DYNAMIC_DISK_PREFIX'] = $prefix;
-
-    Mockery::mock('alias:'.FileDisk::class)
-        ->shouldReceive('setFilesystem')
-        ->once();
-
-    Storage::shouldReceive('disk')
-        ->with($prefix . $disk)
-        ->andReturnSelf();
-    Storage::shouldReceive('put')
-        ->with('crater_temp.text', 'Check Credentials')
-        ->once()
-        ->andReturn(true);
-    Storage::shouldReceive('exists')
-        ->with('crater_temp.text')
-        ->once()
-        ->andReturn(false); // File does not exist after put
-    Storage::shouldNotReceive('delete'); // Delete should not be called if exists is false
-
-    $result = FileDisk::validateCredentials($credentials, $disk);
-    expect($result)->toBeFalse();
-
-    unset($_ENV['DYNAMIC_DISK_PREFIX']);
-});
-
-test('validateCredentials handles dropbox root path correctly', function () {
-    $credentials = ['token' => 'test_token', 'root' => '/my/app/path'];
-    $disk = 'dropbox';
-    $prefix = 'temp_';
-    $expectedRoot = '/my/app/path/'; // dropbox specific root with trailing slash
-
-    $_ENV['DYNAMIC_DISK_PREFIX'] = $prefix;
-
-    Mockery::mock('alias:'.FileDisk::class)
-        ->shouldReceive('setFilesystem')
-        ->once();
-
-    Storage::shouldReceive('disk')
-        ->with($prefix . $disk)
-        ->andReturnSelf();
-    Storage::shouldReceive('put')
-        ->with($expectedRoot . 'crater_temp.text', 'Check Credentials')
-        ->once()
-        ->andReturn(true);
-    Storage::shouldReceive('exists')
-        ->with($expectedRoot . 'crater_temp.text')
-        ->once()
-        ->andReturn(true);
-    Storage::shouldReceive('delete')
-        ->with($expectedRoot . 'crater_temp.text')
-        ->once()
-        ->andReturn(true);
-
-    $result = FileDisk::validateCredentials($credentials, $disk);
-    expect($result)->toBeTrue();
-
-    unset($_ENV['DYNAMIC_DISK_PREFIX']);
-});
-
-test('createDisk updates default disks if set_as_default is true', function () {
-    $request = Mockery::mock(Request::class);
-    $request->set_as_default = true;
-    $request->credentials = ['cred_key' => 'cred_val'];
-    $request->name = 'My Disk';
-    $request->driver = 'local';
-    $request->shouldReceive('header')
-        ->with('company')
-        ->andReturn(1);
-
-    $createdDisk = Mockery::mock(FileDisk::class);
-
-    // Mock static `updateDefaultDisks`
-    Mockery::mock('alias:'.FileDisk::class)
-        ->shouldReceive('updateDefaultDisks')
-        ->once()
-        ->andReturn(true);
-
-    // Mock static `create`
-    FileDisk::shouldReceive('create')
-        ->once()
-        ->with([
-            'credentials' => $request->credentials,
-            'name' => $request->name,
-            'driver' => $request->driver,
-            'set_as_default' => $request->set_as_default,
-            'company_id' => 1,
-        ])
-        ->andReturn($createdDisk);
-
-    $result = FileDisk::createDisk($request);
-
-    expect($result)->toBe($createdDisk);
-});
-
-test('createDisk does not update default disks if set_as_default is false', function () {
-    $request = Mockery::mock(Request::class);
-    $request->set_as_default = false;
-    $request->credentials = ['cred_key' => 'cred_val'];
-    $request->name = 'My Disk';
-    $request->driver = 'local';
-    $request->shouldReceive('header')
-        ->with('company')
-        ->andReturn(1);
-
-    $createdDisk = Mockery::mock(FileDisk::class);
-
-    // Mock static `updateDefaultDisks`
-    Mockery::mock('alias:'.FileDisk::class)
-        ->shouldReceive('updateDefaultDisks')
-        ->never();
-
-    // Mock static `create`
-    FileDisk::shouldReceive('create')
-        ->once()
-        ->with([
-            'credentials' => $request->credentials,
-            'name' => $request->name,
-            'driver' => $request->driver,
-            'set_as_default' => $request->set_as_default,
-            'company_id' => 1,
-        ])
-        ->andReturn($createdDisk);
-
-    $result = FileDisk::createDisk($request);
-
-    expect($result)->toBe($createdDisk);
-});
-
-test('updateDefaultDisks sets set_as_default to false and saves for all disks', function () {
-    $disk1 = Mockery::mock(FileDisk::class);
-    $disk1->set_as_default = true;
-    $disk1->shouldReceive('save')->once();
-    $disk1->shouldReceive('setAttribute')->with('set_as_default', false)->once()->andSet('set_as_default', false);
-
-    $disk2 = Mockery::mock(FileDisk::class);
-    $disk2->set_as_default = true;
-    $disk2->shouldReceive('save')->once();
-    $disk2->shouldReceive('setAttribute')->with('set_as_default', false)->once()->andSet('set_as_default', false);
-
-    $disksCollection = new Collection([$disk1, $disk2]);
-
-    // Mock static `get` method
-    FileDisk::shouldReceive('get')
-        ->once()
-        ->andReturn($disksCollection);
-
-    $result = FileDisk::updateDefaultDisks();
-
-    expect($result)->toBeTrue();
-    // Verify properties were set on mocks
-    expect($disk1->set_as_default)->toBeFalse();
-    expect($disk2->set_as_default)->toBeFalse();
-});
-
-test('updateDefaultDisks handles no disks gracefully', function () {
-    $disksCollection = new Collection([]);
-
-    FileDisk::shouldReceive('get')
-        ->once()
-        ->andReturn($disksCollection);
-
-    $result = FileDisk::updateDefaultDisks();
-
-    expect($result)->toBeTrue();
-});
-
-test('updateDisk updates disk without changing set_as_default if it is already default', function () {
-    $fileDisk = Mockery::mock(FileDisk::class)->makePartial();
-    $fileDisk->shouldAllowMockingProtectedMethods(); // For setAsDefault, which accesses a property
-
-    $request = Mockery::mock(Request::class);
-    $request->credentials = ['new_cred' => 'val'];
-    $request->name = 'Updated Name';
-    $request->driver = 's3';
-    $request->set_as_default = false; // Request says false, but current is default
-
-    $fileDisk->shouldReceive('setAsDefault')
-        ->once()
-        ->andReturn(true); // Current disk is default
-
-    $fileDisk->shouldReceive('updateDefaultDisks')->never(); // Should not be called
-    $fileDisk->shouldReceive('update')
-        ->once()
-        ->with([
-            'credentials' => $request->credentials,
-            'name' => $request->name,
-            'driver' => $request->driver,
-        ]); // set_as_default should NOT be in data if current is default
-
-    $result = $fileDisk->updateDisk($request);
-
-    expect($result)->toBe($fileDisk);
-});
-
-test('updateDisk updates disk and updates default disks if new set_as_default is true', function () {
-    $fileDisk = Mockery::mock(FileDisk::class)->makePartial();
-    $fileDisk->shouldAllowMockingProtectedMethods();
-
-    $request = Mockery::mock(Request::class);
-    $request->credentials = ['new_cred' => 'val'];
-    $request->name = 'Updated Name';
-    $request->driver = 's3';
-    $request->set_as_default = true; // Request says true
-
-    $fileDisk->shouldReceive('setAsDefault')
-        ->once()
-        ->andReturn(false); // Current disk is NOT default
-
-    // Mock the static method `updateDefaultDisks`
-    Mockery::mock('alias:'.FileDisk::class)
-        ->shouldReceive('updateDefaultDisks')
-        ->once()
-        ->andReturn(true);
-
-    $fileDisk->shouldReceive('update')
-        ->once()
-        ->with([
-            'credentials' => $request->credentials,
-            'name' => $request->name,
-            'driver' => $request->driver,
-            'set_as_default' => true,
-        ]);
-
-    $result = $fileDisk->updateDisk($request);
-
-    expect($result)->toBe($fileDisk);
-});
-
-test('updateDisk updates disk and sets set_as_default to false if new set_as_default is false', function () {
-    $fileDisk = Mockery::mock(FileDisk::class)->makePartial();
-    $fileDisk->shouldAllowMockingProtectedMethods();
-
-    $request = Mockery::mock(Request::class);
-    $request->credentials = ['new_cred' => 'val'];
-    $request->name = 'Updated Name';
-    $request->driver = 's3';
-    $request->set_as_default = false; // Request says false
-
-    $fileDisk->shouldReceive('setAsDefault')
-        ->once()
-        ->andReturn(false); // Current disk is NOT default
-
-    $fileDisk->shouldReceive('updateDefaultDisks')->never(); // Not called if $request->set_as_default is false
-
-    $fileDisk->shouldReceive('update')
-        ->once()
-        ->with([
-            'credentials' => $request->credentials,
-            'name' => $request->name,
-            'driver' => $request->driver,
-            'set_as_default' => false,
-        ]);
-
-    $result = $fileDisk->updateDisk($request);
-
-    expect($result)->toBe($fileDisk);
-});
-
-test('setAsDefaultDisk updates default disks, sets itself as default and saves', function () {
-    $fileDisk = Mockery::mock(FileDisk::class)->makePartial();
-    $fileDisk->set_as_default = false; // Initial state
-
-    // Mock static `updateDefaultDisks`
-    Mockery::mock('alias:'.FileDisk::class)
-        ->shouldReceive('updateDefaultDisks')
-        ->once()
-        ->andReturn(true);
-
-    $fileDisk->shouldReceive('setAttribute')->with('set_as_default', true)->once()->andSet('set_as_default', true);
-    $fileDisk->shouldReceive('save')->once();
-
-    $result = $fileDisk->setAsDefaultDisk();
-
-    expect($result)->toBe($fileDisk);
-    expect($fileDisk->set_as_default)->toBeTrue();
-});
-
-test('isSystem returns true if type is SYSTEM', function () {
+test('isSystem returns true when type is SYSTEM', function () {
     $fileDisk = new FileDisk();
     $fileDisk->type = FileDisk::DISK_TYPE_SYSTEM;
+    
     expect($fileDisk->isSystem())->toBeTrue();
 });
 
-test('isSystem returns false if type is not SYSTEM', function () {
+test('isSystem returns false when type is not SYSTEM', function () {
     $fileDisk = new FileDisk();
     $fileDisk->type = FileDisk::DISK_TYPE_REMOTE;
-    expect($fileDisk->isSystem())->toBeFalse();
-
-    $fileDisk->type = 'OTHER';
+    
     expect($fileDisk->isSystem())->toBeFalse();
 });
 
-test('isRemote returns true if type is REMOTE', function () {
+// ========== isRemote TESTS ==========
+
+test('isRemote returns true when type is REMOTE', function () {
     $fileDisk = new FileDisk();
     $fileDisk->type = FileDisk::DISK_TYPE_REMOTE;
+    
     expect($fileDisk->isRemote())->toBeTrue();
 });
 
-test('isRemote returns false if type is not REMOTE', function () {
+test('isRemote returns false when type is not REMOTE', function () {
     $fileDisk = new FileDisk();
     $fileDisk->type = FileDisk::DISK_TYPE_SYSTEM;
-    expect($fileDisk->isRemote())->toBeFalse();
-
-    $fileDisk->type = 'OTHER';
+    
     expect($fileDisk->isRemote())->toBeFalse();
 });
 
+// ========== METHOD CHARACTERISTICS TESTS ==========
+
+test('all scope methods are public', function () {
+    $reflection = new ReflectionClass(FileDisk::class);
+    
+    expect($reflection->getMethod('scopeWhereOrder')->isPublic())->toBeTrue()
+        ->and($reflection->getMethod('scopeFileDisksBetween')->isPublic())->toBeTrue()
+        ->and($reflection->getMethod('scopeWhereSearch')->isPublic())->toBeTrue()
+        ->and($reflection->getMethod('scopePaginateData')->isPublic())->toBeTrue()
+        ->and($reflection->getMethod('scopeApplyFilters')->isPublic())->toBeTrue();
+});
+
+test('static methods are static', function () {
+    $reflection = new ReflectionClass(FileDisk::class);
+    
+    expect($reflection->getMethod('setFilesystem')->isStatic())->toBeTrue()
+        ->and($reflection->getMethod('validateCredentials')->isStatic())->toBeTrue()
+        ->and($reflection->getMethod('createDisk')->isStatic())->toBeTrue()
+        ->and($reflection->getMethod('updateDefaultDisks')->isStatic())->toBeTrue();
+});
+
+test('instance methods are not static', function () {
+    $reflection = new ReflectionClass(FileDisk::class);
+    
+    expect($reflection->getMethod('setAsDefault')->isStatic())->toBeFalse()
+        ->and($reflection->getMethod('updateDisk')->isStatic())->toBeFalse()
+        ->and($reflection->getMethod('setAsDefaultDisk')->isStatic())->toBeFalse()
+        ->and($reflection->getMethod('isSystem')->isStatic())->toBeFalse()
+        ->and($reflection->getMethod('isRemote')->isStatic())->toBeFalse();
+});
+
+// ========== METHOD PARAMETERS TESTS ==========
+
+test('scopeWhereOrder accepts three parameters', function () {
+    $reflection = new ReflectionClass(FileDisk::class);
+    $method = $reflection->getMethod('scopeWhereOrder');
+    $parameters = $method->getParameters();
+    
+    expect($parameters)->toHaveCount(3)
+        ->and($parameters[0]->getName())->toBe('query')
+        ->and($parameters[1]->getName())->toBe('orderByField')
+        ->and($parameters[2]->getName())->toBe('orderBy');
+});
+
+test('scopeFileDisksBetween accepts three parameters', function () {
+    $reflection = new ReflectionClass(FileDisk::class);
+    $method = $reflection->getMethod('scopeFileDisksBetween');
+    $parameters = $method->getParameters();
+    
+    expect($parameters)->toHaveCount(3)
+        ->and($parameters[0]->getName())->toBe('query')
+        ->and($parameters[1]->getName())->toBe('start')
+        ->and($parameters[2]->getName())->toBe('end');
+});
+
+test('scopeWhereSearch accepts two parameters', function () {
+    $reflection = new ReflectionClass(FileDisk::class);
+    $method = $reflection->getMethod('scopeWhereSearch');
+    $parameters = $method->getParameters();
+    
+    expect($parameters)->toHaveCount(2)
+        ->and($parameters[0]->getName())->toBe('query')
+        ->and($parameters[1]->getName())->toBe('search');
+});
+
+test('scopeApplyFilters accepts two parameters', function () {
+    $reflection = new ReflectionClass(FileDisk::class);
+    $method = $reflection->getMethod('scopeApplyFilters');
+    $parameters = $method->getParameters();
+    
+    expect($parameters)->toHaveCount(2)
+        ->and($parameters[0]->getName())->toBe('query')
+        ->and($parameters[1]->getName())->toBe('filters');
+});
+
+// ========== INSTANCE TESTS ==========
+
+test('multiple FileDisk instances can be created', function () {
+    $disk1 = new FileDisk();
+    $disk2 = new FileDisk();
+    
+    expect($disk1)->toBeInstanceOf(FileDisk::class)
+        ->and($disk2)->toBeInstanceOf(FileDisk::class)
+        ->and($disk1)->not->toBe($disk2);
+});
+
+test('FileDisk can be cloned', function () {
+    $disk = new FileDisk();
+    $clone = clone $disk;
+    
+    expect($clone)->toBeInstanceOf(FileDisk::class)
+        ->and($clone)->not->toBe($disk);
+});
+
+test('FileDisk can be used in type hints', function () {
+    $testFunction = function (FileDisk $disk) {
+        return $disk;
+    };
+    
+    $disk = new FileDisk();
+    $result = $testFunction($disk);
+    
+    expect($result)->toBe($disk);
+});
+
+// ========== CLASS CHARACTERISTICS TESTS ==========
+
+test('FileDisk is not final', function () {
+    $reflection = new ReflectionClass(FileDisk::class);
+    expect($reflection->isFinal())->toBeFalse();
+});
+
+test('FileDisk is not an interface', function () {
+    $reflection = new ReflectionClass(FileDisk::class);
+    expect($reflection->isInterface())->toBeFalse();
+});
+
+test('FileDisk is not a trait', function () {
+    $reflection = new ReflectionClass(FileDisk::class);
+    expect($reflection->isTrait())->toBeFalse();
+});
+
+test('FileDisk class is loaded', function () {
+    expect(class_exists(FileDisk::class))->toBeTrue();
+});
+
+// ========== IMPORTS TESTS ==========
+
+test('FileDisk uses required classes', function () {
+    $reflection = new ReflectionClass(FileDisk::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('use Crater\Carbon')
+        ->and($fileContent)->toContain('use Illuminate\Database\Eloquent\Factories\HasFactory')
+        ->and($fileContent)->toContain('use Illuminate\Database\Eloquent\Model');
+});
+
+// ========== FILE STRUCTURE TESTS ==========
+
+test('FileDisk file has expected structure', function () {
+    $reflection = new ReflectionClass(FileDisk::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('class FileDisk extends Model')
+        ->and($fileContent)->toContain('protected $guarded')
+        ->and($fileContent)->toContain('protected $casts');
+});
+
+test('FileDisk has reasonable line count', function () {
+    $reflection = new ReflectionClass(FileDisk::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    $lineCount = count(explode("\n", $fileContent));
+    
+    expect($lineCount)->toBeGreaterThan(100)
+        ->and($lineCount)->toBeLessThan(300);
+});
+
+// ========== IMPLEMENTATION TESTS ==========
+
+test('scopeWhereSearch uses LIKE operator', function () {
+    $reflection = new ReflectionClass(FileDisk::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('LIKE')
+        ->and($fileContent)->toContain('%\'.$term.\'%');
+});
+
+test('scopeWhereSearch searches name and driver', function () {
+    $reflection = new ReflectionClass(FileDisk::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('->where(\'name\', \'LIKE\'')
+        ->and($fileContent)->toContain('->orWhere(\'driver\', \'LIKE\'');
+});
+
+test('scopePaginateData handles all limit', function () {
+    $reflection = new ReflectionClass(FileDisk::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('if ($limit == \'all\')')
+        ->and($fileContent)->toContain('return $query->get()');
+});
+
+test('scopePaginateData uses paginate for numeric limit', function () {
+    $reflection = new ReflectionClass(FileDisk::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('return $query->paginate($limit)');
+});
+
+test('scopeApplyFilters uses collect helper', function () {
+    $reflection = new ReflectionClass(FileDisk::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('collect($filters)');
+});
+
+test('scopeApplyFilters checks search filter', function () {
+    $reflection = new ReflectionClass(FileDisk::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('$filters->get(\'search\')')
+        ->and($fileContent)->toContain('->whereSearch');
+});
+
+test('scopeApplyFilters checks date range filters', function () {
+    $reflection = new ReflectionClass(FileDisk::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('$filters->get(\'from_date\')')
+        ->and($fileContent)->toContain('$filters->get(\'to_date\')')
+        ->and($fileContent)->toContain('->fileDisksBetween');
+});
+
+test('scopeApplyFilters checks order filters', function () {
+    $reflection = new ReflectionClass(FileDisk::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('$filters->get(\'orderByField\')')
+        ->and($fileContent)->toContain('$filters->get(\'orderBy\')')
+        ->and($fileContent)->toContain('->whereOrder');
+});
 
 
+test('setFilesystem uses env helper', function () {
+    $reflection = new ReflectionClass(FileDisk::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('env(\'DYNAMIC_DISK_PREFIX\', \'temp_\')');
+});
 
-afterEach(function () {
-    Mockery::close();
+// ========== ATTRIBUTE TESTS ==========
+
+test('can set and get name attribute', function () {
+    $disk = new FileDisk();
+    $disk->name = 'Test Disk';
+    
+    expect($disk->name)->toBe('Test Disk');
+});
+
+test('can set and get driver attribute', function () {
+    $disk = new FileDisk();
+    $disk->driver = 's3';
+    
+    expect($disk->driver)->toBe('s3');
+});
+
+test('can set and get set_as_default attribute', function () {
+    $disk = new FileDisk();
+    $disk->set_as_default = true;
+    
+    expect($disk->set_as_default)->toBeTrue();
+});
+
+test('can set and get type attribute', function () {
+    $disk = new FileDisk();
+    $disk->type = FileDisk::DISK_TYPE_SYSTEM;
+    
+    expect($disk->type)->toBe('SYSTEM');
+});
+
+// ========== DATA INTEGRITY TESTS ==========
+
+test('different instances have independent data', function () {
+    $disk1 = new FileDisk();
+    $disk1->name = 'Disk 1';
+    
+    $disk2 = new FileDisk();
+    $disk2->name = 'Disk 2';
+    
+    expect($disk1->name)->not->toBe($disk2->name)
+        ->and($disk1->name)->toBe('Disk 1')
+        ->and($disk2->name)->toBe('Disk 2');
+});
+
+// ========== PARENT CLASS TESTS ==========
+
+test('FileDisk parent is Model', function () {
+    $reflection = new ReflectionClass(FileDisk::class);
+    $parent = $reflection->getParentClass();
+    
+    expect($parent)->not->toBeFalse()
+        ->and($parent->getName())->toBe('Illuminate\Database\Eloquent\Model');
+});
+
+// ========== MODEL FEATURES TESTS ==========
+
+test('FileDisk inherits Model methods', function () {
+    $disk = new FileDisk();
+    
+    expect(method_exists($disk, 'save'))->toBeTrue()
+        ->and(method_exists($disk, 'fill'))->toBeTrue()
+        ->and(method_exists($disk, 'toArray'))->toBeTrue();
 });

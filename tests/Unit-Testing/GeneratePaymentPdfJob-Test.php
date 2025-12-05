@@ -27,7 +27,6 @@ test('constructor correctly assigns payment and deleteExistingFile properties', 
         $result = $job->handle();
 
         expect($result)->toBe(0);
-        Mockery::close();
     });
 
     test('handle method calls generatePDF on payment with correct arguments and returns 0 when deleteExistingFile is false', function () {
@@ -46,7 +45,6 @@ test('constructor correctly assigns payment and deleteExistingFile properties', 
         $result = $job->handle();
 
         expect($result)->toBe(0);
-        Mockery::close();
     });
 
     test('handle method calls generatePDF with default deleteExistingFile (false) when not explicitly provided', function () {
@@ -65,7 +63,6 @@ test('constructor correctly assigns payment and deleteExistingFile properties', 
         $result = $job->handle();
 
         expect($result)->toBe(0);
-        Mockery::close();
     });
 
     test('handle method works correctly when payment_number is null', function () {
@@ -84,7 +81,6 @@ test('constructor correctly assigns payment and deleteExistingFile properties', 
         $result = $job->handle();
 
         expect($result)->toBe(0);
-        Mockery::close();
     });
 
     test('handle method works correctly when payment_number is an empty string', function () {
@@ -103,10 +99,7 @@ test('constructor correctly assigns payment and deleteExistingFile properties', 
         $result = $job->handle();
 
         expect($result)->toBe(0);
-        Mockery::close();
     });
-
-
 
 afterEach(function () {
     Mockery::close();

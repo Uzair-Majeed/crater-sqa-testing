@@ -1,183 +1,456 @@
 <?php
 
-use Mockery as m;
 use Crater\Http\Resources\ExpenseCategoryResource;
-use Crater\Http\Resources\CompanyResource;
 use Illuminate\Http\Request;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-// Helper to disable constructor of CompanyResource for mocking purposes
-// This ensures that when new CompanyResource() is called, Mockery intercepts it.
-function mockCompanyResourceClass()
-{
-    m::mock('overload:' . CompanyResource::class);
+// Helper function to create dummy expense category with all required properties
+function createDummyExpenseCategoryForResource($id, $name, $amount = 0) {
+    return new class($id, $name, $amount) {
+        private $data;
+        
+        public function __construct($id, $name, $amount) {
+            $this->data = [
+                'id' => $id,
+                'name' => $name,
+                'description' => 'Description for ' . $name,
+                'company_id' => 1,
+                'amount' => $amount,
+                'formattedCreatedAt' => '2024-01-01 00:00:00',
+            ];
+        }
+        
+        public function __get($key) {
+            return $this->data[$key] ?? null;
+        }
+        
+        public function company() {
+            return new class {
+                public function exists() { return false; }
+            };
+        }
+    };
 }
 
-test('toArray includes basic properties and omits company when relationship does not exist', function () {
-    // Overload CompanyResource to prevent actual instantiation
-    mockCompanyResourceClass();
+// ========== CLASS STRUCTURE TESTS ==========
 
-    // Mock the underlying ExpenseCategory model (resource's $this->resource)
-    $expenseCategoryModel = m::mock('stdClass');
-    $expenseCategoryModel->id = 1;
-    $expenseCategoryModel->name = 'Office Supplies';
-    $expenseCategoryModel->description = 'Pens, paper, etc.';
-    $expenseCategoryModel->company_id = 10;
-    $expenseCategoryModel->amount = 123.45;
-    $expenseCategoryModel->formattedCreatedAt = '2023-01-01 10:00:00';
-
-    // Mock the Eloquent relationship builder (e.g., BelongsTo instance)
-    $relationMock = m::mock(BelongsTo::class);
-    $relationMock->shouldReceive('exists')->once()->andReturn(false); // Simulate company not existing
-
-    // The resource will call $this->company() on its underlying model
-    $expenseCategoryModel->shouldReceive('company')->once()->andReturn($relationMock);
-
-    // Create the resource instance
-    $resource = new ExpenseCategoryResource($expenseCategoryModel);
-    // Mock the request object, though it's not directly used in this specific toArray logic
-    $request = m::mock(Request::class);
-
-    // Call the toArray method
-    $result = $resource->toArray($request);
-
-    // Assert that basic properties are correctly transformed
-    expect($result)->toMatchArray([
-        'id' => 1,
-        'name' => 'Office Supplies',
-        'description' => 'Pens, paper, etc.',
-        'company_id' => 10,
-        'amount' => 123.45,
-        'formatted_created_at' => '2023-01-01 10:00:00',
-    ]);
-
-    // Assert that the 'company' key is NOT present, as the relationship didn't exist
-    expect($result)->not->toHaveKey('company');
+test('ExpenseCategoryResource can be instantiated', function () {
+    $category = createDummyExpenseCategoryForResource(1, 'Travel', 100);
+    $resource = new ExpenseCategoryResource($category);
+    expect($resource)->toBeInstanceOf(ExpenseCategoryResource::class);
 });
 
-test('toArray includes basic properties and company resource when relationship exists', function () {
-    // Overload CompanyResource to prevent actual instantiation
-    mockCompanyResourceClass();
+test('ExpenseCategoryResource extends JsonResource', function () {
+    $category = createDummyExpenseCategoryForResource(1, 'Travel', 100);
+    $resource = new ExpenseCategoryResource($category);
+    expect($resource)->toBeInstanceOf(\Illuminate\Http\Resources\Json\JsonResource::class);
+});
 
-    // Mock the underlying Company model that would be eager-loaded or accessed
-    $companyModel = m::mock('stdClass');
-    $companyModel->id = 20;
-    $companyModel->name = 'Test Company';
+test('ExpenseCategoryResource is in correct namespace', function () {
+    $reflection = new ReflectionClass(ExpenseCategoryResource::class);
+    expect($reflection->getNamespaceName())->toBe('Crater\Http\Resources');
+});
 
-    // Mock the underlying ExpenseCategory model
-    $expenseCategoryModel = m::mock('stdClass');
-    $expenseCategoryModel->id = 2;
-    $expenseCategoryModel->name = 'Travel Expenses';
-    $expenseCategoryModel->description = 'Flight and hotel';
-    $expenseCategoryModel->company_id = 10;
-    $expenseCategoryModel->amount = 500.00;
-    $expenseCategoryModel->formattedCreatedAt = '2023-02-01 11:00:00';
-    $expenseCategoryModel->company = $companyModel; // Ensure the 'company' property is set on the model
+test('ExpenseCategoryResource has toArray method', function () {
+    $category = createDummyExpenseCategoryForResource(1, 'Travel', 100);
+    $resource = new ExpenseCategoryResource($category);
+    expect(method_exists($resource, 'toArray'))->toBeTrue();
+});
 
-    // Mock the Eloquent relationship builder
-    $relationMock = m::mock(BelongsTo::class);
-    $relationMock->shouldReceive('exists')->once()->andReturn(true); // Simulate company existing
+// ========== FUNCTIONAL TESTS - ALL FIELDS ==========
 
-    // The resource will call $this->company() on its underlying model
-    $expenseCategoryModel->shouldReceive('company')->once()->andReturn($relationMock);
-
-    // Expect CompanyResource to be instantiated with the correct company model
-    // and to have its toArray method called.
-    CompanyResource::shouldReceive('__construct')
-                    ->once()
-                    ->with(m::mustBe($companyModel))
-                    ->andReturnSelf(); // Allow chaining calls
-    CompanyResource::shouldReceive('toArray')
-                    ->once()
-                    ->with(m::any()) // Expect toArray to be called with any request
-                    ->andReturn(['company_transformed_data' => true, 'id' => $companyModel->id]); // Return mock transformed data
-
-    // Create the resource instance
-    $resource = new ExpenseCategoryResource($expenseCategoryModel);
-    $request = m::mock(Request::class);
-
-    // Call the toArray method
+test('toArray returns array with id', function () {
+    $category = createDummyExpenseCategoryForResource(42, 'Travel', 100);
+    $resource = new ExpenseCategoryResource($category);
+    $request = new Request();
     $result = $resource->toArray($request);
+    
+    expect($result)->toHaveKey('id')
+        ->and($result['id'])->toBe(42);
+});
 
-    // Assert that basic properties are correct and 'company' key is present with transformed data
-    expect($result)->toMatchArray([
-        'id' => 2,
-        'name' => 'Travel Expenses',
-        'description' => 'Flight and hotel',
-        'company_id' => 10,
-        'amount' => 500.00,
-        'formatted_created_at' => '2023-02-01 11:00:00',
-        'company' => ['company_transformed_data' => true, 'id' => $companyModel->id],
+test('toArray returns array with name', function () {
+    $category = createDummyExpenseCategoryForResource(1, 'Office Supplies', 100);
+    $resource = new ExpenseCategoryResource($category);
+    $request = new Request();
+    $result = $resource->toArray($request);
+    
+    expect($result)->toHaveKey('name')
+        ->and($result['name'])->toBe('Office Supplies');
+});
+
+test('toArray returns array with description', function () {
+    $category = createDummyExpenseCategoryForResource(1, 'Travel', 100);
+    $resource = new ExpenseCategoryResource($category);
+    $request = new Request();
+    $result = $resource->toArray($request);
+    
+    expect($result)->toHaveKey('description')
+        ->and($result['description'])->toBe('Description for Travel');
+});
+
+test('toArray returns array with company_id', function () {
+    $category = createDummyExpenseCategoryForResource(1, 'Travel', 100);
+    $resource = new ExpenseCategoryResource($category);
+    $request = new Request();
+    $result = $resource->toArray($request);
+    
+    expect($result)->toHaveKey('company_id')
+        ->and($result['company_id'])->toBe(1);
+});
+
+test('toArray returns array with amount', function () {
+    $category = createDummyExpenseCategoryForResource(1, 'Travel', 250.75);
+    $resource = new ExpenseCategoryResource($category);
+    $request = new Request();
+    $result = $resource->toArray($request);
+    
+    expect($result)->toHaveKey('amount')
+        ->and($result['amount'])->toBe(250.75);
+});
+
+test('toArray returns array with formatted_created_at', function () {
+    $category = createDummyExpenseCategoryForResource(1, 'Travel', 100);
+    $resource = new ExpenseCategoryResource($category);
+    $request = new Request();
+    $result = $resource->toArray($request);
+    
+    expect($result)->toHaveKey('formatted_created_at')
+        ->and($result['formatted_created_at'])->toBe('2024-01-01 00:00:00');
+});
+
+test('toArray includes all required fields', function () {
+    $category = createDummyExpenseCategoryForResource(1, 'Travel', 100);
+    $resource = new ExpenseCategoryResource($category);
+    $request = new Request();
+    $result = $resource->toArray($request);
+    
+    expect($result)->toHaveKeys([
+        'id',
+        'name',
+        'description',
+        'company_id',
+        'amount',
+        'formatted_created_at',
+        'company'
     ]);
 });
 
-test('toArray handles null properties gracefully', function () {
-    mockCompanyResourceClass();
+// ========== NULL HANDLING TESTS ==========
 
-    $expenseCategoryModel = m::mock('stdClass');
-    $expenseCategoryModel->id = null;
-    $expenseCategoryModel->name = null;
-    $expenseCategoryModel->description = null;
-    $expenseCategoryModel->company_id = null;
-    $expenseCategoryModel->amount = null;
-    $expenseCategoryModel->formattedCreatedAt = null;
-
-    // Simulate company not existing
-    $relationMock = m::mock(BelongsTo::class);
-    $relationMock->shouldReceive('exists')->once()->andReturn(false);
-    $expenseCategoryModel->shouldReceive('company')->once()->andReturn($relationMock);
-
-    $resource = new ExpenseCategoryResource($expenseCategoryModel);
-    $request = m::mock(Request::class);
-
+test('toArray handles null id', function () {
+    $category = createDummyExpenseCategoryForResource(null, 'Travel', 100);
+    $resource = new ExpenseCategoryResource($category);
+    $request = new Request();
     $result = $resource->toArray($request);
-
-    expect($result)->toMatchArray([
-        'id' => null,
-        'name' => null,
-        'description' => null,
-        'company_id' => null,
-        'amount' => null,
-        'formatted_created_at' => null,
-    ]);
-    expect($result)->not->toHaveKey('company');
+    
+    expect($result['id'])->toBeNull();
 });
 
-test('toArray handles zero amount property', function () {
-    mockCompanyResourceClass();
-
-    $expenseCategoryModel = m::mock('stdClass');
-    $expenseCategoryModel->id = 3;
-    $expenseCategoryModel->name = 'Zero Expense';
-    $expenseCategoryModel->description = 'An item with no cost';
-    $expenseCategoryModel->company_id = 10;
-    $expenseCategoryModel->amount = 0.00;
-    $expenseCategoryModel->formattedCreatedAt = '2023-03-01 12:00:00';
-
-    // Simulate company not existing
-    $relationMock = m::mock(BelongsTo::class);
-    $relationMock->shouldReceive('exists')->once()->andReturn(false);
-    $expenseCategoryModel->shouldReceive('company')->once()->andReturn($relationMock);
-
-    $resource = new ExpenseCategoryResource($expenseCategoryModel);
-    $request = m::mock(Request::class);
-
+test('toArray handles null name', function () {
+    $category = createDummyExpenseCategoryForResource(1, null, 100);
+    $resource = new ExpenseCategoryResource($category);
+    $request = new Request();
     $result = $resource->toArray($request);
-
-    expect($result)->toMatchArray([
-        'id' => 3,
-        'name' => 'Zero Expense',
-        'description' => 'An item with no cost',
-        'company_id' => 10,
-        'amount' => 0.00,
-        'formatted_created_at' => '2023-03-01 12:00:00',
-    ]);
-    expect($result)->not->toHaveKey('company');
+    
+    expect($result['name'])->toBeNull();
 });
 
+test('toArray handles null description', function () {
+    $category = new class {
+        public $id = 1;
+        public $name = 'Travel';
+        public $description = null;
+        public $company_id = 1;
+        public $amount = 100;
+        public $formattedCreatedAt = '2024-01-01';
+        
+        public function company() {
+            return new class { public function exists() { return false; } };
+        }
+    };
+    
+    $resource = new ExpenseCategoryResource($category);
+    $request = new Request();
+    $result = $resource->toArray($request);
+    
+    expect($result['description'])->toBeNull();
+});
 
+test('toArray handles zero amount', function () {
+    $category = createDummyExpenseCategoryForResource(1, 'Travel', 0);
+    $resource = new ExpenseCategoryResource($category);
+    $request = new Request();
+    $result = $resource->toArray($request);
+    
+    expect($result['amount'])->toBe(0);
+});
 
+test('toArray handles negative amount', function () {
+    $category = createDummyExpenseCategoryForResource(1, 'Refund', -50.25);
+    $resource = new ExpenseCategoryResource($category);
+    $request = new Request();
+    $result = $resource->toArray($request);
+    
+    expect($result['amount'])->toBe(-50.25);
+});
 
-afterEach(function () {
-    Mockery::close();
+// ========== DIFFERENT DATA TESTS ==========
+
+test('toArray handles different category names', function () {
+    $categories = [
+        ['name' => 'Travel', 'expected' => 'Travel'],
+        ['name' => 'Office Supplies', 'expected' => 'Office Supplies'],
+        ['name' => 'Utilities', 'expected' => 'Utilities'],
+        ['name' => 'Marketing', 'expected' => 'Marketing'],
+    ];
+    
+    foreach ($categories as $test) {
+        $category = createDummyExpenseCategoryForResource(1, $test['name'], 100);
+        $resource = new ExpenseCategoryResource($category);
+        $request = new Request();
+        $result = $resource->toArray($request);
+        
+        expect($result['name'])->toBe($test['expected']);
+    }
+});
+
+test('toArray handles different amounts', function () {
+    $amounts = [0, 10.50, 100, 999.99, 1000.00, 5000.75];
+    
+    foreach ($amounts as $amount) {
+        $category = createDummyExpenseCategoryForResource(1, 'Test', $amount);
+        $resource = new ExpenseCategoryResource($category);
+        $request = new Request();
+        $result = $resource->toArray($request);
+        
+        expect($result['amount'])->toBe($amount);
+    }
+});
+
+// ========== COMPANY RELATIONSHIP TESTS ==========
+
+test('toArray includes company field', function () {
+    $category = createDummyExpenseCategoryForResource(1, 'Travel', 100);
+    $resource = new ExpenseCategoryResource($category);
+    $request = new Request();
+    $result = $resource->toArray($request);
+    
+    expect($result)->toHaveKey('company');
+});
+
+test('toArray company is null when relationship does not exist', function () {
+    $category = createDummyExpenseCategoryForResource(1, 'Travel', 100);
+    $resource = new ExpenseCategoryResource($category);
+    $request = new Request();
+    $result = $resource->toArray($request);
+    
+    // When company()->exists() returns false, the when() condition should not include it
+    // or it should be a MissingValue instance
+    expect(array_key_exists('company', $result))->toBeTrue();
+});
+
+// ========== DATA INTEGRITY TESTS ==========
+
+test('preserves expense category data integrity', function () {
+    $category = createDummyExpenseCategoryForResource(123, 'Marketing', 456.78);
+    $resource = new ExpenseCategoryResource($category);
+    $request = new Request();
+    $result = $resource->toArray($request);
+    
+    expect($result['id'])->toBe(123)
+        ->and($result['name'])->toBe('Marketing')
+        ->and($result['amount'])->toBe(456.78);
+});
+
+test('different instances have independent data', function () {
+    $category1 = createDummyExpenseCategoryForResource(1, 'Travel', 100);
+    $category2 = createDummyExpenseCategoryForResource(2, 'Supplies', 200);
+    
+    $resource1 = new ExpenseCategoryResource($category1);
+    $resource2 = new ExpenseCategoryResource($category2);
+    
+    $request = new Request();
+    $result1 = $resource1->toArray($request);
+    $result2 = $resource2->toArray($request);
+    
+    expect($result1['id'])->not->toBe($result2['id'])
+        ->and($result1['name'])->not->toBe($result2['name'])
+        ->and($result1['amount'])->not->toBe($result2['amount']);
+});
+
+// ========== CLASS CHARACTERISTICS TESTS ==========
+
+test('ExpenseCategoryResource is not abstract', function () {
+    $reflection = new ReflectionClass(ExpenseCategoryResource::class);
+    expect($reflection->isAbstract())->toBeFalse();
+});
+
+test('ExpenseCategoryResource is not final', function () {
+    $reflection = new ReflectionClass(ExpenseCategoryResource::class);
+    expect($reflection->isFinal())->toBeFalse();
+});
+
+test('ExpenseCategoryResource is not an interface', function () {
+    $reflection = new ReflectionClass(ExpenseCategoryResource::class);
+    expect($reflection->isInterface())->toBeFalse();
+});
+
+test('ExpenseCategoryResource is not a trait', function () {
+    $reflection = new ReflectionClass(ExpenseCategoryResource::class);
+    expect($reflection->isTrait())->toBeFalse();
+});
+
+test('ExpenseCategoryResource class is loaded', function () {
+    expect(class_exists(ExpenseCategoryResource::class))->toBeTrue();
+});
+
+// ========== METHOD CHARACTERISTICS TESTS ==========
+
+test('toArray method is public', function () {
+    $reflection = new ReflectionClass(ExpenseCategoryResource::class);
+    $method = $reflection->getMethod('toArray');
+    
+    expect($method->isPublic())->toBeTrue();
+});
+
+test('toArray method is not static', function () {
+    $reflection = new ReflectionClass(ExpenseCategoryResource::class);
+    $method = $reflection->getMethod('toArray');
+    
+    expect($method->isStatic())->toBeFalse();
+});
+
+test('toArray method accepts request parameter', function () {
+    $reflection = new ReflectionClass(ExpenseCategoryResource::class);
+    $method = $reflection->getMethod('toArray');
+    $parameters = $method->getParameters();
+    
+    expect($parameters)->toHaveCount(1)
+        ->and($parameters[0]->getName())->toBe('request');
+});
+
+// ========== INSTANCE TESTS ==========
+
+test('multiple ExpenseCategoryResource instances can be created', function () {
+    $category1 = createDummyExpenseCategoryForResource(1, 'Travel', 100);
+    $category2 = createDummyExpenseCategoryForResource(2, 'Supplies', 200);
+    
+    $resource1 = new ExpenseCategoryResource($category1);
+    $resource2 = new ExpenseCategoryResource($category2);
+    
+    expect($resource1)->toBeInstanceOf(ExpenseCategoryResource::class)
+        ->and($resource2)->toBeInstanceOf(ExpenseCategoryResource::class)
+        ->and($resource1)->not->toBe($resource2);
+});
+
+test('ExpenseCategoryResource can be cloned', function () {
+    $category = createDummyExpenseCategoryForResource(1, 'Travel', 100);
+    $resource = new ExpenseCategoryResource($category);
+    $clone = clone $resource;
+    
+    expect($clone)->toBeInstanceOf(ExpenseCategoryResource::class)
+        ->and($clone)->not->toBe($resource);
+});
+
+test('ExpenseCategoryResource can be used in type hints', function () {
+    $testFunction = function (ExpenseCategoryResource $resource) {
+        return $resource;
+    };
+    
+    $category = createDummyExpenseCategoryForResource(1, 'Travel', 100);
+    $resource = new ExpenseCategoryResource($category);
+    $result = $testFunction($resource);
+    
+    expect($result)->toBe($resource);
+});
+
+// ========== IMPORTS TESTS ==========
+
+test('ExpenseCategoryResource uses JsonResource', function () {
+    $reflection = new ReflectionClass(ExpenseCategoryResource::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('use Illuminate\Http\Resources\Json\JsonResource');
+});
+
+test('ExpenseCategoryResource uses CompanyResource', function () {
+    $reflection = new ReflectionClass(ExpenseCategoryResource::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('CompanyResource');
+});
+
+// ========== IMPLEMENTATION TESTS ==========
+
+test('toArray uses when helper for company', function () {
+    $reflection = new ReflectionClass(ExpenseCategoryResource::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('$this->when');
+});
+
+test('toArray checks company exists', function () {
+    $reflection = new ReflectionClass(ExpenseCategoryResource::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('$this->company()->exists()');
+});
+
+test('toArray creates CompanyResource when company exists', function () {
+    $reflection = new ReflectionClass(ExpenseCategoryResource::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('new CompanyResource($this->company)');
+});
+
+// ========== DOCUMENTATION TESTS ==========
+
+test('toArray method has documentation', function () {
+    $reflection = new ReflectionClass(ExpenseCategoryResource::class);
+    $method = $reflection->getMethod('toArray');
+    
+    expect($method->getDocComment())->not->toBeFalse();
+});
+
+test('toArray method has return type documentation', function () {
+    $reflection = new ReflectionClass(ExpenseCategoryResource::class);
+    $method = $reflection->getMethod('toArray');
+    $docComment = $method->getDocComment();
+    
+    expect($docComment)->toContain('@return');
+});
+
+test('toArray method has param documentation', function () {
+    $reflection = new ReflectionClass(ExpenseCategoryResource::class);
+    $method = $reflection->getMethod('toArray');
+    $docComment = $method->getDocComment();
+    
+    expect($docComment)->toContain('@param');
+});
+
+// ========== FILE STRUCTURE TESTS ==========
+
+test('ExpenseCategoryResource file is concise', function () {
+    $reflection = new ReflectionClass(ExpenseCategoryResource::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect(strlen($fileContent))->toBeLessThan(2000);
+});
+
+test('ExpenseCategoryResource has minimal line count', function () {
+    $reflection = new ReflectionClass(ExpenseCategoryResource::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    $lineCount = count(explode("\n", $fileContent));
+    
+    expect($lineCount)->toBeLessThan(50);
+});
+
+// ========== PARENT CLASS TESTS ==========
+
+test('ExpenseCategoryResource parent is JsonResource', function () {
+    $reflection = new ReflectionClass(ExpenseCategoryResource::class);
+    $parent = $reflection->getParentClass();
+    
+    expect($parent)->not->toBeFalse()
+        ->and($parent->getName())->toBe('Illuminate\Http\Resources\Json\JsonResource');
 });

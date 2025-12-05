@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Mockery as m;
 
 beforeEach(function () {
-    // Ensure Mockery is closed after each test to prevent test pollution
+    // Ensure Mockery is closed before each test to prevent test pollution
     m::close();
 });
 
@@ -69,9 +69,7 @@ test('it returns generated PDF stream when the request does not have a preview p
     expect($result)->toBe($expectedPdfStream);
 });
 
-
-
-
 afterEach(function () {
+    // Ensure Mockery is closed after each test to prevent test pollution
     Mockery::close();
 });

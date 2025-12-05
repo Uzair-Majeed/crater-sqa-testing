@@ -24,18 +24,16 @@ test('it transforms currency model into an array with all expected attributes', 
     $result = $resource->toArray($request);
 
     // Assert
-    $this->assertIsArray($result);
-    $this->assertCount(9, $result);
-
-    $this->assertEquals(1, $result['id']);
-    $this->assertEquals('US Dollar', $result['name']);
-    $this->assertEquals('USD', $result['code']);
-    $this->assertEquals('$', $result['symbol']);
-    $this->assertEquals(2, $result['precision']);
-    $this->assertEquals(',', $result['thousand_separator']);
-    $this->assertEquals('.', $result['decimal_separator']);
-    $this->assertFalse($result['swap_currency_symbol']);
-    $this->assertEquals(1.0, $result['exchange_rate']);
+    expect($result)->toBeArray()->toHaveCount(9);
+    expect($result['id'])->toBe(1);
+    expect($result['name'])->toBe('US Dollar');
+    expect($result['code'])->toBe('USD');
+    expect($result['symbol'])->toBe('$');
+    expect($result['precision'])->toBe(2);
+    expect($result['thousand_separator'])->toBe(',');
+    expect($result['decimal_separator'])->toBe('.');
+    expect($result['swap_currency_symbol'])->toBeFalse();
+    expect($result['exchange_rate'])->toBe(1.0);
 });
 
 test('it handles null and empty values for currency attributes correctly', function () {
@@ -59,18 +57,16 @@ test('it handles null and empty values for currency attributes correctly', funct
     $result = $resource->toArray($request);
 
     // Assert
-    $this->assertIsArray($result);
-    $this->assertCount(9, $result);
-
-    $this->assertNull($result['id']);
-    $this->assertEquals('', $result['name']);
-    $this->assertEquals('EUR', $result['code']);
-    $this->assertEquals('€', $result['symbol']);
-    $this->assertEquals(2, $result['precision']);
-    $this->assertNull($result['thousand_separator']);
-    $this->assertNull($result['decimal_separator']);
-    $this->assertTrue($result['swap_currency_symbol']);
-    $this->assertEquals(0.85, $result['exchange_rate']);
+    expect($result)->toBeArray()->toHaveCount(9);
+    expect($result['id'])->toBeNull();
+    expect($result['name'])->toBe('');
+    expect($result['code'])->toBe('EUR');
+    expect($result['symbol'])->toBe('€');
+    expect($result['precision'])->toBe(2);
+    expect($result['thousand_separator'])->toBeNull();
+    expect($result['decimal_separator'])->toBeNull();
+    expect($result['swap_currency_symbol'])->toBeTrue();
+    expect($result['exchange_rate'])->toBe(0.85);
 });
 
 test('it ensures all expected keys are present in the output array', function () {
@@ -107,11 +103,9 @@ test('it ensures all expected keys are present in the output array', function ()
     ];
 
     foreach ($expectedKeys as $key) {
-        $this->assertArrayHasKey($key, $result);
+        expect($result)->toHaveKey($key);
     }
 });
-
- 
 
 afterEach(function () {
     Mockery::close();

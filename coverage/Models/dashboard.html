@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <title>Dashboard for E:\BS Software Engineering\Semester V\SQE\SQE_Project\crater-sqa-testing\app\Models</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="../_css/bootstrap.min.css" rel="stylesheet" type="text/css">
+  <link href="../_css/nv.d3.min.css" rel="stylesheet" type="text/css">
+  <link href="../_css/style.css" rel="stylesheet" type="text/css">
+  <link href="../_css/custom.css" rel="stylesheet" type="text/css">
+ </head>
+ <body>
+  <header>
+   <div class="container-fluid">
+    <div class="row">
+     <div class="col-md-12">
+      <nav aria-label="breadcrumb">
+       <ol class="breadcrumb">
+         <li class="breadcrumb-item"><a href="../index.html">E:\BS Software Engineering\Semester V\SQE\SQE_Project\crater-sqa-testing\app</a></li>
+         <li class="breadcrumb-item"><a href="index.html">Models</a></li>
+         <li class="breadcrumb-item active">(Dashboard)</li>
+
+       </ol>
+      </nav>
+     </div>
+    </div>
+   </div>
+  </header>
+  <div class="container-fluid">
+   <div class="row">
+    <div class="col-md-12">
+     <h2>Classes</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Coverage Distribution</h3>
+     <div id="classCoverageDistribution" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Complexity</h3>
+     <div id="classComplexity" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Insufficient Coverage</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Class</th>
+         <th class="text-right">Coverage</th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Address.php.html#8">Crater\Models\Address</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Company.php.html#12">Crater\Models\Company</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Country.php.html#8">Crater\Models\Country</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="CustomField.php.html#8">Crater\Models\CustomField</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Customer.php.html#16">Crater\Models\Customer</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="EmailLog.php.html#9">Crater\Models\EmailLog</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Estimate.php.html#20">Crater\Models\Estimate</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Expense.php.html#13">Crater\Models\Expense</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Invoice.php.html#21">Crater\Models\Invoice</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="InvoiceItem.php.html#11">Crater\Models\InvoiceItem</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Item.php.html#10">Crater\Models\Item</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Note.php.html#8">Crater\Models\Note</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="TaxType.php.html#8">Crater\Models\TaxType</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="User.php.html#19">Crater\Models\User</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Payment.php.html#18">Crater\Models\Payment</a></td><td class="text-right">1%</td></tr>
+       <tr><td><a href="RecurringInvoice.php.html#14">Crater\Models\RecurringInvoice</a></td><td class="text-right">2%</td></tr>
+       <tr><td><a href="Tax.php.html#10">Crater\Models\Tax</a></td><td class="text-right">4%</td></tr>
+       <tr><td><a href="FileDisk.php.html#9">Crater\Models\FileDisk</a></td><td class="text-right">5%</td></tr>
+       <tr><td><a href="CompanySetting.php.html#8">Crater\Models\CompanySetting</a></td><td class="text-right">6%</td></tr>
+       <tr><td><a href="ExpenseCategory.php.html#9">Crater\Models\ExpenseCategory</a></td><td class="text-right">11%</td></tr>
+       <tr><td><a href="PaymentMethod.php.html#8">Crater\Models\PaymentMethod</a></td><td class="text-right">16%</td></tr>
+       <tr><td><a href="Transaction.php.html#10">Crater\Models\Transaction</a></td><td class="text-right">17%</td></tr>
+       <tr><td><a href="ExchangeRateProvider.php.html#10">Crater\Models\ExchangeRateProvider</a></td><td class="text-right">20%</td></tr>
+       <tr><td><a href="ExchangeRateLog.php.html#8">Crater\Models\ExchangeRateLog</a></td><td class="text-right">25%</td></tr>
+       <tr><td><a href="Setting.php.html#8">Crater\Models\Setting</a></td><td class="text-right">45%</td></tr>
+       <tr><td><a href="CustomFieldValue.php.html#8">Crater\Models\CustomFieldValue</a></td><td class="text-right">75%</td></tr>
+       <tr><td><a href="EstimateItem.php.html#9">Crater\Models\EstimateItem</a></td><td class="text-right">75%</td></tr>
+       <tr><td><a href="Unit.php.html#8">Crater\Models\Unit</a></td><td class="text-right">87%</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Project Risks</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Class</th>
+         <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Invoice.php.html#21">Crater\Models\Invoice</a></td><td class="text-right">16002</td></tr>
+       <tr><td><a href="Estimate.php.html#20">Crater\Models\Estimate</a></td><td class="text-right">7656</td></tr>
+       <tr><td><a href="User.php.html#19">Crater\Models\User</a></td><td class="text-right">6642</td></tr>
+       <tr><td><a href="Payment.php.html#18">Crater\Models\Payment</a></td><td class="text-right">5516</td></tr>
+       <tr><td><a href="RecurringInvoice.php.html#14">Crater\Models\RecurringInvoice</a></td><td class="text-right">4910</td></tr>
+       <tr><td><a href="Customer.php.html#16">Crater\Models\Customer</a></td><td class="text-right">4830</td></tr>
+       <tr><td><a href="Company.php.html#12">Crater\Models\Company</a></td><td class="text-right">3782</td></tr>
+       <tr><td><a href="Expense.php.html#13">Crater\Models\Expense</a></td><td class="text-right">2550</td></tr>
+       <tr><td><a href="FileDisk.php.html#9">Crater\Models\FileDisk</a></td><td class="text-right">1014</td></tr>
+       <tr><td><a href="Item.php.html#10">Crater\Models\Item</a></td><td class="text-right">992</td></tr>
+       <tr><td><a href="CustomField.php.html#8">Crater\Models\CustomField</a></td><td class="text-right">342</td></tr>
+       <tr><td><a href="ExchangeRateProvider.php.html#10">Crater\Models\ExchangeRateProvider</a></td><td class="text-right">293</td></tr>
+       <tr><td><a href="TaxType.php.html#8">Crater\Models\TaxType</a></td><td class="text-right">272</td></tr>
+       <tr><td><a href="Tax.php.html#10">Crater\Models\Tax</a></td><td class="text-right">187</td></tr>
+       <tr><td><a href="PaymentMethod.php.html#8">Crater\Models\PaymentMethod</a></td><td class="text-right">164</td></tr>
+       <tr><td><a href="ExpenseCategory.php.html#9">Crater\Models\ExpenseCategory</a></td><td class="text-right">131</td></tr>
+       <tr><td><a href="InvoiceItem.php.html#11">Crater\Models\InvoiceItem</a></td><td class="text-right">110</td></tr>
+       <tr><td><a href="Transaction.php.html#10">Crater\Models\Transaction</a></td><td class="text-right">65</td></tr>
+       <tr><td><a href="CompanySetting.php.html#8">Crater\Models\CompanySetting</a></td><td class="text-right">60</td></tr>
+       <tr><td><a href="Note.php.html#8">Crater\Models\Note</a></td><td class="text-right">56</td></tr>
+       <tr><td><a href="Address.php.html#8">Crater\Models\Address</a></td><td class="text-right">42</td></tr>
+       <tr><td><a href="EmailLog.php.html#9">Crater\Models\EmailLog</a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="Setting.php.html#8">Crater\Models\Setting</a></td><td class="text-right">15</td></tr>
+       <tr><td><a href="Unit.php.html#8">Crater\Models\Unit</a></td><td class="text-right">11</td></tr>
+       <tr><td><a href="CustomFieldValue.php.html#8">Crater\Models\CustomFieldValue</a></td><td class="text-right">7</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-12">
+     <h2>Methods</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Coverage Distribution</h3>
+     <div id="methodCoverageDistribution" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Complexity</h3>
+     <div id="methodComplexity" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Insufficient Coverage</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Method</th>
+         <th class="text-right">Coverage</th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Address.php.html#16"><abbr title="Crater\Models\Address::getCountryNameAttribute">getCountryNameAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Address.php.html#23"><abbr title="Crater\Models\Address::user">user</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Address.php.html#28"><abbr title="Crater\Models\Address::customer">customer</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Address.php.html#33"><abbr title="Crater\Models\Address::company">company</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Address.php.html#38"><abbr title="Crater\Models\Address::country">country</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Company.php.html#27"><abbr title="Crater\Models\Company::getRolesAttribute">getRolesAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Company.php.html#33"><abbr title="Crater\Models\Company::getLogoPathAttribute">getLogoPathAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Company.php.html#50"><abbr title="Crater\Models\Company::getLogoAttribute">getLogoAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Company.php.html#61"><abbr title="Crater\Models\Company::customers">customers</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Company.php.html#66"><abbr title="Crater\Models\Company::owner">owner</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Company.php.html#71"><abbr title="Crater\Models\Company::settings">settings</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Company.php.html#76"><abbr title="Crater\Models\Company::recurringInvoices">recurringInvoices</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Company.php.html#81"><abbr title="Crater\Models\Company::customFields">customFields</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Company.php.html#86"><abbr title="Crater\Models\Company::customFieldValues">customFieldValues</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Company.php.html#91"><abbr title="Crater\Models\Company::exchangeRateLogs">exchangeRateLogs</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Company.php.html#96"><abbr title="Crater\Models\Company::exchangeRateProviders">exchangeRateProviders</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Company.php.html#101"><abbr title="Crater\Models\Company::invoices">invoices</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Company.php.html#106"><abbr title="Crater\Models\Company::expenses">expenses</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Company.php.html#111"><abbr title="Crater\Models\Company::units">units</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Company.php.html#116"><abbr title="Crater\Models\Company::expenseCategories">expenseCategories</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Company.php.html#121"><abbr title="Crater\Models\Company::taxTypes">taxTypes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Company.php.html#126"><abbr title="Crater\Models\Company::items">items</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Company.php.html#131"><abbr title="Crater\Models\Company::payments">payments</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Company.php.html#136"><abbr title="Crater\Models\Company::paymentMethods">paymentMethods</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Company.php.html#141"><abbr title="Crater\Models\Company::estimates">estimates</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Company.php.html#146"><abbr title="Crater\Models\Company::address">address</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Company.php.html#151"><abbr title="Crater\Models\Company::users">users</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Company.php.html#156"><abbr title="Crater\Models\Company::setupRoles">setupRoles</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Company.php.html#171"><abbr title="Crater\Models\Company::setupDefaultPaymentMethods">setupDefaultPaymentMethods</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Company.php.html#179"><abbr title="Crater\Models\Company::setupDefaultUnits">setupDefaultUnits</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Company.php.html#194"><abbr title="Crater\Models\Company::setupDefaultSettings">setupDefaultSettings</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Company.php.html#255"><abbr title="Crater\Models\Company::setupDefaultData">setupDefaultData</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Company.php.html#265"><abbr title="Crater\Models\Company::deleteCompany">deleteCompany</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Company.php.html#369"><abbr title="Crater\Models\Company::checkModelData">checkModelData</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Company.php.html#384"><abbr title="Crater\Models\Company::hasTransactions">hasTransactions</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="CompanySetting.php.html#19"><abbr title="Crater\Models\CompanySetting::scopeWhereCompany">scopeWhereCompany</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="CompanySetting.php.html#24"><abbr title="Crater\Models\CompanySetting::setSettings">setSettings</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="CompanySetting.php.html#41"><abbr title="Crater\Models\CompanySetting::getAllSettings">getAllSettings</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="CompanySetting.php.html#48"><abbr title="Crater\Models\CompanySetting::getSettings">getSettings</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="CompanySetting.php.html#56"><abbr title="Crater\Models\CompanySetting::getSetting">getSetting</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Country.php.html#12"><abbr title="Crater\Models\Country::address">address</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="CustomField.php.html#29"><abbr title="Crater\Models\CustomField::setTimeAnswerAttribute">setTimeAnswerAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="CustomField.php.html#36"><abbr title="Crater\Models\CustomField::setOptionsAttribute">setOptionsAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="CustomField.php.html#41"><abbr title="Crater\Models\CustomField::getDefaultAnswerAttribute">getDefaultAnswerAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="CustomField.php.html#48"><abbr title="Crater\Models\CustomField::getInUseAttribute">getInUseAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="CustomField.php.html#53"><abbr title="Crater\Models\CustomField::company">company</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="CustomField.php.html#58"><abbr title="Crater\Models\CustomField::customFieldValues">customFieldValues</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="CustomField.php.html#63"><abbr title="Crater\Models\CustomField::scopeWhereCompany">scopeWhereCompany</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="CustomField.php.html#68"><abbr title="Crater\Models\CustomField::scopeWhereSearch">scopeWhereSearch</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="CustomField.php.html#76"><abbr title="Crater\Models\CustomField::scopePaginateData">scopePaginateData</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="CustomField.php.html#85"><abbr title="Crater\Models\CustomField::scopeApplyFilters">scopeApplyFilters</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="CustomField.php.html#98"><abbr title="Crater\Models\CustomField::scopeWhereType">scopeWhereType</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="CustomField.php.html#103"><abbr title="Crater\Models\CustomField::createCustomField">createCustomField</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="CustomField.php.html#113"><abbr title="Crater\Models\CustomField::updateCustomField">updateCustomField</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="CustomFieldValue.php.html#34"><abbr title="Crater\Models\CustomFieldValue::getDefaultAnswerAttribute">getDefaultAnswerAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Customer.php.html#47"><abbr title="Crater\Models\Customer::getFormattedCreatedAtAttribute">getFormattedCreatedAtAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Customer.php.html#54"><abbr title="Crater\Models\Customer::setPasswordAttribute">setPasswordAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Customer.php.html#61"><abbr title="Crater\Models\Customer::estimates">estimates</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Customer.php.html#66"><abbr title="Crater\Models\Customer::expenses">expenses</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Customer.php.html#71"><abbr title="Crater\Models\Customer::invoices">invoices</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Customer.php.html#76"><abbr title="Crater\Models\Customer::payments">payments</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Customer.php.html#81"><abbr title="Crater\Models\Customer::addresses">addresses</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Customer.php.html#86"><abbr title="Crater\Models\Customer::recurringInvoices">recurringInvoices</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Customer.php.html#91"><abbr title="Crater\Models\Customer::currency">currency</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Customer.php.html#96"><abbr title="Crater\Models\Customer::creator">creator</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Customer.php.html#101"><abbr title="Crater\Models\Customer::company">company</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Customer.php.html#106"><abbr title="Crater\Models\Customer::billingAddress">billingAddress</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Customer.php.html#111"><abbr title="Crater\Models\Customer::shippingAddress">shippingAddress</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Customer.php.html#116"><abbr title="Crater\Models\Customer::sendPasswordResetNotification">sendPasswordResetNotification</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Customer.php.html#121"><abbr title="Crater\Models\Customer::getAvatarAttribute">getAvatarAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Customer.php.html#132"><abbr title="Crater\Models\Customer::deleteCustomers">deleteCustomers</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Customer.php.html#178"><abbr title="Crater\Models\Customer::createCustomer">createCustomer</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Customer.php.html#205"><abbr title="Crater\Models\Customer::updateCustomer">updateCustomer</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Customer.php.html#240"><abbr title="Crater\Models\Customer::scopePaginateData">scopePaginateData</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Customer.php.html#249"><abbr title="Crater\Models\Customer::scopeWhereCompany">scopeWhereCompany</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Customer.php.html#254"><abbr title="Crater\Models\Customer::scopeWhereContactName">scopeWhereContactName</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Customer.php.html#259"><abbr title="Crater\Models\Customer::scopeWhereDisplayName">scopeWhereDisplayName</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Customer.php.html#264"><abbr title="Crater\Models\Customer::scopeWhereOrder">scopeWhereOrder</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Customer.php.html#269"><abbr title="Crater\Models\Customer::scopeWhereSearch">scopeWhereSearch</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Customer.php.html#280"><abbr title="Crater\Models\Customer::scopeWherePhone">scopeWherePhone</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Customer.php.html#285"><abbr title="Crater\Models\Customer::scopeWhereCustomer">scopeWhereCustomer</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Customer.php.html#290"><abbr title="Crater\Models\Customer::scopeApplyInvoiceFilters">scopeApplyInvoiceFilters</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Customer.php.html#301"><abbr title="Crater\Models\Customer::scopeInvoicesBetween">scopeInvoicesBetween</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Customer.php.html#311"><abbr title="Crater\Models\Customer::scopeApplyFilters">scopeApplyFilters</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="EmailLog.php.html#15"><abbr title="Crater\Models\EmailLog::mailable">mailable</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="EmailLog.php.html#20"><abbr title="Crater\Models\EmailLog::isExpired">isExpired</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Estimate.php.html#59"><abbr title="Crater\Models\Estimate::getEstimatePdfUrlAttribute">getEstimatePdfUrlAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Estimate.php.html#64"><abbr title="Crater\Models\Estimate::emailLogs">emailLogs</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Estimate.php.html#69"><abbr title="Crater\Models\Estimate::items">items</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Estimate.php.html#74"><abbr title="Crater\Models\Estimate::customer">customer</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Estimate.php.html#79"><abbr title="Crater\Models\Estimate::creator">creator</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Estimate.php.html#84"><abbr title="Crater\Models\Estimate::company">company</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Estimate.php.html#89"><abbr title="Crater\Models\Estimate::currency">currency</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Estimate.php.html#94"><abbr title="Crater\Models\Estimate::taxes">taxes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Estimate.php.html#99"><abbr title="Crater\Models\Estimate::getFormattedExpiryDateAttribute">getFormattedExpiryDateAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Estimate.php.html#106"><abbr title="Crater\Models\Estimate::getFormattedEstimateDateAttribute">getFormattedEstimateDateAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Estimate.php.html#113"><abbr title="Crater\Models\Estimate::scopeEstimatesBetween">scopeEstimatesBetween</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Estimate.php.html#121"><abbr title="Crater\Models\Estimate::scopeWhereStatus">scopeWhereStatus</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Estimate.php.html#126"><abbr title="Crater\Models\Estimate::scopeWhereEstimateNumber">scopeWhereEstimateNumber</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Estimate.php.html#131"><abbr title="Crater\Models\Estimate::scopeWhereEstimate">scopeWhereEstimate</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Estimate.php.html#136"><abbr title="Crater\Models\Estimate::scopeWhereSearch">scopeWhereSearch</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Estimate.php.html#147"><abbr title="Crater\Models\Estimate::scopeApplyFilters">scopeApplyFilters</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Estimate.php.html#184"><abbr title="Crater\Models\Estimate::scopeWhereOrder">scopeWhereOrder</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Estimate.php.html#189"><abbr title="Crater\Models\Estimate::scopeWhereCompany">scopeWhereCompany</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Estimate.php.html#194"><abbr title="Crater\Models\Estimate::scopeWhereCustomer">scopeWhereCustomer</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Estimate.php.html#199"><abbr title="Crater\Models\Estimate::scopePaginateData">scopePaginateData</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Estimate.php.html#208"><abbr title="Crater\Models\Estimate::createEstimate">createEstimate</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Estimate.php.html#249"><abbr title="Crater\Models\Estimate::updateEstimate">updateEstimate</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Estimate.php.html#301"><abbr title="Crater\Models\Estimate::createItems">createItems</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Estimate.php.html#330"><abbr title="Crater\Models\Estimate::createTaxes">createTaxes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Estimate.php.html#346"><abbr title="Crater\Models\Estimate::sendEstimateData">sendEstimateData</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Estimate.php.html#357"><abbr title="Crater\Models\Estimate::send">send</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Estimate.php.html#374"><abbr title="Crater\Models\Estimate::getPDFData">getPDFData</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Estimate.php.html#422"><abbr title="Crater\Models\Estimate::getCompanyAddress">getCompanyAddress</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Estimate.php.html#433"><abbr title="Crater\Models\Estimate::getCustomerShippingAddress">getCustomerShippingAddress</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Estimate.php.html#444"><abbr title="Crater\Models\Estimate::getCustomerBillingAddress">getCustomerBillingAddress</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Estimate.php.html#455"><abbr title="Crater\Models\Estimate::getNotes">getNotes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Estimate.php.html#460"><abbr title="Crater\Models\Estimate::getEmailAttachmentSetting">getEmailAttachmentSetting</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Estimate.php.html#471"><abbr title="Crater\Models\Estimate::getEmailBody">getEmailBody</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Estimate.php.html#480"><abbr title="Crater\Models\Estimate::getExtraFields">getExtraFields</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Estimate.php.html#490"><abbr title="Crater\Models\Estimate::estimateTemplates">estimateTemplates</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Estimate.php.html#504"><abbr title="Crater\Models\Estimate::getInvoiceTemplateName">getInvoiceTemplateName</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Estimate.php.html#521"><abbr title="Crater\Models\Estimate::checkForEstimateConvertAction">checkForEstimateConvertAction</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="EstimateItem.php.html#42"><abbr title="Crater\Models\EstimateItem::scopeWhereCompany">scopeWhereCompany</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ExchangeRateLog.php.html#30"><abbr title="Crater\Models\ExchangeRateLog::addExchangeRateLog">addExchangeRateLog</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ExchangeRateProvider.php.html#39"><abbr title="Crater\Models\ExchangeRateProvider::scopeWhereCompany">scopeWhereCompany</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ExchangeRateProvider.php.html#44"><abbr title="Crater\Models\ExchangeRateProvider::createFromRequest">createFromRequest</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ExchangeRateProvider.php.html#51"><abbr title="Crater\Models\ExchangeRateProvider::updateFromRequest">updateFromRequest</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ExchangeRateProvider.php.html#58"><abbr title="Crater\Models\ExchangeRateProvider::checkActiveCurrencies">checkActiveCurrencies</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ExchangeRateProvider.php.html#67"><abbr title="Crater\Models\ExchangeRateProvider::checkUpdateActiveCurrencies">checkUpdateActiveCurrencies</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ExchangeRateProvider.php.html#77"><abbr title="Crater\Models\ExchangeRateProvider::checkExchangeRateProviderStatus">checkExchangeRateProviderStatus</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Expense.php.html#37"><abbr title="Crater\Models\Expense::category">category</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Expense.php.html#42"><abbr title="Crater\Models\Expense::customer">customer</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Expense.php.html#47"><abbr title="Crater\Models\Expense::company">company</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Expense.php.html#52"><abbr title="Crater\Models\Expense::paymentMethod">paymentMethod</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Expense.php.html#57"><abbr title="Crater\Models\Expense::currency">currency</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Expense.php.html#62"><abbr title="Crater\Models\Expense::creator">creator</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Expense.php.html#67"><abbr title="Crater\Models\Expense::getFormattedExpenseDateAttribute">getFormattedExpenseDateAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Expense.php.html#74"><abbr title="Crater\Models\Expense::getFormattedCreatedAtAttribute">getFormattedCreatedAtAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Expense.php.html#81"><abbr title="Crater\Models\Expense::getReceiptUrlAttribute">getReceiptUrlAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Expense.php.html#95"><abbr title="Crater\Models\Expense::getReceiptAttribute">getReceiptAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Expense.php.html#106"><abbr title="Crater\Models\Expense::getReceiptMetaAttribute">getReceiptMetaAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Expense.php.html#117"><abbr title="Crater\Models\Expense::scopeExpensesBetween">scopeExpensesBetween</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Expense.php.html#125"><abbr title="Crater\Models\Expense::scopeWhereCategoryName">scopeWhereCategoryName</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Expense.php.html#134"><abbr title="Crater\Models\Expense::scopeWhereNotes">scopeWhereNotes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Expense.php.html#139"><abbr title="Crater\Models\Expense::scopeWhereCategory">scopeWhereCategory</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Expense.php.html#144"><abbr title="Crater\Models\Expense::scopeWhereUser">scopeWhereUser</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Expense.php.html#149"><abbr title="Crater\Models\Expense::scopeApplyFilters">scopeApplyFilters</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Expense.php.html#182"><abbr title="Crater\Models\Expense::scopeWhereExpense">scopeWhereExpense</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Expense.php.html#187"><abbr title="Crater\Models\Expense::scopeWhereSearch">scopeWhereSearch</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Expense.php.html#197"><abbr title="Crater\Models\Expense::scopeWhereOrder">scopeWhereOrder</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Expense.php.html#202"><abbr title="Crater\Models\Expense::scopeWhereCompany">scopeWhereCompany</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Expense.php.html#207"><abbr title="Crater\Models\Expense::scopeWhereCompanyId">scopeWhereCompanyId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Expense.php.html#212"><abbr title="Crater\Models\Expense::scopePaginateData">scopePaginateData</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Expense.php.html#221"><abbr title="Crater\Models\Expense::scopeExpensesAttributes">scopeExpensesAttributes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Expense.php.html#232"><abbr title="Crater\Models\Expense::createExpense">createExpense</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Expense.php.html#253"><abbr title="Crater\Models\Expense::updateExpense">updateExpense</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ExpenseCategory.php.html#32"><abbr title="Crater\Models\ExpenseCategory::getFormattedCreatedAtAttribute">getFormattedCreatedAtAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ExpenseCategory.php.html#39"><abbr title="Crater\Models\ExpenseCategory::getAmountAttribute">getAmountAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ExpenseCategory.php.html#44"><abbr title="Crater\Models\ExpenseCategory::scopeWhereCompany">scopeWhereCompany</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ExpenseCategory.php.html#49"><abbr title="Crater\Models\ExpenseCategory::scopeWhereCategory">scopeWhereCategory</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ExpenseCategory.php.html#54"><abbr title="Crater\Models\ExpenseCategory::scopeWhereSearch">scopeWhereSearch</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ExpenseCategory.php.html#59"><abbr title="Crater\Models\ExpenseCategory::scopeApplyFilters">scopeApplyFilters</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="ExpenseCategory.php.html#76"><abbr title="Crater\Models\ExpenseCategory::scopePaginateData">scopePaginateData</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="FileDisk.php.html#28"><abbr title="Crater\Models\FileDisk::scopeWhereOrder">scopeWhereOrder</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="FileDisk.php.html#33"><abbr title="Crater\Models\FileDisk::scopeFileDisksBetween">scopeFileDisksBetween</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="FileDisk.php.html#41"><abbr title="Crater\Models\FileDisk::scopeWhereSearch">scopeWhereSearch</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="FileDisk.php.html#49"><abbr title="Crater\Models\FileDisk::scopePaginateData">scopePaginateData</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="FileDisk.php.html#58"><abbr title="Crater\Models\FileDisk::scopeApplyFilters">scopeApplyFilters</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="FileDisk.php.html#78"><abbr title="Crater\Models\FileDisk::setConfig">setConfig</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="FileDisk.php.html#92"><abbr title="Crater\Models\FileDisk::setFilesystem">setFilesystem</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="FileDisk.php.html#109"><abbr title="Crater\Models\FileDisk::validateCredentials">validateCredentials</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="FileDisk.php.html#135"><abbr title="Crater\Models\FileDisk::createDisk">createDisk</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="FileDisk.php.html#152"><abbr title="Crater\Models\FileDisk::updateDefaultDisks">updateDefaultDisks</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="FileDisk.php.html#164"><abbr title="Crater\Models\FileDisk::updateDisk">updateDisk</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="FileDisk.php.html#185"><abbr title="Crater\Models\FileDisk::setAsDefaultDisk">setAsDefaultDisk</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Invoice.php.html#65"><abbr title="Crater\Models\Invoice::transactions">transactions</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Invoice.php.html#70"><abbr title="Crater\Models\Invoice::emailLogs">emailLogs</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Invoice.php.html#75"><abbr title="Crater\Models\Invoice::items">items</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Invoice.php.html#80"><abbr title="Crater\Models\Invoice::taxes">taxes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Invoice.php.html#85"><abbr title="Crater\Models\Invoice::payments">payments</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Invoice.php.html#90"><abbr title="Crater\Models\Invoice::currency">currency</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Invoice.php.html#95"><abbr title="Crater\Models\Invoice::company">company</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Invoice.php.html#100"><abbr title="Crater\Models\Invoice::customer">customer</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Invoice.php.html#105"><abbr title="Crater\Models\Invoice::recurringInvoice">recurringInvoice</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Invoice.php.html#110"><abbr title="Crater\Models\Invoice::creator">creator</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Invoice.php.html#115"><abbr title="Crater\Models\Invoice::getInvoicePdfUrlAttribute">getInvoicePdfUrlAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Invoice.php.html#120"><abbr title="Crater\Models\Invoice::getPaymentModuleEnabledAttribute">getPaymentModuleEnabledAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Invoice.php.html#129"><abbr title="Crater\Models\Invoice::getAllowEditAttribute">getAllowEditAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Invoice.php.html#153"><abbr title="Crater\Models\Invoice::getPreviousStatus">getPreviousStatus</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Invoice.php.html#164"><abbr title="Crater\Models\Invoice::getFormattedNotesAttribute">getFormattedNotesAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Invoice.php.html#169"><abbr title="Crater\Models\Invoice::getFormattedCreatedAtAttribute">getFormattedCreatedAtAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Invoice.php.html#176"><abbr title="Crater\Models\Invoice::getFormattedDueDateAttribute">getFormattedDueDateAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Invoice.php.html#183"><abbr title="Crater\Models\Invoice::getFormattedInvoiceDateAttribute">getFormattedInvoiceDateAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Invoice.php.html#190"><abbr title="Crater\Models\Invoice::scopeWhereStatus">scopeWhereStatus</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Invoice.php.html#195"><abbr title="Crater\Models\Invoice::scopeWherePaidStatus">scopeWherePaidStatus</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Invoice.php.html#200"><abbr title="Crater\Models\Invoice::scopeWhereDueStatus">scopeWhereDueStatus</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Invoice.php.html#208"><abbr title="Crater\Models\Invoice::scopeWhereInvoiceNumber">scopeWhereInvoiceNumber</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Invoice.php.html#213"><abbr title="Crater\Models\Invoice::scopeInvoicesBetween">scopeInvoicesBetween</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Invoice.php.html#221"><abbr title="Crater\Models\Invoice::scopeWhereSearch">scopeWhereSearch</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Invoice.php.html#232"><abbr title="Crater\Models\Invoice::scopeWhereOrder">scopeWhereOrder</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Invoice.php.html#237"><abbr title="Crater\Models\Invoice::scopeApplyFilters">scopeApplyFilters</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Invoice.php.html#288"><abbr title="Crater\Models\Invoice::scopeWhereInvoice">scopeWhereInvoice</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Invoice.php.html#293"><abbr title="Crater\Models\Invoice::scopeWhereCompany">scopeWhereCompany</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Invoice.php.html#298"><abbr title="Crater\Models\Invoice::scopeWhereCompanyId">scopeWhereCompanyId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Invoice.php.html#303"><abbr title="Crater\Models\Invoice::scopeWhereCustomer">scopeWhereCustomer</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Invoice.php.html#308"><abbr title="Crater\Models\Invoice::scopePaginateData">scopePaginateData</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Invoice.php.html#317"><abbr title="Crater\Models\Invoice::createInvoice">createInvoice</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Invoice.php.html#366"><abbr title="Crater\Models\Invoice::updateInvoice">updateInvoice</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Invoice.php.html#441"><abbr title="Crater\Models\Invoice::sendInvoiceData">sendInvoiceData</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Invoice.php.html#453"><abbr title="Crater\Models\Invoice::preview">preview</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Invoice.php.html#463"><abbr title="Crater\Models\Invoice::send">send</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Invoice.php.html#481"><abbr title="Crater\Models\Invoice::createItems">createItems</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Invoice.php.html#522"><abbr title="Crater\Models\Invoice::createTaxes">createTaxes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Invoice.php.html#542"><abbr title="Crater\Models\Invoice::getPDFData">getPDFData</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Invoice.php.html#590"><abbr title="Crater\Models\Invoice::getEmailAttachmentSetting">getEmailAttachmentSetting</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Invoice.php.html#601"><abbr title="Crater\Models\Invoice::getCompanyAddress">getCompanyAddress</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Invoice.php.html#612"><abbr title="Crater\Models\Invoice::getCustomerShippingAddress">getCustomerShippingAddress</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Invoice.php.html#623"><abbr title="Crater\Models\Invoice::getCustomerBillingAddress">getCustomerBillingAddress</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Invoice.php.html#634"><abbr title="Crater\Models\Invoice::getNotes">getNotes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Invoice.php.html#639"><abbr title="Crater\Models\Invoice::getEmailString">getEmailString</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Invoice.php.html#648"><abbr title="Crater\Models\Invoice::getExtraFields">getExtraFields</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Invoice.php.html#658"><abbr title="Crater\Models\Invoice::invoiceTemplates">invoiceTemplates</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Invoice.php.html#672"><abbr title="Crater\Models\Invoice::addInvoicePayment">addInvoicePayment</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Invoice.php.html#680"><abbr title="Crater\Models\Invoice::subtractInvoicePayment">subtractInvoicePayment</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Invoice.php.html#688"><abbr title="Crater\Models\Invoice::changeInvoiceStatus">changeInvoiceStatus</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Invoice.php.html#711"><abbr title="Crater\Models\Invoice::deleteInvoices">deleteInvoices</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="InvoiceItem.php.html#29"><abbr title="Crater\Models\InvoiceItem::invoice">invoice</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="InvoiceItem.php.html#34"><abbr title="Crater\Models\InvoiceItem::item">item</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="InvoiceItem.php.html#39"><abbr title="Crater\Models\InvoiceItem::taxes">taxes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="InvoiceItem.php.html#44"><abbr title="Crater\Models\InvoiceItem::recurringInvoice">recurringInvoice</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="InvoiceItem.php.html#49"><abbr title="Crater\Models\InvoiceItem::scopeWhereCompany">scopeWhereCompany</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="InvoiceItem.php.html#54"><abbr title="Crater\Models\InvoiceItem::scopeInvoicesBetween">scopeInvoicesBetween</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="InvoiceItem.php.html#64"><abbr title="Crater\Models\InvoiceItem::scopeApplyInvoiceFilters">scopeApplyInvoiceFilters</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="InvoiceItem.php.html#75"><abbr title="Crater\Models\InvoiceItem::scopeItemAttributes">scopeItemAttributes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Item.php.html#24"><abbr title="Crater\Models\Item::unit">unit</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Item.php.html#29"><abbr title="Crater\Models\Item::company">company</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Item.php.html#34"><abbr title="Crater\Models\Item::creator">creator</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Item.php.html#39"><abbr title="Crater\Models\Item::currency">currency</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Item.php.html#44"><abbr title="Crater\Models\Item::scopeWhereSearch">scopeWhereSearch</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Item.php.html#49"><abbr title="Crater\Models\Item::scopeWherePrice">scopeWherePrice</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Item.php.html#54"><abbr title="Crater\Models\Item::scopeWhereUnit">scopeWhereUnit</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Item.php.html#59"><abbr title="Crater\Models\Item::scopeWhereOrder">scopeWhereOrder</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Item.php.html#64"><abbr title="Crater\Models\Item::scopeWhereItem">scopeWhereItem</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Item.php.html#69"><abbr title="Crater\Models\Item::scopeApplyFilters">scopeApplyFilters</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Item.php.html#96"><abbr title="Crater\Models\Item::scopePaginateData">scopePaginateData</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Item.php.html#105"><abbr title="Crater\Models\Item::getFormattedCreatedAtAttribute">getFormattedCreatedAtAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Item.php.html#112"><abbr title="Crater\Models\Item::taxes">taxes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Item.php.html#119"><abbr title="Crater\Models\Item::scopeWhereCompany">scopeWhereCompany</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Item.php.html#124"><abbr title="Crater\Models\Item::invoiceItems">invoiceItems</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Item.php.html#129"><abbr title="Crater\Models\Item::estimateItems">estimateItems</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Item.php.html#134"><abbr title="Crater\Models\Item::createItem">createItem</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Item.php.html#157"><abbr title="Crater\Models\Item::updateItem">updateItem</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Note.php.html#14"><abbr title="Crater\Models\Note::company">company</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Note.php.html#19"><abbr title="Crater\Models\Note::scopeApplyFilters">scopeApplyFilters</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Note.php.html#32"><abbr title="Crater\Models\Note::scopeWhereSearch">scopeWhereSearch</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Note.php.html#37"><abbr title="Crater\Models\Note::scopeWhereType">scopeWhereType</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Note.php.html#42"><abbr title="Crater\Models\Note::scopeWhereCompany">scopeWhereCompany</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Payment.php.html#57"><abbr title="Crater\Models\Payment::setSettingsAttribute">setSettingsAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Payment.php.html#64"><abbr title="Crater\Models\Payment::getFormattedCreatedAtAttribute">getFormattedCreatedAtAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Payment.php.html#71"><abbr title="Crater\Models\Payment::getFormattedPaymentDateAttribute">getFormattedPaymentDateAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Payment.php.html#78"><abbr title="Crater\Models\Payment::getPaymentPdfUrlAttribute">getPaymentPdfUrlAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Payment.php.html#83"><abbr title="Crater\Models\Payment::transaction">transaction</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Payment.php.html#88"><abbr title="Crater\Models\Payment::emailLogs">emailLogs</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Payment.php.html#93"><abbr title="Crater\Models\Payment::customer">customer</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Payment.php.html#98"><abbr title="Crater\Models\Payment::company">company</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Payment.php.html#103"><abbr title="Crater\Models\Payment::invoice">invoice</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Payment.php.html#108"><abbr title="Crater\Models\Payment::creator">creator</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Payment.php.html#113"><abbr title="Crater\Models\Payment::currency">currency</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Payment.php.html#118"><abbr title="Crater\Models\Payment::paymentMethod">paymentMethod</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Payment.php.html#123"><abbr title="Crater\Models\Payment::sendPaymentData">sendPaymentData</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Payment.php.html#134"><abbr title="Crater\Models\Payment::send">send</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Payment.php.html#145"><abbr title="Crater\Models\Payment::createPayment">createPayment</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Payment.php.html#189"><abbr title="Crater\Models\Payment::updatePayment">updatePayment</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Payment.php.html#241"><abbr title="Crater\Models\Payment::deletePayments">deletePayments</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Payment.php.html#266"><abbr title="Crater\Models\Payment::scopeWhereSearch">scopeWhereSearch</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Payment.php.html#277"><abbr title="Crater\Models\Payment::scopePaymentNumber">scopePaymentNumber</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Payment.php.html#282"><abbr title="Crater\Models\Payment::scopePaymentMethod">scopePaymentMethod</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Payment.php.html#287"><abbr title="Crater\Models\Payment::scopePaginateData">scopePaginateData</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Payment.php.html#296"><abbr title="Crater\Models\Payment::scopeApplyFilters">scopeApplyFilters</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Payment.php.html#333"><abbr title="Crater\Models\Payment::scopePaymentsBetween">scopePaymentsBetween</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Payment.php.html#341"><abbr title="Crater\Models\Payment::scopeWhereOrder">scopeWhereOrder</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Payment.php.html#346"><abbr title="Crater\Models\Payment::scopeWherePayment">scopeWherePayment</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Payment.php.html#351"><abbr title="Crater\Models\Payment::scopeWhereCompany">scopeWhereCompany</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Payment.php.html#356"><abbr title="Crater\Models\Payment::scopeWhereCustomer">scopeWhereCustomer</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Payment.php.html#361"><abbr title="Crater\Models\Payment::getPDFData">getPDFData</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Payment.php.html#385"><abbr title="Crater\Models\Payment::getCompanyAddress">getCompanyAddress</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Payment.php.html#396"><abbr title="Crater\Models\Payment::getCustomerBillingAddress">getCustomerBillingAddress</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Payment.php.html#407"><abbr title="Crater\Models\Payment::getEmailAttachmentSetting">getEmailAttachmentSetting</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Payment.php.html#418"><abbr title="Crater\Models\Payment::getNotes">getNotes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Payment.php.html#423"><abbr title="Crater\Models\Payment::getEmailBody">getEmailBody</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Payment.php.html#432"><abbr title="Crater\Models\Payment::getExtraFields">getExtraFields</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Payment.php.html#442"><abbr title="Crater\Models\Payment::generatePayment">generatePayment</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PaymentMethod.php.html#44"><abbr title="Crater\Models\PaymentMethod::scopeWhereCompanyId">scopeWhereCompanyId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PaymentMethod.php.html#49"><abbr title="Crater\Models\PaymentMethod::scopeWhereCompany">scopeWhereCompany</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PaymentMethod.php.html#54"><abbr title="Crater\Models\PaymentMethod::scopeWherePaymentMethod">scopeWherePaymentMethod</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PaymentMethod.php.html#59"><abbr title="Crater\Models\PaymentMethod::scopeWhereSearch">scopeWhereSearch</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PaymentMethod.php.html#64"><abbr title="Crater\Models\PaymentMethod::scopeApplyFilters">scopeApplyFilters</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PaymentMethod.php.html#81"><abbr title="Crater\Models\PaymentMethod::scopePaginateData">scopePaginateData</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PaymentMethod.php.html#90"><abbr title="Crater\Models\PaymentMethod::createPaymentMethod">createPaymentMethod</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="PaymentMethod.php.html#99"><abbr title="Crater\Models\PaymentMethod::getSettings">getSettings</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RecurringInvoice.php.html#47"><abbr title="Crater\Models\RecurringInvoice::getFormattedStartsAtAttribute">getFormattedStartsAtAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RecurringInvoice.php.html#54"><abbr title="Crater\Models\RecurringInvoice::getFormattedNextInvoiceAtAttribute">getFormattedNextInvoiceAtAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RecurringInvoice.php.html#61"><abbr title="Crater\Models\RecurringInvoice::getFormattedLimitDateAttribute">getFormattedLimitDateAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RecurringInvoice.php.html#68"><abbr title="Crater\Models\RecurringInvoice::getFormattedCreatedAtAttribute">getFormattedCreatedAtAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RecurringInvoice.php.html#80"><abbr title="Crater\Models\RecurringInvoice::taxes">taxes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RecurringInvoice.php.html#85"><abbr title="Crater\Models\RecurringInvoice::items">items</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RecurringInvoice.php.html#100"><abbr title="Crater\Models\RecurringInvoice::creator">creator</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RecurringInvoice.php.html#110"><abbr title="Crater\Models\RecurringInvoice::scopeWhereCompany">scopeWhereCompany</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RecurringInvoice.php.html#115"><abbr title="Crater\Models\RecurringInvoice::scopePaginateData">scopePaginateData</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RecurringInvoice.php.html#124"><abbr title="Crater\Models\RecurringInvoice::scopeWhereOrder">scopeWhereOrder</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RecurringInvoice.php.html#129"><abbr title="Crater\Models\RecurringInvoice::scopeWhereStatus">scopeWhereStatus</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RecurringInvoice.php.html#134"><abbr title="Crater\Models\RecurringInvoice::scopeWhereCustomer">scopeWhereCustomer</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RecurringInvoice.php.html#139"><abbr title="Crater\Models\RecurringInvoice::scopeRecurringInvoicesStartBetween">scopeRecurringInvoicesStartBetween</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RecurringInvoice.php.html#147"><abbr title="Crater\Models\RecurringInvoice::scopeWhereSearch">scopeWhereSearch</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RecurringInvoice.php.html#158"><abbr title="Crater\Models\RecurringInvoice::scopeApplyFilters">scopeApplyFilters</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RecurringInvoice.php.html#187"><abbr title="Crater\Models\RecurringInvoice::createFromRequest">createFromRequest</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RecurringInvoice.php.html#210"><abbr title="Crater\Models\RecurringInvoice::updateFromRequest">updateFromRequest</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RecurringInvoice.php.html#237"><abbr title="Crater\Models\RecurringInvoice::createItems">createItems</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RecurringInvoice.php.html#253"><abbr title="Crater\Models\RecurringInvoice::createTaxes">createTaxes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RecurringInvoice.php.html#264"><abbr title="Crater\Models\RecurringInvoice::generateInvoice">generateInvoice</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RecurringInvoice.php.html#299"><abbr title="Crater\Models\RecurringInvoice::createInvoice">createInvoice</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RecurringInvoice.php.html#385"><abbr title="Crater\Models\RecurringInvoice::markStatusAsCompleted">markStatusAsCompleted</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RecurringInvoice.php.html#393"><abbr title="Crater\Models\RecurringInvoice::getNextInvoiceDate">getNextInvoiceDate</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RecurringInvoice.php.html#400"><abbr title="Crater\Models\RecurringInvoice::updateNextInvoiceDate">updateNextInvoiceDate</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="RecurringInvoice.php.html#408"><abbr title="Crater\Models\RecurringInvoice::deleteRecurringInvoice">deleteRecurringInvoice</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Setting.php.html#31"><abbr title="Crater\Models\Setting::setSettings">setSettings</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Setting.php.html#46"><abbr title="Crater\Models\Setting::getSetting">getSetting</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Setting.php.html#57"><abbr title="Crater\Models\Setting::getSettings">getSettings</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Tax.php.html#23"><abbr title="Crater\Models\Tax::taxType">taxType</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Tax.php.html#28"><abbr title="Crater\Models\Tax::invoice">invoice</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Tax.php.html#33"><abbr title="Crater\Models\Tax::recurringInvoice">recurringInvoice</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Tax.php.html#38"><abbr title="Crater\Models\Tax::estimate">estimate</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Tax.php.html#43"><abbr title="Crater\Models\Tax::currency">currency</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Tax.php.html#53"><abbr title="Crater\Models\Tax::estimateItem">estimateItem</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Tax.php.html#58"><abbr title="Crater\Models\Tax::item">item</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Tax.php.html#63"><abbr title="Crater\Models\Tax::scopeWhereCompany">scopeWhereCompany</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Tax.php.html#68"><abbr title="Crater\Models\Tax::scopeTaxAttributes">scopeTaxAttributes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Tax.php.html#75"><abbr title="Crater\Models\Tax::scopeInvoicesBetween">scopeInvoicesBetween</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Tax.php.html#93"><abbr title="Crater\Models\Tax::scopeWhereInvoicesFilters">scopeWhereInvoicesFilters</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="TaxType.php.html#24"><abbr title="Crater\Models\TaxType::taxes">taxes</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="TaxType.php.html#29"><abbr title="Crater\Models\TaxType::company">company</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="TaxType.php.html#34"><abbr title="Crater\Models\TaxType::scopeWhereCompany">scopeWhereCompany</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="TaxType.php.html#39"><abbr title="Crater\Models\TaxType::scopeWhereTaxType">scopeWhereTaxType</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="TaxType.php.html#44"><abbr title="Crater\Models\TaxType::scopeApplyFilters">scopeApplyFilters</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="TaxType.php.html#67"><abbr title="Crater\Models\TaxType::scopeWhereOrder">scopeWhereOrder</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="TaxType.php.html#72"><abbr title="Crater\Models\TaxType::scopeWhereSearch">scopeWhereSearch</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="TaxType.php.html#77"><abbr title="Crater\Models\TaxType::scopePaginateData">scopePaginateData</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Transaction.php.html#41"><abbr title="Crater\Models\Transaction::completeTransaction">completeTransaction</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Transaction.php.html#47"><abbr title="Crater\Models\Transaction::failedTransaction">failedTransaction</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Transaction.php.html#53"><abbr title="Crater\Models\Transaction::createTransaction">createTransaction</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Transaction.php.html#62"><abbr title="Crater\Models\Transaction::isExpired">isExpired</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Unit.php.html#24"><abbr title="Crater\Models\Unit::scopeWhereCompany">scopeWhereCompany</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="User.php.html#62"><abbr title="Crater\Models\User::findForPassport">findForPassport</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="User.php.html#67"><abbr title="Crater\Models\User::setPasswordAttribute">setPasswordAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="User.php.html#74"><abbr title="Crater\Models\User::isSuperAdminOrAdmin">isSuperAdminOrAdmin</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="User.php.html#79"><abbr title="Crater\Models\User::login">login</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="User.php.html#88"><abbr title="Crater\Models\User::getFormattedCreatedAtAttribute">getFormattedCreatedAtAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="User.php.html#95"><abbr title="Crater\Models\User::estimates">estimates</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="User.php.html#100"><abbr title="Crater\Models\User::customers">customers</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="User.php.html#105"><abbr title="Crater\Models\User::recurringInvoices">recurringInvoices</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="User.php.html#110"><abbr title="Crater\Models\User::currency">currency</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="User.php.html#115"><abbr title="Crater\Models\User::creator">creator</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="User.php.html#120"><abbr title="Crater\Models\User::companies">companies</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="User.php.html#125"><abbr title="Crater\Models\User::expenses">expenses</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="User.php.html#130"><abbr title="Crater\Models\User::payments">payments</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="User.php.html#135"><abbr title="Crater\Models\User::invoices">invoices</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="User.php.html#140"><abbr title="Crater\Models\User::items">items</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="User.php.html#145"><abbr title="Crater\Models\User::settings">settings</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="User.php.html#150"><abbr title="Crater\Models\User::addresses">addresses</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="User.php.html#155"><abbr title="Crater\Models\User::billingAddress">billingAddress</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="User.php.html#160"><abbr title="Crater\Models\User::shippingAddress">shippingAddress</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="User.php.html#168"><abbr title="Crater\Models\User::sendPasswordResetNotification">sendPasswordResetNotification</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="User.php.html#173"><abbr title="Crater\Models\User::scopeWhereOrder">scopeWhereOrder</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="User.php.html#178"><abbr title="Crater\Models\User::scopeWhereSearch">scopeWhereSearch</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="User.php.html#189"><abbr title="Crater\Models\User::scopeWhereContactName">scopeWhereContactName</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="User.php.html#194"><abbr title="Crater\Models\User::scopeWhereDisplayName">scopeWhereDisplayName</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="User.php.html#199"><abbr title="Crater\Models\User::scopeWherePhone">scopeWherePhone</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="User.php.html#204"><abbr title="Crater\Models\User::scopeWhereEmail">scopeWhereEmail</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="User.php.html#209"><abbr title="Crater\Models\User::scopePaginateData">scopePaginateData</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="User.php.html#218"><abbr title="Crater\Models\User::scopeApplyFilters">scopeApplyFilters</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="User.php.html#245"><abbr title="Crater\Models\User::scopeWhereSuperAdmin">scopeWhereSuperAdmin</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="User.php.html#250"><abbr title="Crater\Models\User::scopeApplyInvoiceFilters">scopeApplyInvoiceFilters</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="User.php.html#261"><abbr title="Crater\Models\User::scopeInvoicesBetween">scopeInvoicesBetween</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="User.php.html#271"><abbr title="Crater\Models\User::getAvatarAttribute">getAvatarAttribute</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="User.php.html#282"><abbr title="Crater\Models\User::setSettings">setSettings</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="User.php.html#297"><abbr title="Crater\Models\User::hasCompany">hasCompany</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="User.php.html#304"><abbr title="Crater\Models\User::getAllSettings">getAllSettings</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="User.php.html#311"><abbr title="Crater\Models\User::getSettings">getSettings</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="User.php.html#318"><abbr title="Crater\Models\User::isOwner">isOwner</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="User.php.html#333"><abbr title="Crater\Models\User::createFromRequest">createFromRequest</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="User.php.html#353"><abbr title="Crater\Models\User::updateFromRequest">updateFromRequest</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="User.php.html#369"><abbr title="Crater\Models\User::checkAccess">checkAccess</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="User.php.html#390"><abbr title="Crater\Models\User::deleteUsers">deleteUsers</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Payment.php.html#46"><abbr title="Crater\Models\Payment::booted">booted</abbr></a></td><td class="text-right">50%</td></tr>
+       <tr><td><a href="Unit.php.html#39"><abbr title="Crater\Models\Unit::scopeApplyFilters">scopeApplyFilters</abbr></a></td><td class="text-right">87%</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Project Risks</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Method</th>
+         <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Company.php.html#265"><abbr title="Crater\Models\Company::deleteCompany">deleteCompany</abbr></a></td><td class="text-right">380</td></tr>
+       <tr><td><a href="Invoice.php.html#237"><abbr title="Crater\Models\Invoice::scopeApplyFilters">scopeApplyFilters</abbr></a></td><td class="text-right">306</td></tr>
+       <tr><td><a href="Estimate.php.html#147"><abbr title="Crater\Models\Estimate::scopeApplyFilters">scopeApplyFilters</abbr></a></td><td class="text-right">156</td></tr>
+       <tr><td><a href="Payment.php.html#189"><abbr title="Crater\Models\Payment::updatePayment">updatePayment</abbr></a></td><td class="text-right">156</td></tr>
+       <tr><td><a href="Payment.php.html#296"><abbr title="Crater\Models\Payment::scopeApplyFilters">scopeApplyFilters</abbr></a></td><td class="text-right">156</td></tr>
+       <tr><td><a href="Customer.php.html#132"><abbr title="Crater\Models\Customer::deleteCustomers">deleteCustomers</abbr></a></td><td class="text-right">132</td></tr>
+       <tr><td><a href="Customer.php.html#205"><abbr title="Crater\Models\Customer::updateCustomer">updateCustomer</abbr></a></td><td class="text-right">132</td></tr>
+       <tr><td><a href="Expense.php.html#149"><abbr title="Crater\Models\Expense::scopeApplyFilters">scopeApplyFilters</abbr></a></td><td class="text-right">132</td></tr>
+       <tr><td><a href="RecurringInvoice.php.html#158"><abbr title="Crater\Models\RecurringInvoice::scopeApplyFilters">scopeApplyFilters</abbr></a></td><td class="text-right">132</td></tr>
+       <tr><td><a href="Customer.php.html#311"><abbr title="Crater\Models\Customer::scopeApplyFilters">scopeApplyFilters</abbr></a></td><td class="text-right">110</td></tr>
+       <tr><td><a href="ExchangeRateProvider.php.html#77"><abbr title="Crater\Models\ExchangeRateProvider::checkExchangeRateProviderStatus">checkExchangeRateProviderStatus</abbr></a></td><td class="text-right">110</td></tr>
+       <tr><td><a href="Invoice.php.html#129"><abbr title="Crater\Models\Invoice::getAllowEditAttribute">getAllowEditAttribute</abbr></a></td><td class="text-right">110</td></tr>
+       <tr><td><a href="Invoice.php.html#481"><abbr title="Crater\Models\Invoice::createItems">createItems</abbr></a></td><td class="text-right">110</td></tr>
+       <tr><td><a href="User.php.html#369"><abbr title="Crater\Models\User::checkAccess">checkAccess</abbr></a></td><td class="text-right">110</td></tr>
+       <tr><td><a href="User.php.html#390"><abbr title="Crater\Models\User::deleteUsers">deleteUsers</abbr></a></td><td class="text-right">110</td></tr>
+       <tr><td><a href="Invoice.php.html#366"><abbr title="Crater\Models\Invoice::updateInvoice">updateInvoice</abbr></a></td><td class="text-right">90</td></tr>
+       <tr><td><a href="Item.php.html#69"><abbr title="Crater\Models\Item::scopeApplyFilters">scopeApplyFilters</abbr></a></td><td class="text-right">90</td></tr>
+       <tr><td><a href="User.php.html#218"><abbr title="Crater\Models\User::scopeApplyFilters">scopeApplyFilters</abbr></a></td><td class="text-right">90</td></tr>
+       <tr><td><a href="Company.php.html#384"><abbr title="Crater\Models\Company::hasTransactions">hasTransactions</abbr></a></td><td class="text-right">72</td></tr>
+       <tr><td><a href="Estimate.php.html#301"><abbr title="Crater\Models\Estimate::createItems">createItems</abbr></a></td><td class="text-right">72</td></tr>
+       <tr><td><a href="FileDisk.php.html#58"><abbr title="Crater\Models\FileDisk::scopeApplyFilters">scopeApplyFilters</abbr></a></td><td class="text-right">72</td></tr>
+       <tr><td><a href="TaxType.php.html#44"><abbr title="Crater\Models\TaxType::scopeApplyFilters">scopeApplyFilters</abbr></a></td><td class="text-right">72</td></tr>
+       <tr><td><a href="RecurringInvoice.php.html#299"><abbr title="Crater\Models\RecurringInvoice::createInvoice">createInvoice</abbr></a></td><td class="text-right">56</td></tr>
+       <tr><td><a href="Customer.php.html#178"><abbr title="Crater\Models\Customer::createCustomer">createCustomer</abbr></a></td><td class="text-right">42</td></tr>
+       <tr><td><a href="Estimate.php.html#208"><abbr title="Crater\Models\Estimate::createEstimate">createEstimate</abbr></a></td><td class="text-right">42</td></tr>
+       <tr><td><a href="Estimate.php.html#374"><abbr title="Crater\Models\Estimate::getPDFData">getPDFData</abbr></a></td><td class="text-right">42</td></tr>
+       <tr><td><a href="Expense.php.html#253"><abbr title="Crater\Models\Expense::updateExpense">updateExpense</abbr></a></td><td class="text-right">42</td></tr>
+       <tr><td><a href="Invoice.php.html#317"><abbr title="Crater\Models\Invoice::createInvoice">createInvoice</abbr></a></td><td class="text-right">42</td></tr>
+       <tr><td><a href="Invoice.php.html#542"><abbr title="Crater\Models\Invoice::getPDFData">getPDFData</abbr></a></td><td class="text-right">42</td></tr>
+       <tr><td><a href="RecurringInvoice.php.html#237"><abbr title="Crater\Models\RecurringInvoice::createItems">createItems</abbr></a></td><td class="text-right">42</td></tr>
+       <tr><td><a href="RecurringInvoice.php.html#264"><abbr title="Crater\Models\RecurringInvoice::generateInvoice">generateInvoice</abbr></a></td><td class="text-right">42</td></tr>
+       <tr><td><a href="Estimate.php.html#249"><abbr title="Crater\Models\Estimate::updateEstimate">updateEstimate</abbr></a></td><td class="text-right">30</td></tr>
+       <tr><td><a href="RecurringInvoice.php.html#187"><abbr title="Crater\Models\RecurringInvoice::createFromRequest">createFromRequest</abbr></a></td><td class="text-right">30</td></tr>
+       <tr><td><a href="RecurringInvoice.php.html#210"><abbr title="Crater\Models\RecurringInvoice::updateFromRequest">updateFromRequest</abbr></a></td><td class="text-right">30</td></tr>
+       <tr><td><a href="RecurringInvoice.php.html#408"><abbr title="Crater\Models\RecurringInvoice::deleteRecurringInvoice">deleteRecurringInvoice</abbr></a></td><td class="text-right">30</td></tr>
+       <tr><td><a href="User.php.html#318"><abbr title="Crater\Models\User::isOwner">isOwner</abbr></a></td><td class="text-right">30</td></tr>
+       <tr><td><a href="Expense.php.html#232"><abbr title="Crater\Models\Expense::createExpense">createExpense</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="ExpenseCategory.php.html#59"><abbr title="Crater\Models\ExpenseCategory::scopeApplyFilters">scopeApplyFilters</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="FileDisk.php.html#109"><abbr title="Crater\Models\FileDisk::validateCredentials">validateCredentials</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="Invoice.php.html#522"><abbr title="Crater\Models\Invoice::createTaxes">createTaxes</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="Invoice.php.html#688"><abbr title="Crater\Models\Invoice::changeInvoiceStatus">changeInvoiceStatus</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="Payment.php.html#145"><abbr title="Crater\Models\Payment::createPayment">createPayment</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="Payment.php.html#241"><abbr title="Crater\Models\Payment::deletePayments">deletePayments</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="PaymentMethod.php.html#64"><abbr title="Crater\Models\PaymentMethod::scopeApplyFilters">scopeApplyFilters</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="Transaction.php.html#62"><abbr title="Crater\Models\Transaction::isExpired">isExpired</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="Company.php.html#33"><abbr title="Crater\Models\Company::getLogoPathAttribute">getLogoPathAttribute</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Company.php.html#369"><abbr title="Crater\Models\Company::checkModelData">checkModelData</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="CustomField.php.html#29"><abbr title="Crater\Models\CustomField::setTimeAnswerAttribute">setTimeAnswerAttribute</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="CustomField.php.html#85"><abbr title="Crater\Models\CustomField::scopeApplyFilters">scopeApplyFilters</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Customer.php.html#290"><abbr title="Crater\Models\Customer::scopeApplyInvoiceFilters">scopeApplyInvoiceFilters</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="EmailLog.php.html#20"><abbr title="Crater\Models\EmailLog::isExpired">isExpired</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Estimate.php.html#330"><abbr title="Crater\Models\Estimate::createTaxes">createTaxes</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Estimate.php.html#422"><abbr title="Crater\Models\Estimate::getCompanyAddress">getCompanyAddress</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Estimate.php.html#433"><abbr title="Crater\Models\Estimate::getCustomerShippingAddress">getCustomerShippingAddress</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Estimate.php.html#444"><abbr title="Crater\Models\Estimate::getCustomerBillingAddress">getCustomerBillingAddress</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Estimate.php.html#504"><abbr title="Crater\Models\Estimate::getInvoiceTemplateName">getInvoiceTemplateName</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Estimate.php.html#521"><abbr title="Crater\Models\Estimate::checkForEstimateConvertAction">checkForEstimateConvertAction</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="FileDisk.php.html#92"><abbr title="Crater\Models\FileDisk::setFilesystem">setFilesystem</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="FileDisk.php.html#164"><abbr title="Crater\Models\FileDisk::updateDisk">updateDisk</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Invoice.php.html#153"><abbr title="Crater\Models\Invoice::getPreviousStatus">getPreviousStatus</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Invoice.php.html#601"><abbr title="Crater\Models\Invoice::getCompanyAddress">getCompanyAddress</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Invoice.php.html#612"><abbr title="Crater\Models\Invoice::getCustomerShippingAddress">getCustomerShippingAddress</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Invoice.php.html#623"><abbr title="Crater\Models\Invoice::getCustomerBillingAddress">getCustomerBillingAddress</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Invoice.php.html#711"><abbr title="Crater\Models\Invoice::deleteInvoices">deleteInvoices</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="InvoiceItem.php.html#64"><abbr title="Crater\Models\InvoiceItem::scopeApplyInvoiceFilters">scopeApplyInvoiceFilters</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Item.php.html#134"><abbr title="Crater\Models\Item::createItem">createItem</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Item.php.html#157"><abbr title="Crater\Models\Item::updateItem">updateItem</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Note.php.html#19"><abbr title="Crater\Models\Note::scopeApplyFilters">scopeApplyFilters</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Payment.php.html#385"><abbr title="Crater\Models\Payment::getCompanyAddress">getCompanyAddress</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Payment.php.html#396"><abbr title="Crater\Models\Payment::getCustomerBillingAddress">getCustomerBillingAddress</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="RecurringInvoice.php.html#253"><abbr title="Crater\Models\RecurringInvoice::createTaxes">createTaxes</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Tax.php.html#93"><abbr title="Crater\Models\Tax::scopeWhereInvoicesFilters">scopeWhereInvoicesFilters</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="User.php.html#250"><abbr title="Crater\Models\User::scopeApplyInvoiceFilters">scopeApplyInvoiceFilters</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Address.php.html#16"><abbr title="Crater\Models\Address::getCountryNameAttribute">getCountryNameAttribute</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Company.php.html#50"><abbr title="Crater\Models\Company::getLogoAttribute">getLogoAttribute</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Company.php.html#156"><abbr title="Crater\Models\Company::setupRoles">setupRoles</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="CompanySetting.php.html#24"><abbr title="Crater\Models\CompanySetting::setSettings">setSettings</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="CompanySetting.php.html#56"><abbr title="Crater\Models\CompanySetting::getSetting">getSetting</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="CustomField.php.html#76"><abbr title="Crater\Models\CustomField::scopePaginateData">scopePaginateData</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Customer.php.html#54"><abbr title="Crater\Models\Customer::setPasswordAttribute">setPasswordAttribute</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Customer.php.html#121"><abbr title="Crater\Models\Customer::getAvatarAttribute">getAvatarAttribute</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Customer.php.html#240"><abbr title="Crater\Models\Customer::scopePaginateData">scopePaginateData</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Customer.php.html#269"><abbr title="Crater\Models\Customer::scopeWhereSearch">scopeWhereSearch</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Estimate.php.html#136"><abbr title="Crater\Models\Estimate::scopeWhereSearch">scopeWhereSearch</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Estimate.php.html#199"><abbr title="Crater\Models\Estimate::scopePaginateData">scopePaginateData</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Estimate.php.html#346"><abbr title="Crater\Models\Estimate::sendEstimateData">sendEstimateData</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Estimate.php.html#357"><abbr title="Crater\Models\Estimate::send">send</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Estimate.php.html#460"><abbr title="Crater\Models\Estimate::getEmailAttachmentSetting">getEmailAttachmentSetting</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Estimate.php.html#490"><abbr title="Crater\Models\Estimate::estimateTemplates">estimateTemplates</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Expense.php.html#81"><abbr title="Crater\Models\Expense::getReceiptUrlAttribute">getReceiptUrlAttribute</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Expense.php.html#95"><abbr title="Crater\Models\Expense::getReceiptAttribute">getReceiptAttribute</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Expense.php.html#106"><abbr title="Crater\Models\Expense::getReceiptMetaAttribute">getReceiptMetaAttribute</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Expense.php.html#125"><abbr title="Crater\Models\Expense::scopeWhereCategoryName">scopeWhereCategoryName</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Expense.php.html#187"><abbr title="Crater\Models\Expense::scopeWhereSearch">scopeWhereSearch</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Expense.php.html#212"><abbr title="Crater\Models\Expense::scopePaginateData">scopePaginateData</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="ExpenseCategory.php.html#76"><abbr title="Crater\Models\ExpenseCategory::scopePaginateData">scopePaginateData</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="FileDisk.php.html#41"><abbr title="Crater\Models\FileDisk::scopeWhereSearch">scopeWhereSearch</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="FileDisk.php.html#49"><abbr title="Crater\Models\FileDisk::scopePaginateData">scopePaginateData</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="FileDisk.php.html#135"><abbr title="Crater\Models\FileDisk::createDisk">createDisk</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="FileDisk.php.html#152"><abbr title="Crater\Models\FileDisk::updateDefaultDisks">updateDefaultDisks</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Invoice.php.html#120"><abbr title="Crater\Models\Invoice::getPaymentModuleEnabledAttribute">getPaymentModuleEnabledAttribute</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Invoice.php.html#221"><abbr title="Crater\Models\Invoice::scopeWhereSearch">scopeWhereSearch</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Invoice.php.html#308"><abbr title="Crater\Models\Invoice::scopePaginateData">scopePaginateData</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Invoice.php.html#441"><abbr title="Crater\Models\Invoice::sendInvoiceData">sendInvoiceData</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Invoice.php.html#463"><abbr title="Crater\Models\Invoice::send">send</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Invoice.php.html#590"><abbr title="Crater\Models\Invoice::getEmailAttachmentSetting">getEmailAttachmentSetting</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Invoice.php.html#658"><abbr title="Crater\Models\Invoice::invoiceTemplates">invoiceTemplates</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Item.php.html#96"><abbr title="Crater\Models\Item::scopePaginateData">scopePaginateData</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Payment.php.html#57"><abbr title="Crater\Models\Payment::setSettingsAttribute">setSettingsAttribute</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Payment.php.html#123"><abbr title="Crater\Models\Payment::sendPaymentData">sendPaymentData</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Payment.php.html#266"><abbr title="Crater\Models\Payment::scopeWhereSearch">scopeWhereSearch</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Payment.php.html#287"><abbr title="Crater\Models\Payment::scopePaginateData">scopePaginateData</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Payment.php.html#361"><abbr title="Crater\Models\Payment::getPDFData">getPDFData</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Payment.php.html#407"><abbr title="Crater\Models\Payment::getEmailAttachmentSetting">getEmailAttachmentSetting</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Payment.php.html#432"><abbr title="Crater\Models\Payment::getExtraFields">getExtraFields</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="PaymentMethod.php.html#81"><abbr title="Crater\Models\PaymentMethod::scopePaginateData">scopePaginateData</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="RecurringInvoice.php.html#115"><abbr title="Crater\Models\RecurringInvoice::scopePaginateData">scopePaginateData</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="RecurringInvoice.php.html#147"><abbr title="Crater\Models\RecurringInvoice::scopeWhereSearch">scopeWhereSearch</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="RecurringInvoice.php.html#385"><abbr title="Crater\Models\RecurringInvoice::markStatusAsCompleted">markStatusAsCompleted</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Setting.php.html#31"><abbr title="Crater\Models\Setting::setSettings">setSettings</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Setting.php.html#46"><abbr title="Crater\Models\Setting::getSetting">getSetting</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="TaxType.php.html#77"><abbr title="Crater\Models\TaxType::scopePaginateData">scopePaginateData</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="User.php.html#67"><abbr title="Crater\Models\User::setPasswordAttribute">setPasswordAttribute</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="User.php.html#74"><abbr title="Crater\Models\User::isSuperAdminOrAdmin">isSuperAdminOrAdmin</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="User.php.html#178"><abbr title="Crater\Models\User::scopeWhereSearch">scopeWhereSearch</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="User.php.html#209"><abbr title="Crater\Models\User::scopePaginateData">scopePaginateData</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="User.php.html#271"><abbr title="Crater\Models\User::getAvatarAttribute">getAvatarAttribute</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="User.php.html#282"><abbr title="Crater\Models\User::setSettings">setSettings</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="User.php.html#333"><abbr title="Crater\Models\User::createFromRequest">createFromRequest</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="User.php.html#353"><abbr title="Crater\Models\User::updateFromRequest">updateFromRequest</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Unit.php.html#39"><abbr title="Crater\Models\Unit::scopeApplyFilters">scopeApplyFilters</abbr></a></td><td class="text-right">4</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <footer>
+    <hr/>
+    <p>
+     <small>Generated by <a href="https://github.com/sebastianbergmann/php-code-coverage" target="_top">php-code-coverage 9.2.15</a> using <a href="https://secure.php.net/" target="_top">PHP 8.1.33</a> and <a href="https://phpunit.de/">PHPUnit 9.5.20</a> at Fri Dec 5 14:19:33 UTC 2025.</small>
+    </p>
+   </footer>
+  </div>
+  <script src="../_js/jquery.min.js" type="text/javascript"></script>
+  <script src="../_js/d3.min.js" type="text/javascript"></script>
+  <script src="../_js/nv.d3.min.js" type="text/javascript"></script>
+  <script type="text/javascript">
+$(document).ready(function() {
+  nv.addGraph(function() {
+    var chart = nv.models.multiBarChart();
+    chart.tooltips(false)
+      .showControls(false)
+      .showLegend(false)
+      .reduceXTicks(false)
+      .staggerLabels(true)
+      .yAxis.tickFormat(d3.format('d'));
+
+    d3.select('#classCoverageDistribution svg')
+      .datum(getCoverageDistributionData([14,5,3,2,0,1,0,0,2,1,0,3], "Class Coverage"))
+      .transition().duration(500).call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  nv.addGraph(function() {
+    var chart = nv.models.multiBarChart();
+    chart.tooltips(false)
+      .showControls(false)
+      .showLegend(false)
+      .reduceXTicks(false)
+      .staggerLabels(true)
+      .yAxis.tickFormat(d3.format('d'));
+
+    d3.select('#methodCoverageDistribution svg')
+      .datum(getCoverageDistributionData([394,0,0,0,0,0,1,0,0,1,1,38], "Method Coverage"))
+      .transition().duration(500).call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  function getCoverageDistributionData(data, label) {
+    var labels = [
+      '0%',
+      '0-10%',
+      '10-20%',
+      '20-30%',
+      '30-40%',
+      '40-50%',
+      '50-60%',
+      '60-70%',
+      '70-80%',
+      '80-90%',
+      '90-100%',
+      '100%'
+    ];
+    var values = [];
+    $.each(labels, function(key) {
+      values.push({x: labels[key], y: data[key]});
+    });
+
+    return [
+      {
+        key: label,
+        values: values,
+        color: "#4572A7"
+      }
+    ];
+  }
+  nv.addGraph(function() {
+    var chart = nv.models.scatterChart()
+      .showDistX(true)
+      .showDistY(true)
+      .showLegend(false)
+      .forceX([0, 100]);
+    chart.tooltipContent(function(graph) {
+      return '<p>' + graph.point.class + '</p>';
+    });
+
+    chart.xAxis.axisLabel('Code Coverage (in percent)');
+    chart.yAxis.axisLabel('Cyclomatic Complexity');
+
+    d3.select('#classComplexity svg')
+      .datum(getComplexityData([[0,6,"<a href=\"Address.php.html#8\">Crater\\Models\\Address<\/a>"],[0,61,"<a href=\"Company.php.html#12\">Crater\\Models\\Company<\/a>"],[6.666666666666667,8,"<a href=\"CompanySetting.php.html#8\">Crater\\Models\\CompanySetting<\/a>"],[0,1,"<a href=\"Country.php.html#8\">Crater\\Models\\Country<\/a>"],[100,0,"<a href=\"Currency.php.html#8\">Crater\\Models\\Currency<\/a>"],[0,18,"<a href=\"CustomField.php.html#8\">Crater\\Models\\CustomField<\/a>"],[75,7,"<a href=\"CustomFieldValue.php.html#8\">Crater\\Models\\CustomFieldValue<\/a>"],[0,69,"<a href=\"Customer.php.html#16\">Crater\\Models\\Customer<\/a>"],[0,4,"<a href=\"EmailLog.php.html#9\">Crater\\Models\\EmailLog<\/a>"],[0,87,"<a href=\"Estimate.php.html#20\">Crater\\Models\\Estimate<\/a>"],[75,4,"<a href=\"EstimateItem.php.html#9\">Crater\\Models\\EstimateItem<\/a>"],[25,3,"<a href=\"ExchangeRateLog.php.html#8\">Crater\\Models\\ExchangeRateLog<\/a>"],[20,23,"<a href=\"ExchangeRateProvider.php.html#10\">Crater\\Models\\ExchangeRateProvider<\/a>"],[0,50,"<a href=\"Expense.php.html#13\">Crater\\Models\\Expense<\/a>"],[11.11111111111111,13,"<a href=\"ExpenseCategory.php.html#9\">Crater\\Models\\ExpenseCategory<\/a>"],[5.333333333333334,34,"<a href=\"FileDisk.php.html#9\">Crater\\Models\\FileDisk<\/a>"],[0,126,"<a href=\"Invoice.php.html#21\">Crater\\Models\\Invoice<\/a>"],[0,10,"<a href=\"InvoiceItem.php.html#11\">Crater\\Models\\InvoiceItem<\/a>"],[0,31,"<a href=\"Item.php.html#10\">Crater\\Models\\Item<\/a>"],[100,0,"<a href=\"Module.php.html#8\">Crater\\Models\\Module<\/a>"],[0,7,"<a href=\"Note.php.html#8\">Crater\\Models\\Note<\/a>"],[1.098901098901099,75,"<a href=\"Payment.php.html#18\">Crater\\Models\\Payment<\/a>"],[16.666666666666664,16,"<a href=\"PaymentMethod.php.html#8\">Crater\\Models\\PaymentMethod<\/a>"],[2.272727272727273,72,"<a href=\"RecurringInvoice.php.html#14\">Crater\\Models\\RecurringInvoice<\/a>"],[45,7,"<a href=\"Setting.php.html#8\">Crater\\Models\\Setting<\/a>"],[4,14,"<a href=\"Tax.php.html#10\">Crater\\Models\\Tax<\/a>"],[0,16,"<a href=\"TaxType.php.html#8\">Crater\\Models\\TaxType<\/a>"],[17.647058823529413,10,"<a href=\"Transaction.php.html#10\">Crater\\Models\\Transaction<\/a>"],[87.5,11,"<a href=\"Unit.php.html#8\">Crater\\Models\\Unit<\/a>"],[0,81,"<a href=\"User.php.html#19\">Crater\\Models\\User<\/a>"],[100,1,"<a href=\"UserSetting.php.html#8\">Crater\\Models\\UserSetting<\/a>"]], 'Class Complexity'))
+      .transition()
+      .duration(500)
+      .call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  nv.addGraph(function() {
+    var chart = nv.models.scatterChart()
+      .showDistX(true)
+      .showDistY(true)
+      .showLegend(false)
+      .forceX([0, 100]);
+    chart.tooltipContent(function(graph) {
+      return '<p>' + graph.point.class + '</p>';
+    });
+
+    chart.xAxis.axisLabel('Code Coverage (in percent)');
+    chart.yAxis.axisLabel('Method Complexity');
+
+    d3.select('#methodComplexity svg')
+      .datum(getComplexityData([[0,2,"<a href=\"Address.php.html#16\">Crater\\Models\\Address::getCountryNameAttribute<\/a>"],[0,1,"<a href=\"Address.php.html#23\">Crater\\Models\\Address::user<\/a>"],[0,1,"<a href=\"Address.php.html#28\">Crater\\Models\\Address::customer<\/a>"],[0,1,"<a href=\"Address.php.html#33\">Crater\\Models\\Address::company<\/a>"],[0,1,"<a href=\"Address.php.html#38\">Crater\\Models\\Address::country<\/a>"],[0,1,"<a href=\"Company.php.html#27\">Crater\\Models\\Company::getRolesAttribute<\/a>"],[0,3,"<a href=\"Company.php.html#33\">Crater\\Models\\Company::getLogoPathAttribute<\/a>"],[0,2,"<a href=\"Company.php.html#50\">Crater\\Models\\Company::getLogoAttribute<\/a>"],[0,1,"<a href=\"Company.php.html#61\">Crater\\Models\\Company::customers<\/a>"],[0,1,"<a href=\"Company.php.html#66\">Crater\\Models\\Company::owner<\/a>"],[0,1,"<a href=\"Company.php.html#71\">Crater\\Models\\Company::settings<\/a>"],[0,1,"<a href=\"Company.php.html#76\">Crater\\Models\\Company::recurringInvoices<\/a>"],[0,1,"<a href=\"Company.php.html#81\">Crater\\Models\\Company::customFields<\/a>"],[0,1,"<a href=\"Company.php.html#86\">Crater\\Models\\Company::customFieldValues<\/a>"],[0,1,"<a href=\"Company.php.html#91\">Crater\\Models\\Company::exchangeRateLogs<\/a>"],[0,1,"<a href=\"Company.php.html#96\">Crater\\Models\\Company::exchangeRateProviders<\/a>"],[0,1,"<a href=\"Company.php.html#101\">Crater\\Models\\Company::invoices<\/a>"],[0,1,"<a href=\"Company.php.html#106\">Crater\\Models\\Company::expenses<\/a>"],[0,1,"<a href=\"Company.php.html#111\">Crater\\Models\\Company::units<\/a>"],[0,1,"<a href=\"Company.php.html#116\">Crater\\Models\\Company::expenseCategories<\/a>"],[0,1,"<a href=\"Company.php.html#121\">Crater\\Models\\Company::taxTypes<\/a>"],[0,1,"<a href=\"Company.php.html#126\">Crater\\Models\\Company::items<\/a>"],[0,1,"<a href=\"Company.php.html#131\">Crater\\Models\\Company::payments<\/a>"],[0,1,"<a href=\"Company.php.html#136\">Crater\\Models\\Company::paymentMethods<\/a>"],[0,1,"<a href=\"Company.php.html#141\">Crater\\Models\\Company::estimates<\/a>"],[0,1,"<a href=\"Company.php.html#146\">Crater\\Models\\Company::address<\/a>"],[0,1,"<a href=\"Company.php.html#151\">Crater\\Models\\Company::users<\/a>"],[0,2,"<a href=\"Company.php.html#156\">Crater\\Models\\Company::setupRoles<\/a>"],[0,1,"<a href=\"Company.php.html#171\">Crater\\Models\\Company::setupDefaultPaymentMethods<\/a>"],[0,1,"<a href=\"Company.php.html#179\">Crater\\Models\\Company::setupDefaultUnits<\/a>"],[0,1,"<a href=\"Company.php.html#194\">Crater\\Models\\Company::setupDefaultSettings<\/a>"],[0,1,"<a href=\"Company.php.html#255\">Crater\\Models\\Company::setupDefaultData<\/a>"],[0,19,"<a href=\"Company.php.html#265\">Crater\\Models\\Company::deleteCompany<\/a>"],[0,3,"<a href=\"Company.php.html#369\">Crater\\Models\\Company::checkModelData<\/a>"],[0,8,"<a href=\"Company.php.html#384\">Crater\\Models\\Company::hasTransactions<\/a>"],[100,1,"<a href=\"CompanySetting.php.html#14\">Crater\\Models\\CompanySetting::company<\/a>"],[0,1,"<a href=\"CompanySetting.php.html#19\">Crater\\Models\\CompanySetting::scopeWhereCompany<\/a>"],[0,2,"<a href=\"CompanySetting.php.html#24\">Crater\\Models\\CompanySetting::setSettings<\/a>"],[0,1,"<a href=\"CompanySetting.php.html#41\">Crater\\Models\\CompanySetting::getAllSettings<\/a>"],[0,1,"<a href=\"CompanySetting.php.html#48\">Crater\\Models\\CompanySetting::getSettings<\/a>"],[0,2,"<a href=\"CompanySetting.php.html#56\">Crater\\Models\\CompanySetting::getSetting<\/a>"],[0,1,"<a href=\"Country.php.html#12\">Crater\\Models\\Country::address<\/a>"],[0,3,"<a href=\"CustomField.php.html#29\">Crater\\Models\\CustomField::setTimeAnswerAttribute<\/a>"],[0,1,"<a href=\"CustomField.php.html#36\">Crater\\Models\\CustomField::setOptionsAttribute<\/a>"],[0,1,"<a href=\"CustomField.php.html#41\">Crater\\Models\\CustomField::getDefaultAnswerAttribute<\/a>"],[0,1,"<a href=\"CustomField.php.html#48\">Crater\\Models\\CustomField::getInUseAttribute<\/a>"],[0,1,"<a href=\"CustomField.php.html#53\">Crater\\Models\\CustomField::company<\/a>"],[0,1,"<a href=\"CustomField.php.html#58\">Crater\\Models\\CustomField::customFieldValues<\/a>"],[0,1,"<a href=\"CustomField.php.html#63\">Crater\\Models\\CustomField::scopeWhereCompany<\/a>"],[0,1,"<a href=\"CustomField.php.html#68\">Crater\\Models\\CustomField::scopeWhereSearch<\/a>"],[0,2,"<a href=\"CustomField.php.html#76\">Crater\\Models\\CustomField::scopePaginateData<\/a>"],[0,3,"<a href=\"CustomField.php.html#85\">Crater\\Models\\CustomField::scopeApplyFilters<\/a>"],[0,1,"<a href=\"CustomField.php.html#98\">Crater\\Models\\CustomField::scopeWhereType<\/a>"],[0,1,"<a href=\"CustomField.php.html#103\">Crater\\Models\\CustomField::createCustomField<\/a>"],[0,1,"<a href=\"CustomField.php.html#113\">Crater\\Models\\CustomField::updateCustomField<\/a>"],[100,3,"<a href=\"CustomFieldValue.php.html#25\">Crater\\Models\\CustomFieldValue::setTimeAnswerAttribute<\/a>"],[0,1,"<a href=\"CustomFieldValue.php.html#34\">Crater\\Models\\CustomFieldValue::getDefaultAnswerAttribute<\/a>"],[100,1,"<a href=\"CustomFieldValue.php.html#41\">Crater\\Models\\CustomFieldValue::company<\/a>"],[100,1,"<a href=\"CustomFieldValue.php.html#46\">Crater\\Models\\CustomFieldValue::customField<\/a>"],[100,1,"<a href=\"CustomFieldValue.php.html#51\">Crater\\Models\\CustomFieldValue::customFieldValuable<\/a>"],[0,1,"<a href=\"Customer.php.html#47\">Crater\\Models\\Customer::getFormattedCreatedAtAttribute<\/a>"],[0,2,"<a href=\"Customer.php.html#54\">Crater\\Models\\Customer::setPasswordAttribute<\/a>"],[0,1,"<a href=\"Customer.php.html#61\">Crater\\Models\\Customer::estimates<\/a>"],[0,1,"<a href=\"Customer.php.html#66\">Crater\\Models\\Customer::expenses<\/a>"],[0,1,"<a href=\"Customer.php.html#71\">Crater\\Models\\Customer::invoices<\/a>"],[0,1,"<a href=\"Customer.php.html#76\">Crater\\Models\\Customer::payments<\/a>"],[0,1,"<a href=\"Customer.php.html#81\">Crater\\Models\\Customer::addresses<\/a>"],[0,1,"<a href=\"Customer.php.html#86\">Crater\\Models\\Customer::recurringInvoices<\/a>"],[0,1,"<a href=\"Customer.php.html#91\">Crater\\Models\\Customer::currency<\/a>"],[0,1,"<a href=\"Customer.php.html#96\">Crater\\Models\\Customer::creator<\/a>"],[0,1,"<a href=\"Customer.php.html#101\">Crater\\Models\\Customer::company<\/a>"],[0,1,"<a href=\"Customer.php.html#106\">Crater\\Models\\Customer::billingAddress<\/a>"],[0,1,"<a href=\"Customer.php.html#111\">Crater\\Models\\Customer::shippingAddress<\/a>"],[0,1,"<a href=\"Customer.php.html#116\">Crater\\Models\\Customer::sendPasswordResetNotification<\/a>"],[0,2,"<a href=\"Customer.php.html#121\">Crater\\Models\\Customer::getAvatarAttribute<\/a>"],[0,11,"<a href=\"Customer.php.html#132\">Crater\\Models\\Customer::deleteCustomers<\/a>"],[0,6,"<a href=\"Customer.php.html#178\">Crater\\Models\\Customer::createCustomer<\/a>"],[0,11,"<a href=\"Customer.php.html#205\">Crater\\Models\\Customer::updateCustomer<\/a>"],[0,2,"<a href=\"Customer.php.html#240\">Crater\\Models\\Customer::scopePaginateData<\/a>"],[0,1,"<a href=\"Customer.php.html#249\">Crater\\Models\\Customer::scopeWhereCompany<\/a>"],[0,1,"<a href=\"Customer.php.html#254\">Crater\\Models\\Customer::scopeWhereContactName<\/a>"],[0,1,"<a href=\"Customer.php.html#259\">Crater\\Models\\Customer::scopeWhereDisplayName<\/a>"],[0,1,"<a href=\"Customer.php.html#264\">Crater\\Models\\Customer::scopeWhereOrder<\/a>"],[0,2,"<a href=\"Customer.php.html#269\">Crater\\Models\\Customer::scopeWhereSearch<\/a>"],[0,1,"<a href=\"Customer.php.html#280\">Crater\\Models\\Customer::scopeWherePhone<\/a>"],[0,1,"<a href=\"Customer.php.html#285\">Crater\\Models\\Customer::scopeWhereCustomer<\/a>"],[0,3,"<a href=\"Customer.php.html#290\">Crater\\Models\\Customer::scopeApplyInvoiceFilters<\/a>"],[0,1,"<a href=\"Customer.php.html#301\">Crater\\Models\\Customer::scopeInvoicesBetween<\/a>"],[0,10,"<a href=\"Customer.php.html#311\">Crater\\Models\\Customer::scopeApplyFilters<\/a>"],[0,1,"<a href=\"EmailLog.php.html#15\">Crater\\Models\\EmailLog::mailable<\/a>"],[0,3,"<a href=\"EmailLog.php.html#20\">Crater\\Models\\EmailLog::isExpired<\/a>"],[0,1,"<a href=\"Estimate.php.html#59\">Crater\\Models\\Estimate::getEstimatePdfUrlAttribute<\/a>"],[0,1,"<a href=\"Estimate.php.html#64\">Crater\\Models\\Estimate::emailLogs<\/a>"],[0,1,"<a href=\"Estimate.php.html#69\">Crater\\Models\\Estimate::items<\/a>"],[0,1,"<a href=\"Estimate.php.html#74\">Crater\\Models\\Estimate::customer<\/a>"],[0,1,"<a href=\"Estimate.php.html#79\">Crater\\Models\\Estimate::creator<\/a>"],[0,1,"<a href=\"Estimate.php.html#84\">Crater\\Models\\Estimate::company<\/a>"],[0,1,"<a href=\"Estimate.php.html#89\">Crater\\Models\\Estimate::currency<\/a>"],[0,1,"<a href=\"Estimate.php.html#94\">Crater\\Models\\Estimate::taxes<\/a>"],[0,1,"<a href=\"Estimate.php.html#99\">Crater\\Models\\Estimate::getFormattedExpiryDateAttribute<\/a>"],[0,1,"<a href=\"Estimate.php.html#106\">Crater\\Models\\Estimate::getFormattedEstimateDateAttribute<\/a>"],[0,1,"<a href=\"Estimate.php.html#113\">Crater\\Models\\Estimate::scopeEstimatesBetween<\/a>"],[0,1,"<a href=\"Estimate.php.html#121\">Crater\\Models\\Estimate::scopeWhereStatus<\/a>"],[0,1,"<a href=\"Estimate.php.html#126\">Crater\\Models\\Estimate::scopeWhereEstimateNumber<\/a>"],[0,1,"<a href=\"Estimate.php.html#131\">Crater\\Models\\Estimate::scopeWhereEstimate<\/a>"],[0,2,"<a href=\"Estimate.php.html#136\">Crater\\Models\\Estimate::scopeWhereSearch<\/a>"],[0,12,"<a href=\"Estimate.php.html#147\">Crater\\Models\\Estimate::scopeApplyFilters<\/a>"],[0,1,"<a href=\"Estimate.php.html#184\">Crater\\Models\\Estimate::scopeWhereOrder<\/a>"],[0,1,"<a href=\"Estimate.php.html#189\">Crater\\Models\\Estimate::scopeWhereCompany<\/a>"],[0,1,"<a href=\"Estimate.php.html#194\">Crater\\Models\\Estimate::scopeWhereCustomer<\/a>"],[0,2,"<a href=\"Estimate.php.html#199\">Crater\\Models\\Estimate::scopePaginateData<\/a>"],[0,6,"<a href=\"Estimate.php.html#208\">Crater\\Models\\Estimate::createEstimate<\/a>"],[0,5,"<a href=\"Estimate.php.html#249\">Crater\\Models\\Estimate::updateEstimate<\/a>"],[0,8,"<a href=\"Estimate.php.html#301\">Crater\\Models\\Estimate::createItems<\/a>"],[0,3,"<a href=\"Estimate.php.html#330\">Crater\\Models\\Estimate::createTaxes<\/a>"],[0,2,"<a href=\"Estimate.php.html#346\">Crater\\Models\\Estimate::sendEstimateData<\/a>"],[0,2,"<a href=\"Estimate.php.html#357\">Crater\\Models\\Estimate::send<\/a>"],[0,6,"<a href=\"Estimate.php.html#374\">Crater\\Models\\Estimate::getPDFData<\/a>"],[0,3,"<a href=\"Estimate.php.html#422\">Crater\\Models\\Estimate::getCompanyAddress<\/a>"],[0,3,"<a href=\"Estimate.php.html#433\">Crater\\Models\\Estimate::getCustomerShippingAddress<\/a>"],[0,3,"<a href=\"Estimate.php.html#444\">Crater\\Models\\Estimate::getCustomerBillingAddress<\/a>"],[0,1,"<a href=\"Estimate.php.html#455\">Crater\\Models\\Estimate::getNotes<\/a>"],[0,2,"<a href=\"Estimate.php.html#460\">Crater\\Models\\Estimate::getEmailAttachmentSetting<\/a>"],[0,1,"<a href=\"Estimate.php.html#471\">Crater\\Models\\Estimate::getEmailBody<\/a>"],[0,1,"<a href=\"Estimate.php.html#480\">Crater\\Models\\Estimate::getExtraFields<\/a>"],[0,2,"<a href=\"Estimate.php.html#490\">Crater\\Models\\Estimate::estimateTemplates<\/a>"],[0,3,"<a href=\"Estimate.php.html#504\">Crater\\Models\\Estimate::getInvoiceTemplateName<\/a>"],[0,3,"<a href=\"Estimate.php.html#521\">Crater\\Models\\Estimate::checkForEstimateConvertAction<\/a>"],[100,1,"<a href=\"EstimateItem.php.html#27\">Crater\\Models\\EstimateItem::estimate<\/a>"],[100,1,"<a href=\"EstimateItem.php.html#32\">Crater\\Models\\EstimateItem::item<\/a>"],[100,1,"<a href=\"EstimateItem.php.html#37\">Crater\\Models\\EstimateItem::taxes<\/a>"],[0,1,"<a href=\"EstimateItem.php.html#42\">Crater\\Models\\EstimateItem::scopeWhereCompany<\/a>"],[100,1,"<a href=\"ExchangeRateLog.php.html#20\">Crater\\Models\\ExchangeRateLog::currency<\/a>"],[100,1,"<a href=\"ExchangeRateLog.php.html#25\">Crater\\Models\\ExchangeRateLog::company<\/a>"],[0,1,"<a href=\"ExchangeRateLog.php.html#30\">Crater\\Models\\ExchangeRateLog::addExchangeRateLog<\/a>"],[100,1,"<a href=\"ExchangeRateProvider.php.html#24\">Crater\\Models\\ExchangeRateProvider::company<\/a>"],[100,1,"<a href=\"ExchangeRateProvider.php.html#29\">Crater\\Models\\ExchangeRateProvider::setCurrenciesAttribute<\/a>"],[100,1,"<a href=\"ExchangeRateProvider.php.html#34\">Crater\\Models\\ExchangeRateProvider::setDriverConfigAttribute<\/a>"],[0,1,"<a href=\"ExchangeRateProvider.php.html#39\">Crater\\Models\\ExchangeRateProvider::scopeWhereCompany<\/a>"],[0,1,"<a href=\"ExchangeRateProvider.php.html#44\">Crater\\Models\\ExchangeRateProvider::createFromRequest<\/a>"],[0,1,"<a href=\"ExchangeRateProvider.php.html#51\">Crater\\Models\\ExchangeRateProvider::updateFromRequest<\/a>"],[0,1,"<a href=\"ExchangeRateProvider.php.html#58\">Crater\\Models\\ExchangeRateProvider::checkActiveCurrencies<\/a>"],[0,1,"<a href=\"ExchangeRateProvider.php.html#67\">Crater\\Models\\ExchangeRateProvider::checkUpdateActiveCurrencies<\/a>"],[0,10,"<a href=\"ExchangeRateProvider.php.html#77\">Crater\\Models\\ExchangeRateProvider::checkExchangeRateProviderStatus<\/a>"],[90,5,"<a href=\"ExchangeRateProvider.php.html#142\">Crater\\Models\\ExchangeRateProvider::getCurrencyConverterUrl<\/a>"],[0,1,"<a href=\"Expense.php.html#37\">Crater\\Models\\Expense::category<\/a>"],[0,1,"<a href=\"Expense.php.html#42\">Crater\\Models\\Expense::customer<\/a>"],[0,1,"<a href=\"Expense.php.html#47\">Crater\\Models\\Expense::company<\/a>"],[0,1,"<a href=\"Expense.php.html#52\">Crater\\Models\\Expense::paymentMethod<\/a>"],[0,1,"<a href=\"Expense.php.html#57\">Crater\\Models\\Expense::currency<\/a>"],[0,1,"<a href=\"Expense.php.html#62\">Crater\\Models\\Expense::creator<\/a>"],[0,1,"<a href=\"Expense.php.html#67\">Crater\\Models\\Expense::getFormattedExpenseDateAttribute<\/a>"],[0,1,"<a href=\"Expense.php.html#74\">Crater\\Models\\Expense::getFormattedCreatedAtAttribute<\/a>"],[0,2,"<a href=\"Expense.php.html#81\">Crater\\Models\\Expense::getReceiptUrlAttribute<\/a>"],[0,2,"<a href=\"Expense.php.html#95\">Crater\\Models\\Expense::getReceiptAttribute<\/a>"],[0,2,"<a href=\"Expense.php.html#106\">Crater\\Models\\Expense::getReceiptMetaAttribute<\/a>"],[0,1,"<a href=\"Expense.php.html#117\">Crater\\Models\\Expense::scopeExpensesBetween<\/a>"],[0,2,"<a href=\"Expense.php.html#125\">Crater\\Models\\Expense::scopeWhereCategoryName<\/a>"],[0,1,"<a href=\"Expense.php.html#134\">Crater\\Models\\Expense::scopeWhereNotes<\/a>"],[0,1,"<a href=\"Expense.php.html#139\">Crater\\Models\\Expense::scopeWhereCategory<\/a>"],[0,1,"<a href=\"Expense.php.html#144\">Crater\\Models\\Expense::scopeWhereUser<\/a>"],[0,11,"<a href=\"Expense.php.html#149\">Crater\\Models\\Expense::scopeApplyFilters<\/a>"],[0,1,"<a href=\"Expense.php.html#182\">Crater\\Models\\Expense::scopeWhereExpense<\/a>"],[0,2,"<a href=\"Expense.php.html#187\">Crater\\Models\\Expense::scopeWhereSearch<\/a>"],[0,1,"<a href=\"Expense.php.html#197\">Crater\\Models\\Expense::scopeWhereOrder<\/a>"],[0,1,"<a href=\"Expense.php.html#202\">Crater\\Models\\Expense::scopeWhereCompany<\/a>"],[0,1,"<a href=\"Expense.php.html#207\">Crater\\Models\\Expense::scopeWhereCompanyId<\/a>"],[0,2,"<a href=\"Expense.php.html#212\">Crater\\Models\\Expense::scopePaginateData<\/a>"],[0,1,"<a href=\"Expense.php.html#221\">Crater\\Models\\Expense::scopeExpensesAttributes<\/a>"],[0,4,"<a href=\"Expense.php.html#232\">Crater\\Models\\Expense::createExpense<\/a>"],[0,6,"<a href=\"Expense.php.html#253\">Crater\\Models\\Expense::updateExpense<\/a>"],[100,1,"<a href=\"ExpenseCategory.php.html#22\">Crater\\Models\\ExpenseCategory::expenses<\/a>"],[100,1,"<a href=\"ExpenseCategory.php.html#27\">Crater\\Models\\ExpenseCategory::company<\/a>"],[0,1,"<a href=\"ExpenseCategory.php.html#32\">Crater\\Models\\ExpenseCategory::getFormattedCreatedAtAttribute<\/a>"],[0,1,"<a href=\"ExpenseCategory.php.html#39\">Crater\\Models\\ExpenseCategory::getAmountAttribute<\/a>"],[0,1,"<a href=\"ExpenseCategory.php.html#44\">Crater\\Models\\ExpenseCategory::scopeWhereCompany<\/a>"],[0,1,"<a href=\"ExpenseCategory.php.html#49\">Crater\\Models\\ExpenseCategory::scopeWhereCategory<\/a>"],[0,1,"<a href=\"ExpenseCategory.php.html#54\">Crater\\Models\\ExpenseCategory::scopeWhereSearch<\/a>"],[0,4,"<a href=\"ExpenseCategory.php.html#59\">Crater\\Models\\ExpenseCategory::scopeApplyFilters<\/a>"],[0,2,"<a href=\"ExpenseCategory.php.html#76\">Crater\\Models\\ExpenseCategory::scopePaginateData<\/a>"],[100,1,"<a href=\"FileDisk.php.html#23\">Crater\\Models\\FileDisk::setCredentialsAttribute<\/a>"],[0,1,"<a href=\"FileDisk.php.html#28\">Crater\\Models\\FileDisk::scopeWhereOrder<\/a>"],[0,1,"<a href=\"FileDisk.php.html#33\">Crater\\Models\\FileDisk::scopeFileDisksBetween<\/a>"],[0,2,"<a href=\"FileDisk.php.html#41\">Crater\\Models\\FileDisk::scopeWhereSearch<\/a>"],[0,2,"<a href=\"FileDisk.php.html#49\">Crater\\Models\\FileDisk::scopePaginateData<\/a>"],[0,8,"<a href=\"FileDisk.php.html#58\">Crater\\Models\\FileDisk::scopeApplyFilters<\/a>"],[0,1,"<a href=\"FileDisk.php.html#78\">Crater\\Models\\FileDisk::setConfig<\/a>"],[100,1,"<a href=\"FileDisk.php.html#87\">Crater\\Models\\FileDisk::setAsDefault<\/a>"],[0,3,"<a href=\"FileDisk.php.html#92\">Crater\\Models\\FileDisk::setFilesystem<\/a>"],[0,4,"<a href=\"FileDisk.php.html#109\">Crater\\Models\\FileDisk::validateCredentials<\/a>"],[0,2,"<a href=\"FileDisk.php.html#135\">Crater\\Models\\FileDisk::createDisk<\/a>"],[0,2,"<a href=\"FileDisk.php.html#152\">Crater\\Models\\FileDisk::updateDefaultDisks<\/a>"],[0,3,"<a href=\"FileDisk.php.html#164\">Crater\\Models\\FileDisk::updateDisk<\/a>"],[0,1,"<a href=\"FileDisk.php.html#185\">Crater\\Models\\FileDisk::setAsDefaultDisk<\/a>"],[100,1,"<a href=\"FileDisk.php.html#195\">Crater\\Models\\FileDisk::isSystem<\/a>"],[100,1,"<a href=\"FileDisk.php.html#200\">Crater\\Models\\FileDisk::isRemote<\/a>"],[0,1,"<a href=\"Invoice.php.html#65\">Crater\\Models\\Invoice::transactions<\/a>"],[0,1,"<a href=\"Invoice.php.html#70\">Crater\\Models\\Invoice::emailLogs<\/a>"],[0,1,"<a href=\"Invoice.php.html#75\">Crater\\Models\\Invoice::items<\/a>"],[0,1,"<a href=\"Invoice.php.html#80\">Crater\\Models\\Invoice::taxes<\/a>"],[0,1,"<a href=\"Invoice.php.html#85\">Crater\\Models\\Invoice::payments<\/a>"],[0,1,"<a href=\"Invoice.php.html#90\">Crater\\Models\\Invoice::currency<\/a>"],[0,1,"<a href=\"Invoice.php.html#95\">Crater\\Models\\Invoice::company<\/a>"],[0,1,"<a href=\"Invoice.php.html#100\">Crater\\Models\\Invoice::customer<\/a>"],[0,1,"<a href=\"Invoice.php.html#105\">Crater\\Models\\Invoice::recurringInvoice<\/a>"],[0,1,"<a href=\"Invoice.php.html#110\">Crater\\Models\\Invoice::creator<\/a>"],[0,1,"<a href=\"Invoice.php.html#115\">Crater\\Models\\Invoice::getInvoicePdfUrlAttribute<\/a>"],[0,2,"<a href=\"Invoice.php.html#120\">Crater\\Models\\Invoice::getPaymentModuleEnabledAttribute<\/a>"],[0,10,"<a href=\"Invoice.php.html#129\">Crater\\Models\\Invoice::getAllowEditAttribute<\/a>"],[0,3,"<a href=\"Invoice.php.html#153\">Crater\\Models\\Invoice::getPreviousStatus<\/a>"],[0,1,"<a href=\"Invoice.php.html#164\">Crater\\Models\\Invoice::getFormattedNotesAttribute<\/a>"],[0,1,"<a href=\"Invoice.php.html#169\">Crater\\Models\\Invoice::getFormattedCreatedAtAttribute<\/a>"],[0,1,"<a href=\"Invoice.php.html#176\">Crater\\Models\\Invoice::getFormattedDueDateAttribute<\/a>"],[0,1,"<a href=\"Invoice.php.html#183\">Crater\\Models\\Invoice::getFormattedInvoiceDateAttribute<\/a>"],[0,1,"<a href=\"Invoice.php.html#190\">Crater\\Models\\Invoice::scopeWhereStatus<\/a>"],[0,1,"<a href=\"Invoice.php.html#195\">Crater\\Models\\Invoice::scopeWherePaidStatus<\/a>"],[0,1,"<a href=\"Invoice.php.html#200\">Crater\\Models\\Invoice::scopeWhereDueStatus<\/a>"],[0,1,"<a href=\"Invoice.php.html#208\">Crater\\Models\\Invoice::scopeWhereInvoiceNumber<\/a>"],[0,1,"<a href=\"Invoice.php.html#213\">Crater\\Models\\Invoice::scopeInvoicesBetween<\/a>"],[0,2,"<a href=\"Invoice.php.html#221\">Crater\\Models\\Invoice::scopeWhereSearch<\/a>"],[0,1,"<a href=\"Invoice.php.html#232\">Crater\\Models\\Invoice::scopeWhereOrder<\/a>"],[0,17,"<a href=\"Invoice.php.html#237\">Crater\\Models\\Invoice::scopeApplyFilters<\/a>"],[0,1,"<a href=\"Invoice.php.html#288\">Crater\\Models\\Invoice::scopeWhereInvoice<\/a>"],[0,1,"<a href=\"Invoice.php.html#293\">Crater\\Models\\Invoice::scopeWhereCompany<\/a>"],[0,1,"<a href=\"Invoice.php.html#298\">Crater\\Models\\Invoice::scopeWhereCompanyId<\/a>"],[0,1,"<a href=\"Invoice.php.html#303\">Crater\\Models\\Invoice::scopeWhereCustomer<\/a>"],[0,2,"<a href=\"Invoice.php.html#308\">Crater\\Models\\Invoice::scopePaginateData<\/a>"],[0,6,"<a href=\"Invoice.php.html#317\">Crater\\Models\\Invoice::createInvoice<\/a>"],[0,9,"<a href=\"Invoice.php.html#366\">Crater\\Models\\Invoice::updateInvoice<\/a>"],[0,2,"<a href=\"Invoice.php.html#441\">Crater\\Models\\Invoice::sendInvoiceData<\/a>"],[0,1,"<a href=\"Invoice.php.html#453\">Crater\\Models\\Invoice::preview<\/a>"],[0,2,"<a href=\"Invoice.php.html#463\">Crater\\Models\\Invoice::send<\/a>"],[0,10,"<a href=\"Invoice.php.html#481\">Crater\\Models\\Invoice::createItems<\/a>"],[0,4,"<a href=\"Invoice.php.html#522\">Crater\\Models\\Invoice::createTaxes<\/a>"],[0,6,"<a href=\"Invoice.php.html#542\">Crater\\Models\\Invoice::getPDFData<\/a>"],[0,2,"<a href=\"Invoice.php.html#590\">Crater\\Models\\Invoice::getEmailAttachmentSetting<\/a>"],[0,3,"<a href=\"Invoice.php.html#601\">Crater\\Models\\Invoice::getCompanyAddress<\/a>"],[0,3,"<a href=\"Invoice.php.html#612\">Crater\\Models\\Invoice::getCustomerShippingAddress<\/a>"],[0,3,"<a href=\"Invoice.php.html#623\">Crater\\Models\\Invoice::getCustomerBillingAddress<\/a>"],[0,1,"<a href=\"Invoice.php.html#634\">Crater\\Models\\Invoice::getNotes<\/a>"],[0,1,"<a href=\"Invoice.php.html#639\">Crater\\Models\\Invoice::getEmailString<\/a>"],[0,1,"<a href=\"Invoice.php.html#648\">Crater\\Models\\Invoice::getExtraFields<\/a>"],[0,2,"<a href=\"Invoice.php.html#658\">Crater\\Models\\Invoice::invoiceTemplates<\/a>"],[0,1,"<a href=\"Invoice.php.html#672\">Crater\\Models\\Invoice::addInvoicePayment<\/a>"],[0,1,"<a href=\"Invoice.php.html#680\">Crater\\Models\\Invoice::subtractInvoicePayment<\/a>"],[0,4,"<a href=\"Invoice.php.html#688\">Crater\\Models\\Invoice::changeInvoiceStatus<\/a>"],[0,3,"<a href=\"Invoice.php.html#711\">Crater\\Models\\Invoice::deleteInvoices<\/a>"],[0,1,"<a href=\"InvoiceItem.php.html#29\">Crater\\Models\\InvoiceItem::invoice<\/a>"],[0,1,"<a href=\"InvoiceItem.php.html#34\">Crater\\Models\\InvoiceItem::item<\/a>"],[0,1,"<a href=\"InvoiceItem.php.html#39\">Crater\\Models\\InvoiceItem::taxes<\/a>"],[0,1,"<a href=\"InvoiceItem.php.html#44\">Crater\\Models\\InvoiceItem::recurringInvoice<\/a>"],[0,1,"<a href=\"InvoiceItem.php.html#49\">Crater\\Models\\InvoiceItem::scopeWhereCompany<\/a>"],[0,1,"<a href=\"InvoiceItem.php.html#54\">Crater\\Models\\InvoiceItem::scopeInvoicesBetween<\/a>"],[0,3,"<a href=\"InvoiceItem.php.html#64\">Crater\\Models\\InvoiceItem::scopeApplyInvoiceFilters<\/a>"],[0,1,"<a href=\"InvoiceItem.php.html#75\">Crater\\Models\\InvoiceItem::scopeItemAttributes<\/a>"],[0,1,"<a href=\"Item.php.html#24\">Crater\\Models\\Item::unit<\/a>"],[0,1,"<a href=\"Item.php.html#29\">Crater\\Models\\Item::company<\/a>"],[0,1,"<a href=\"Item.php.html#34\">Crater\\Models\\Item::creator<\/a>"],[0,1,"<a href=\"Item.php.html#39\">Crater\\Models\\Item::currency<\/a>"],[0,1,"<a href=\"Item.php.html#44\">Crater\\Models\\Item::scopeWhereSearch<\/a>"],[0,1,"<a href=\"Item.php.html#49\">Crater\\Models\\Item::scopeWherePrice<\/a>"],[0,1,"<a href=\"Item.php.html#54\">Crater\\Models\\Item::scopeWhereUnit<\/a>"],[0,1,"<a href=\"Item.php.html#59\">Crater\\Models\\Item::scopeWhereOrder<\/a>"],[0,1,"<a href=\"Item.php.html#64\">Crater\\Models\\Item::scopeWhereItem<\/a>"],[0,9,"<a href=\"Item.php.html#69\">Crater\\Models\\Item::scopeApplyFilters<\/a>"],[0,2,"<a href=\"Item.php.html#96\">Crater\\Models\\Item::scopePaginateData<\/a>"],[0,1,"<a href=\"Item.php.html#105\">Crater\\Models\\Item::getFormattedCreatedAtAttribute<\/a>"],[0,1,"<a href=\"Item.php.html#112\">Crater\\Models\\Item::taxes<\/a>"],[0,1,"<a href=\"Item.php.html#119\">Crater\\Models\\Item::scopeWhereCompany<\/a>"],[0,1,"<a href=\"Item.php.html#124\">Crater\\Models\\Item::invoiceItems<\/a>"],[0,1,"<a href=\"Item.php.html#129\">Crater\\Models\\Item::estimateItems<\/a>"],[0,3,"<a href=\"Item.php.html#134\">Crater\\Models\\Item::createItem<\/a>"],[0,3,"<a href=\"Item.php.html#157\">Crater\\Models\\Item::updateItem<\/a>"],[0,1,"<a href=\"Note.php.html#14\">Crater\\Models\\Note::company<\/a>"],[0,3,"<a href=\"Note.php.html#19\">Crater\\Models\\Note::scopeApplyFilters<\/a>"],[0,1,"<a href=\"Note.php.html#32\">Crater\\Models\\Note::scopeWhereSearch<\/a>"],[0,1,"<a href=\"Note.php.html#37\">Crater\\Models\\Note::scopeWhereType<\/a>"],[0,1,"<a href=\"Note.php.html#42\">Crater\\Models\\Note::scopeWhereCompany<\/a>"],[50,1,"<a href=\"Payment.php.html#46\">Crater\\Models\\Payment::booted<\/a>"],[0,2,"<a href=\"Payment.php.html#57\">Crater\\Models\\Payment::setSettingsAttribute<\/a>"],[0,1,"<a href=\"Payment.php.html#64\">Crater\\Models\\Payment::getFormattedCreatedAtAttribute<\/a>"],[0,1,"<a href=\"Payment.php.html#71\">Crater\\Models\\Payment::getFormattedPaymentDateAttribute<\/a>"],[0,1,"<a href=\"Payment.php.html#78\">Crater\\Models\\Payment::getPaymentPdfUrlAttribute<\/a>"],[0,1,"<a href=\"Payment.php.html#83\">Crater\\Models\\Payment::transaction<\/a>"],[0,1,"<a href=\"Payment.php.html#88\">Crater\\Models\\Payment::emailLogs<\/a>"],[0,1,"<a href=\"Payment.php.html#93\">Crater\\Models\\Payment::customer<\/a>"],[0,1,"<a href=\"Payment.php.html#98\">Crater\\Models\\Payment::company<\/a>"],[0,1,"<a href=\"Payment.php.html#103\">Crater\\Models\\Payment::invoice<\/a>"],[0,1,"<a href=\"Payment.php.html#108\">Crater\\Models\\Payment::creator<\/a>"],[0,1,"<a href=\"Payment.php.html#113\">Crater\\Models\\Payment::currency<\/a>"],[0,1,"<a href=\"Payment.php.html#118\">Crater\\Models\\Payment::paymentMethod<\/a>"],[0,2,"<a href=\"Payment.php.html#123\">Crater\\Models\\Payment::sendPaymentData<\/a>"],[0,1,"<a href=\"Payment.php.html#134\">Crater\\Models\\Payment::send<\/a>"],[0,4,"<a href=\"Payment.php.html#145\">Crater\\Models\\Payment::createPayment<\/a>"],[0,12,"<a href=\"Payment.php.html#189\">Crater\\Models\\Payment::updatePayment<\/a>"],[0,4,"<a href=\"Payment.php.html#241\">Crater\\Models\\Payment::deletePayments<\/a>"],[0,2,"<a href=\"Payment.php.html#266\">Crater\\Models\\Payment::scopeWhereSearch<\/a>"],[0,1,"<a href=\"Payment.php.html#277\">Crater\\Models\\Payment::scopePaymentNumber<\/a>"],[0,1,"<a href=\"Payment.php.html#282\">Crater\\Models\\Payment::scopePaymentMethod<\/a>"],[0,2,"<a href=\"Payment.php.html#287\">Crater\\Models\\Payment::scopePaginateData<\/a>"],[0,12,"<a href=\"Payment.php.html#296\">Crater\\Models\\Payment::scopeApplyFilters<\/a>"],[0,1,"<a href=\"Payment.php.html#333\">Crater\\Models\\Payment::scopePaymentsBetween<\/a>"],[0,1,"<a href=\"Payment.php.html#341\">Crater\\Models\\Payment::scopeWhereOrder<\/a>"],[0,1,"<a href=\"Payment.php.html#346\">Crater\\Models\\Payment::scopeWherePayment<\/a>"],[0,1,"<a href=\"Payment.php.html#351\">Crater\\Models\\Payment::scopeWhereCompany<\/a>"],[0,1,"<a href=\"Payment.php.html#356\">Crater\\Models\\Payment::scopeWhereCustomer<\/a>"],[0,2,"<a href=\"Payment.php.html#361\">Crater\\Models\\Payment::getPDFData<\/a>"],[0,3,"<a href=\"Payment.php.html#385\">Crater\\Models\\Payment::getCompanyAddress<\/a>"],[0,3,"<a href=\"Payment.php.html#396\">Crater\\Models\\Payment::getCustomerBillingAddress<\/a>"],[0,2,"<a href=\"Payment.php.html#407\">Crater\\Models\\Payment::getEmailAttachmentSetting<\/a>"],[0,1,"<a href=\"Payment.php.html#418\">Crater\\Models\\Payment::getNotes<\/a>"],[0,1,"<a href=\"Payment.php.html#423\">Crater\\Models\\Payment::getEmailBody<\/a>"],[0,2,"<a href=\"Payment.php.html#432\">Crater\\Models\\Payment::getExtraFields<\/a>"],[0,1,"<a href=\"Payment.php.html#442\">Crater\\Models\\Payment::generatePayment<\/a>"],[100,1,"<a href=\"PaymentMethod.php.html#24\">Crater\\Models\\PaymentMethod::setSettingsAttribute<\/a>"],[100,1,"<a href=\"PaymentMethod.php.html#29\">Crater\\Models\\PaymentMethod::payments<\/a>"],[100,1,"<a href=\"PaymentMethod.php.html#34\">Crater\\Models\\PaymentMethod::expenses<\/a>"],[100,1,"<a href=\"PaymentMethod.php.html#39\">Crater\\Models\\PaymentMethod::company<\/a>"],[0,1,"<a href=\"PaymentMethod.php.html#44\">Crater\\Models\\PaymentMethod::scopeWhereCompanyId<\/a>"],[0,1,"<a href=\"PaymentMethod.php.html#49\">Crater\\Models\\PaymentMethod::scopeWhereCompany<\/a>"],[0,1,"<a href=\"PaymentMethod.php.html#54\">Crater\\Models\\PaymentMethod::scopeWherePaymentMethod<\/a>"],[0,1,"<a href=\"PaymentMethod.php.html#59\">Crater\\Models\\PaymentMethod::scopeWhereSearch<\/a>"],[0,4,"<a href=\"PaymentMethod.php.html#64\">Crater\\Models\\PaymentMethod::scopeApplyFilters<\/a>"],[0,2,"<a href=\"PaymentMethod.php.html#81\">Crater\\Models\\PaymentMethod::scopePaginateData<\/a>"],[0,1,"<a href=\"PaymentMethod.php.html#90\">Crater\\Models\\PaymentMethod::createPaymentMethod<\/a>"],[0,1,"<a href=\"PaymentMethod.php.html#99\">Crater\\Models\\PaymentMethod::getSettings<\/a>"],[0,1,"<a href=\"RecurringInvoice.php.html#47\">Crater\\Models\\RecurringInvoice::getFormattedStartsAtAttribute<\/a>"],[0,1,"<a href=\"RecurringInvoice.php.html#54\">Crater\\Models\\RecurringInvoice::getFormattedNextInvoiceAtAttribute<\/a>"],[0,1,"<a href=\"RecurringInvoice.php.html#61\">Crater\\Models\\RecurringInvoice::getFormattedLimitDateAttribute<\/a>"],[0,1,"<a href=\"RecurringInvoice.php.html#68\">Crater\\Models\\RecurringInvoice::getFormattedCreatedAtAttribute<\/a>"],[100,1,"<a href=\"RecurringInvoice.php.html#75\">Crater\\Models\\RecurringInvoice::invoices<\/a>"],[0,1,"<a href=\"RecurringInvoice.php.html#80\">Crater\\Models\\RecurringInvoice::taxes<\/a>"],[0,1,"<a href=\"RecurringInvoice.php.html#85\">Crater\\Models\\RecurringInvoice::items<\/a>"],[100,1,"<a href=\"RecurringInvoice.php.html#90\">Crater\\Models\\RecurringInvoice::customer<\/a>"],[100,1,"<a href=\"RecurringInvoice.php.html#95\">Crater\\Models\\RecurringInvoice::company<\/a>"],[0,1,"<a href=\"RecurringInvoice.php.html#100\">Crater\\Models\\RecurringInvoice::creator<\/a>"],[100,1,"<a href=\"RecurringInvoice.php.html#105\">Crater\\Models\\RecurringInvoice::currency<\/a>"],[0,1,"<a href=\"RecurringInvoice.php.html#110\">Crater\\Models\\RecurringInvoice::scopeWhereCompany<\/a>"],[0,2,"<a href=\"RecurringInvoice.php.html#115\">Crater\\Models\\RecurringInvoice::scopePaginateData<\/a>"],[0,1,"<a href=\"RecurringInvoice.php.html#124\">Crater\\Models\\RecurringInvoice::scopeWhereOrder<\/a>"],[0,1,"<a href=\"RecurringInvoice.php.html#129\">Crater\\Models\\RecurringInvoice::scopeWhereStatus<\/a>"],[0,1,"<a href=\"RecurringInvoice.php.html#134\">Crater\\Models\\RecurringInvoice::scopeWhereCustomer<\/a>"],[0,1,"<a href=\"RecurringInvoice.php.html#139\">Crater\\Models\\RecurringInvoice::scopeRecurringInvoicesStartBetween<\/a>"],[0,2,"<a href=\"RecurringInvoice.php.html#147\">Crater\\Models\\RecurringInvoice::scopeWhereSearch<\/a>"],[0,11,"<a href=\"RecurringInvoice.php.html#158\">Crater\\Models\\RecurringInvoice::scopeApplyFilters<\/a>"],[0,5,"<a href=\"RecurringInvoice.php.html#187\">Crater\\Models\\RecurringInvoice::createFromRequest<\/a>"],[0,5,"<a href=\"RecurringInvoice.php.html#210\">Crater\\Models\\RecurringInvoice::updateFromRequest<\/a>"],[0,6,"<a href=\"RecurringInvoice.php.html#237\">Crater\\Models\\RecurringInvoice::createItems<\/a>"],[0,3,"<a href=\"RecurringInvoice.php.html#253\">Crater\\Models\\RecurringInvoice::createTaxes<\/a>"],[0,6,"<a href=\"RecurringInvoice.php.html#264\">Crater\\Models\\RecurringInvoice::generateInvoice<\/a>"],[0,7,"<a href=\"RecurringInvoice.php.html#299\">Crater\\Models\\RecurringInvoice::createInvoice<\/a>"],[0,2,"<a href=\"RecurringInvoice.php.html#385\">Crater\\Models\\RecurringInvoice::markStatusAsCompleted<\/a>"],[0,1,"<a href=\"RecurringInvoice.php.html#393\">Crater\\Models\\RecurringInvoice::getNextInvoiceDate<\/a>"],[0,1,"<a href=\"RecurringInvoice.php.html#400\">Crater\\Models\\RecurringInvoice::updateNextInvoiceDate<\/a>"],[0,5,"<a href=\"RecurringInvoice.php.html#408\">Crater\\Models\\RecurringInvoice::deleteRecurringInvoice<\/a>"],[100,2,"<a href=\"Setting.php.html#14\">Crater\\Models\\Setting::setSetting<\/a>"],[0,2,"<a href=\"Setting.php.html#31\">Crater\\Models\\Setting::setSettings<\/a>"],[0,2,"<a href=\"Setting.php.html#46\">Crater\\Models\\Setting::getSetting<\/a>"],[0,1,"<a href=\"Setting.php.html#57\">Crater\\Models\\Setting::getSettings<\/a>"],[0,1,"<a href=\"Tax.php.html#23\">Crater\\Models\\Tax::taxType<\/a>"],[0,1,"<a href=\"Tax.php.html#28\">Crater\\Models\\Tax::invoice<\/a>"],[0,1,"<a href=\"Tax.php.html#33\">Crater\\Models\\Tax::recurringInvoice<\/a>"],[0,1,"<a href=\"Tax.php.html#38\">Crater\\Models\\Tax::estimate<\/a>"],[0,1,"<a href=\"Tax.php.html#43\">Crater\\Models\\Tax::currency<\/a>"],[100,1,"<a href=\"Tax.php.html#48\">Crater\\Models\\Tax::invoiceItem<\/a>"],[0,1,"<a href=\"Tax.php.html#53\">Crater\\Models\\Tax::estimateItem<\/a>"],[0,1,"<a href=\"Tax.php.html#58\">Crater\\Models\\Tax::item<\/a>"],[0,1,"<a href=\"Tax.php.html#63\">Crater\\Models\\Tax::scopeWhereCompany<\/a>"],[0,1,"<a href=\"Tax.php.html#68\">Crater\\Models\\Tax::scopeTaxAttributes<\/a>"],[0,1,"<a href=\"Tax.php.html#75\">Crater\\Models\\Tax::scopeInvoicesBetween<\/a>"],[0,3,"<a href=\"Tax.php.html#93\">Crater\\Models\\Tax::scopeWhereInvoicesFilters<\/a>"],[0,1,"<a href=\"TaxType.php.html#24\">Crater\\Models\\TaxType::taxes<\/a>"],[0,1,"<a href=\"TaxType.php.html#29\">Crater\\Models\\TaxType::company<\/a>"],[0,1,"<a href=\"TaxType.php.html#34\">Crater\\Models\\TaxType::scopeWhereCompany<\/a>"],[0,1,"<a href=\"TaxType.php.html#39\">Crater\\Models\\TaxType::scopeWhereTaxType<\/a>"],[0,8,"<a href=\"TaxType.php.html#44\">Crater\\Models\\TaxType::scopeApplyFilters<\/a>"],[0,1,"<a href=\"TaxType.php.html#67\">Crater\\Models\\TaxType::scopeWhereOrder<\/a>"],[0,1,"<a href=\"TaxType.php.html#72\">Crater\\Models\\TaxType::scopeWhereSearch<\/a>"],[0,2,"<a href=\"TaxType.php.html#77\">Crater\\Models\\TaxType::scopePaginateData<\/a>"],[100,1,"<a href=\"Transaction.php.html#26\">Crater\\Models\\Transaction::payments<\/a>"],[100,1,"<a href=\"Transaction.php.html#31\">Crater\\Models\\Transaction::invoice<\/a>"],[100,1,"<a href=\"Transaction.php.html#36\">Crater\\Models\\Transaction::company<\/a>"],[0,1,"<a href=\"Transaction.php.html#41\">Crater\\Models\\Transaction::completeTransaction<\/a>"],[0,1,"<a href=\"Transaction.php.html#47\">Crater\\Models\\Transaction::failedTransaction<\/a>"],[0,1,"<a href=\"Transaction.php.html#53\">Crater\\Models\\Transaction::createTransaction<\/a>"],[0,4,"<a href=\"Transaction.php.html#62\">Crater\\Models\\Transaction::isExpired<\/a>"],[100,1,"<a href=\"Unit.php.html#14\">Crater\\Models\\Unit::items<\/a>"],[100,1,"<a href=\"Unit.php.html#19\">Crater\\Models\\Unit::company<\/a>"],[0,1,"<a href=\"Unit.php.html#24\">Crater\\Models\\Unit::scopeWhereCompany<\/a>"],[100,1,"<a href=\"Unit.php.html#29\">Crater\\Models\\Unit::scopeWhereUnit<\/a>"],[100,1,"<a href=\"Unit.php.html#34\">Crater\\Models\\Unit::scopeWhereSearch<\/a>"],[87.5,4,"<a href=\"Unit.php.html#39\">Crater\\Models\\Unit::scopeApplyFilters<\/a>"],[100,2,"<a href=\"Unit.php.html#58\">Crater\\Models\\Unit::scopePaginateData<\/a>"],[0,1,"<a href=\"User.php.html#62\">Crater\\Models\\User::findForPassport<\/a>"],[0,2,"<a href=\"User.php.html#67\">Crater\\Models\\User::setPasswordAttribute<\/a>"],[0,2,"<a href=\"User.php.html#74\">Crater\\Models\\User::isSuperAdminOrAdmin<\/a>"],[0,1,"<a href=\"User.php.html#79\">Crater\\Models\\User::login<\/a>"],[0,1,"<a href=\"User.php.html#88\">Crater\\Models\\User::getFormattedCreatedAtAttribute<\/a>"],[0,1,"<a href=\"User.php.html#95\">Crater\\Models\\User::estimates<\/a>"],[0,1,"<a href=\"User.php.html#100\">Crater\\Models\\User::customers<\/a>"],[0,1,"<a href=\"User.php.html#105\">Crater\\Models\\User::recurringInvoices<\/a>"],[0,1,"<a href=\"User.php.html#110\">Crater\\Models\\User::currency<\/a>"],[0,1,"<a href=\"User.php.html#115\">Crater\\Models\\User::creator<\/a>"],[0,1,"<a href=\"User.php.html#120\">Crater\\Models\\User::companies<\/a>"],[0,1,"<a href=\"User.php.html#125\">Crater\\Models\\User::expenses<\/a>"],[0,1,"<a href=\"User.php.html#130\">Crater\\Models\\User::payments<\/a>"],[0,1,"<a href=\"User.php.html#135\">Crater\\Models\\User::invoices<\/a>"],[0,1,"<a href=\"User.php.html#140\">Crater\\Models\\User::items<\/a>"],[0,1,"<a href=\"User.php.html#145\">Crater\\Models\\User::settings<\/a>"],[0,1,"<a href=\"User.php.html#150\">Crater\\Models\\User::addresses<\/a>"],[0,1,"<a href=\"User.php.html#155\">Crater\\Models\\User::billingAddress<\/a>"],[0,1,"<a href=\"User.php.html#160\">Crater\\Models\\User::shippingAddress<\/a>"],[0,1,"<a href=\"User.php.html#168\">Crater\\Models\\User::sendPasswordResetNotification<\/a>"],[0,1,"<a href=\"User.php.html#173\">Crater\\Models\\User::scopeWhereOrder<\/a>"],[0,2,"<a href=\"User.php.html#178\">Crater\\Models\\User::scopeWhereSearch<\/a>"],[0,1,"<a href=\"User.php.html#189\">Crater\\Models\\User::scopeWhereContactName<\/a>"],[0,1,"<a href=\"User.php.html#194\">Crater\\Models\\User::scopeWhereDisplayName<\/a>"],[0,1,"<a href=\"User.php.html#199\">Crater\\Models\\User::scopeWherePhone<\/a>"],[0,1,"<a href=\"User.php.html#204\">Crater\\Models\\User::scopeWhereEmail<\/a>"],[0,2,"<a href=\"User.php.html#209\">Crater\\Models\\User::scopePaginateData<\/a>"],[0,9,"<a href=\"User.php.html#218\">Crater\\Models\\User::scopeApplyFilters<\/a>"],[0,1,"<a href=\"User.php.html#245\">Crater\\Models\\User::scopeWhereSuperAdmin<\/a>"],[0,3,"<a href=\"User.php.html#250\">Crater\\Models\\User::scopeApplyInvoiceFilters<\/a>"],[0,1,"<a href=\"User.php.html#261\">Crater\\Models\\User::scopeInvoicesBetween<\/a>"],[0,2,"<a href=\"User.php.html#271\">Crater\\Models\\User::getAvatarAttribute<\/a>"],[0,2,"<a href=\"User.php.html#282\">Crater\\Models\\User::setSettings<\/a>"],[0,1,"<a href=\"User.php.html#297\">Crater\\Models\\User::hasCompany<\/a>"],[0,1,"<a href=\"User.php.html#304\">Crater\\Models\\User::getAllSettings<\/a>"],[0,1,"<a href=\"User.php.html#311\">Crater\\Models\\User::getSettings<\/a>"],[0,5,"<a href=\"User.php.html#318\">Crater\\Models\\User::isOwner<\/a>"],[0,2,"<a href=\"User.php.html#333\">Crater\\Models\\User::createFromRequest<\/a>"],[0,2,"<a href=\"User.php.html#353\">Crater\\Models\\User::updateFromRequest<\/a>"],[0,10,"<a href=\"User.php.html#369\">Crater\\Models\\User::checkAccess<\/a>"],[0,10,"<a href=\"User.php.html#390\">Crater\\Models\\User::deleteUsers<\/a>"],[100,1,"<a href=\"UserSetting.php.html#14\">Crater\\Models\\UserSetting::user<\/a>"]], 'Method Complexity'))
+      .transition()
+      .duration(500)
+      .call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  function getComplexityData(data, label) {
+    var values = [];
+    $.each(data, function(key) {
+      var value = Math.round(data[key][0]*100) / 100;
+      values.push({
+        x: value,
+        y: data[key][1],
+        class: data[key][2],
+        size: 0.05,
+        shape: 'diamond'
+      });
+    });
+
+    return [
+      {
+        key: label,
+        values: values,
+        color: "#4572A7"
+      }
+    ];
+  }
+});
+  </script>
+ </body>
+</html>

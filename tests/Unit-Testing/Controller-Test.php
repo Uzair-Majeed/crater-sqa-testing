@@ -31,8 +31,8 @@ test('the controller extends Illuminate\'s BaseController', function () {
     expect($reflectionClass->getParentClass()->getName())->toBe(BaseController::class);
 });
 
- 
-
 afterEach(function () {
-    Mockery::close();
+    if (class_exists(\Mockery::class)) {
+        \Mockery::close();
+    }
 });

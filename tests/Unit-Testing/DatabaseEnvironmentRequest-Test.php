@@ -118,10 +118,6 @@ test('rules method returns default rules when database connection is an empty st
     expect($mockRequest->rules())->toEqual($expectedRules);
 });
 
-
-
-
-
 afterEach(function () {
     Mockery::close();
 });

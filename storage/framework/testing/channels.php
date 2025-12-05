@@ -1,0 +1,1 @@
+<?php Broadcast::channel("test", fn() => true);

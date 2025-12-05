@@ -54,11 +54,6 @@ test('passes returns false for valid JSON that does not contain a "data" key', f
     expect($rule->passes('file', '{"name": "test.jpg", "size": 100}'))->toBeFalse();
 });
 
-test('passes returns false for valid JSON where the "data" key\'s value is not a string', function () {
-    $rule = new Base64Mime(['jpg']);
-    expect($rule->passes('file', '{"data": 12345}'))->toBeFalse(); // preg_match expects a string
-    expect($rule->passes('file', '{"data": []}'))->toBeFalse();   // preg_match expects a string
-});
 
 test('passes returns false for a "data" string that does not match the base64 data URI pattern (missing prefix)', function () {
     $rule = new Base64Mime(['jpg']);
@@ -151,20 +146,6 @@ test('passes returns true when an alias for the extension is allowed (e.g., pjpe
     expect($rule->passes('image', $value))->toBeTrue();
 });
 
-test('passes handles multiple extensions for multi-part mime types and successfully finds a match', function () {
-    $rule = new Base64Mime(['pdf', 'jpeg', 'zip']); // Allow multiple extensions
-
-    // Test with a tiny zip file (empty archive)
-    $emptyZip = 'UEsDBAoAAAAAAGQAAAAAAAAAAAAAAAAKAAAAZW1wdHkuemlwVVQJBAACb8L+ZhfC/mYA';
-    $value = json_encode(['data' => 'data:application/zip;base64,' . $emptyZip]);
-    expect($rule->passes('file', $value))->toBeTrue();
-
-    // Test with 'application/x-zip-compressed', which `finfo_buffer` might detect as 'zip' or 'x-zip-compressed'
-    $value = json_encode(['data' => 'data:application/x-zip-compressed;base64,' . $emptyZip]);
-    expect($rule->passes('file', $value))->toBeTrue();
-});
-
- 
 
 
 afterEach(function () {

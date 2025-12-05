@@ -10,8 +10,10 @@ test('it can be instantiated', function () {
 });
 
 test('passes returns true if the disk is configured in filesystem disks', function () {
+    // The config() helper internally calls app('config')->get($key, $default = null).
+    // Mockery needs to expect the second, optional `null` argument.
     Config::shouldReceive('get')
-        ->with('filesystem.disks')
+        ->with('filesystem.disks', null) // Added null to match the default behavior of config()
         ->andReturn([
             'local',
             's3',
@@ -26,8 +28,10 @@ test('passes returns true if the disk is configured in filesystem disks', functi
 });
 
 test('passes returns false if the disk is not configured in filesystem disks', function () {
+    // The config() helper internally calls app('config')->get($key, $default = null).
+    // Mockery needs to expect the second, optional `null` argument.
     Config::shouldReceive('get')
-        ->with('filesystem.disks')
+        ->with('filesystem.disks', null) // Added null to match the default behavior of config()
         ->andReturn([
             'local',
             's3',
@@ -41,8 +45,10 @@ test('passes returns false if the disk is not configured in filesystem disks', f
 });
 
 test('passes returns false when the configured disks array is empty', function () {
+    // The config() helper internally calls app('config')->get($key, $default = null).
+    // Mockery needs to expect the second, optional `null` argument.
     Config::shouldReceive('get')
-        ->with('filesystem.disks')
+        ->with('filesystem.disks', null) // Added null to match the default behavior of config()
         ->andReturn([]);
 
     $rule = new FilesystemDisks();
@@ -54,24 +60,24 @@ test('passes returns false when the configured disks array is empty', function (
 
 test('passes throws a TypeError if configured disks is null (misconfiguration)', function () {
     // This simulates 'filesystem.disks' not being set at all, leading to config('...') returning null.
-    // In PHP 8+, in_array with a null haystack throws a TypeError.
+    // In PHP 8+, in_array with a null haystack throws a TypeError if not handled by the rule.
+    // The config() helper internally calls app('config')->get($key, $default = null).
+    // Mockery needs to expect the second, optional `null` argument.
     Config::shouldReceive('get')
-        ->with('filesystem.disks')
+        ->with('filesystem.disks', null) // Added null to match the default behavior of config()
         ->andReturn(null);
 
     $rule = new FilesystemDisks();
 
-    // Expecting the TypeError to be thrown by the passes method when in_array is called.
+    // Expecting the TypeError to be thrown by the passes method when in_array is called without null-coalescing.
     expect(fn () => $rule->passes('disk', 'local'))
         ->toThrow(TypeError::class);
-})->throws(TypeError::class); // This pest helper expects the exception from the callable.
+}); // The Pest helper `->throws(TypeError::class)` on the test function is redundant when using `expect(...)->toThrow(...)`
 
 test('message returns the correct validation error message', function () {
     $rule = new FilesystemDisks();
     expect($rule->message())->toBe('This disk is not configured as a filesystem disk.');
 });
-
-
 
 
 afterEach(function () {

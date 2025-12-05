@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
 beforeEach(function () {
-    // Ensure mocks are closed after each test to prevent interference
     Mockery::close();
 });
 
@@ -18,11 +17,10 @@ test('it returns 401 if no user is authenticated', function () {
     $controller = new CopyFilesController();
     $response = $controller->__invoke($request);
 
-    expect($response)
-        ->toBeInstanceOf(JsonResponse::class)
-        ->status()->toBe(401)
-        ->original['success']->toBeFalse()
-        ->original['message']->toBe('You are not allowed to update this app.');
+    expect($response)->toBeInstanceOf(JsonResponse::class);
+    expect($response->getStatusCode())->toBe(401);
+    expect($response->getData()->success)->toBeFalse();
+    expect($response->getData()->message)->toBe('You are not allowed to update this app.');
 });
 
 test('it returns 401 if the authenticated user is not an owner', function () {
@@ -35,11 +33,10 @@ test('it returns 401 if the authenticated user is not an owner', function () {
     $controller = new CopyFilesController();
     $response = $controller->__invoke($request);
 
-    expect($response)
-        ->toBeInstanceOf(JsonResponse::class)
-        ->status()->toBe(401)
-        ->original['success']->toBeFalse()
-        ->original['message']->toBe('You are not allowed to update this app.');
+    expect($response)->toBeInstanceOf(JsonResponse::class);
+    expect($response->getStatusCode())->toBe(401);
+    expect($response->getData()->success)->toBeFalse();
+    expect($response->getData()->message)->toBe('You are not allowed to update this app.');
 });
 
 test('it throws ValidationException if path is missing', function () {
@@ -49,7 +46,6 @@ test('it throws ValidationException if path is missing', function () {
     $request = Mockery::mock(Request::class);
     $request->shouldReceive('user')->andReturn($mockUser);
 
-    // Mock validate method to throw ValidationException
     $request->shouldReceive('validate')
         ->with(['path' => 'required'])
         ->andThrow(new ValidationException(
@@ -58,7 +54,6 @@ test('it throws ValidationException if path is missing', function () {
 
     $controller = new CopyFilesController();
 
-    // Expect the exception to be thrown
     $this->expectException(ValidationException::class);
     $controller->__invoke($request);
 });
@@ -73,15 +68,11 @@ test('it successfully copies files and returns the path', function () {
     $dummyPath = '/path/to/source';
     $copiedPath = '/path/to/destination';
 
-    // Simulate the 'path' parameter being present on the request
-    // and make validate method return the validated data
     $request->shouldReceive('validate')
         ->with(['path' => 'required'])
         ->andReturn(['path' => $dummyPath]);
-    $request->path = $dummyPath; // Set dynamic property for access
+    $request->path = $dummyPath;
 
-    // Mock the static method call for Updater::copyFiles
-    // 'alias' creates a temporary alias for the class for this test
     Mockery::mock('alias:\Crater\Space\Updater')
         ->shouldReceive('copyFiles')
         ->with($dummyPath)
@@ -91,14 +82,11 @@ test('it successfully copies files and returns the path', function () {
     $controller = new CopyFilesController();
     $response = $controller->__invoke($request);
 
-    expect($response)
-        ->toBeInstanceOf(JsonResponse::class)
-        ->status()->toBe(200)
-        ->original['success']->toBeTrue()
-        ->original['path']->toBe($copiedPath);
+    expect($response)->toBeInstanceOf(JsonResponse::class);
+    expect($response->getStatusCode())->toBe(200);
+    expect($response->getData()->success)->toBeTrue();
+    expect($response->getData()->path)->toBe($copiedPath);
 });
-
- 
 
 afterEach(function () {
     Mockery::close();

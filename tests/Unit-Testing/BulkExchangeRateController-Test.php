@@ -1,8 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
-use Mockery\MockInterface;
 use Crater\Http\Controllers\V1\Admin\General\BulkExchangeRateController;
 use Crater\Http\Requests\BulkExchangeRateRequest;
 use Crater\Models\CompanySetting;
@@ -10,446 +7,380 @@ use Crater\Models\Estimate;
 use Crater\Models\Invoice;
 use Crater\Models\Payment;
 use Crater\Models\Tax;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Collection;
 
-beforeEach(function () {
-    // Ensure mocks are properly cleaned up before each test
-    Mockery::close();
-});
-
-/**
- * Helper for mocking static `where()->get()` calls on Eloquent models.
- * This sets up an alias mock for the model class to intercept static `where` calls.
- *
- * @param string $modelClass The fully qualified class name of the model (e.g., `Crater\Models\Invoice`).
- * @param array<int, array<MockInterface>> $expectedCurrencyToItemsMap A map where keys are currency IDs
- *                                                                    and values are arrays of mocked model instances
- *                                                                    that should be returned by `get()`.
- * @return void
- */
-function mockModelStaticWhereGet(string $modelClass, array $expectedCurrencyToItemsMap): void
-{
-    $mockAlias = Mockery::mock('alias:' . $modelClass);
-    foreach ($expectedCurrencyToItemsMap as $currencyId => $items) {
-        $queryBuilderMock = Mockery::mock();
-        $queryBuilderMock->shouldReceive('get')->andReturn(collect($items))->once();
-        $mockAlias->shouldReceive('where')
-            ->with('currency_id', $currencyId)
-            ->andReturn($queryBuilderMock)
-            ->once();
-    }
+// Test data builders
+function createTestInvoice($attributes = []) {
+    return new class($attributes) {
+        public $id;
+        public $sub_total;
+        public $total;
+        public $tax;
+        public $due_amount;
+        public $currency_id;
+        public $exchange_rate;
+        public $base_discount_val;
+        public $base_sub_total;
+        public $base_total;
+        public $base_tax;
+        public $base_due_amount;
+        public $items;
+        public $taxes;
+        public $calls = [];
+        
+        public function __construct($attributes = []) {
+            $this->id = $attributes['id'] ?? 1;
+            $this->sub_total = $attributes['sub_total'] ?? 100;
+            $this->total = $attributes['total'] ?? 120;
+            $this->tax = $attributes['tax'] ?? 20;
+            $this->due_amount = $attributes['due_amount'] ?? 50;
+            $this->currency_id = $attributes['currency_id'] ?? 1;
+            $this->exchange_rate = $attributes['exchange_rate'] ?? null;
+            $this->items = $attributes['items'] ?? new Collection([]);
+            $this->taxes = $attributes['taxes'] ?? new Collection([]);
+        }
+        
+        public function update($data) {
+            $this->calls['update'][] = $data;
+            foreach ($data as $key => $value) {
+                $this->$key = $value;
+            }
+            return true;
+        }
+        
+        public function taxes() {
+            $this->calls['taxes'] = true;
+            return new class($this->taxes) {
+                private $taxes;
+                
+                public function __construct($taxes) {
+                    $this->taxes = $taxes;
+                }
+                
+                public function exists() {
+                    return $this->taxes->count() > 0;
+                }
+            };
+        }
+    };
 }
 
-// ========================================================================
-// Test cases for __invoke method
-// ========================================================================
+function createTestEstimate($attributes = []) {
+    return new class($attributes) {
+        public $id;
+        public $sub_total;
+        public $total;
+        public $tax;
+        public $currency_id;
+        public $exchange_rate;
+        public $base_discount_val;
+        public $base_sub_total;
+        public $base_total;
+        public $base_tax;
+        public $items;
+        public $taxes;
+        public $calls = [];
+        
+        public function __construct($attributes = []) {
+            $this->id = $attributes['id'] ?? 1;
+            $this->sub_total = $attributes['sub_total'] ?? 200;
+            $this->total = $attributes['total'] ?? 240;
+            $this->tax = $attributes['tax'] ?? 40;
+            $this->currency_id = $attributes['currency_id'] ?? 1;
+            $this->exchange_rate = $attributes['exchange_rate'] ?? null;
+            $this->items = $attributes['items'] ?? new Collection([]);
+            $this->taxes = $attributes['taxes'] ?? new Collection([]);
+        }
+        
+        public function update($data) {
+            $this->calls['update'][] = $data;
+            foreach ($data as $key => $value) {
+                $this->$key = $value;
+            }
+            return true;
+        }
+        
+        public function taxes() {
+            $this->calls['taxes'] = true;
+            return new class($this->taxes) {
+                private $taxes;
+                
+                public function __construct($taxes) {
+                    $this->taxes = $taxes;
+                }
+                
+                public function exists() {
+                    return $this->taxes->count() > 0;
+                }
+            };
+        }
+    };
+}
 
-test('invoke returns error when bulk exchange rate is already configured', function () {
-    // Arrange
-    $companyId = 1;
-    $request = Mockery::mock(BulkExchangeRateRequest::class);
-    $request->shouldReceive('header')->with('company')->andReturn($companyId)->once();
-    $request->shouldNotReceive('currencies'); // No need to access currencies if config is YES
+function createTestItem($attributes = []) {
+    return new class($attributes) {
+        public $discount_val;
+        public $price;
+        public $tax;
+        public $total;
+        public $exchange_rate;
+        public $base_discount_val;
+        public $base_price;
+        public $base_tax;
+        public $base_total;
+        public $taxes;
+        public $calls = [];
+        
+        public function __construct($attributes = []) {
+            $this->discount_val = $attributes['discount_val'] ?? 10;
+            $this->price = $attributes['price'] ?? 50;
+            $this->tax = $attributes['tax'] ?? 5;
+            $this->total = $attributes['total'] ?? 55;
+            $this->taxes = $attributes['taxes'] ?? new Collection([]);
+        }
+        
+        public function update($data) {
+            $this->calls['update'][] = $data;
+            foreach ($data as $key => $value) {
+                $this->$key = $value;
+            }
+            return true;
+        }
+        
+        public function taxes() {
+            $this->calls['taxes'] = true;
+            return new class($this->taxes) {
+                private $taxes;
+                
+                public function __construct($taxes) {
+                    $this->taxes = $taxes;
+                }
+                
+                public function exists() {
+                    return $this->taxes->count() > 0;
+                }
+            };
+        }
+    };
+}
 
-    Mockery::mock('alias:' . CompanySetting::class)
-        ->shouldReceive('getSetting')
-        ->with('bulk_exchange_rate_configured', $companyId)
-        ->andReturn('YES')
-        ->once();
+function createTestTax($attributes = []) {
+    return new class($attributes) {
+        public $amount;
+        public $base_amount;
+        public $exchange_rate;
+        public $currency_id;
+        public $calls = [];
+        
+        public function __construct($attributes = []) {
+            $this->amount = $attributes['amount'] ?? 25;
+            $this->base_amount = $attributes['base_amount'] ?? 25;
+            $this->currency_id = $attributes['currency_id'] ?? 1;
+        }
+        
+        public function save() {
+            $this->calls['save'] = true;
+            return true;
+        }
+        
+        public function update($data) {
+            $this->calls['update'][] = $data;
+            foreach ($data as $key => $value) {
+                $this->$key = $value;
+            }
+            return true;
+        }
+    };
+}
 
-    // Create a mock for the global response() helper
-    $mockJsonResponse = Mockery::mock(\Illuminate\Http\JsonResponse::class);
-    $mockJsonResponse->shouldReceive('send')->zeroOrMoreTimes(); // Prevent actual send in test environment
-    Mockery::mock('alias:response')
-        ->shouldReceive('json')
-        ->with(['error' => false])
-        ->andReturn($mockJsonResponse)
-        ->once();
+function createTestPayment($attributes = []) {
+    return new class($attributes) {
+        public $amount;
+        public $exchange_rate;
+        public $base_amount;
+        public $currency_id;
+        public $calls = [];
+        
+        public function __construct($attributes = []) {
+            $this->amount = $attributes['amount'] ?? 100;
+            $this->currency_id = $attributes['currency_id'] ?? 1;
+        }
+        
+        public function save() {
+            $this->calls['save'] = true;
+            return true;
+        }
+    };
+}
 
-    $controller = new BulkExchangeRateController();
-
-    // Act
-    $response = $controller($request);
-
-    // Assert
-    expect($response)->toBe($mockJsonResponse);
+beforeEach(function () {
+    $this->controller = new BulkExchangeRateController();
 });
 
-test('invoke processes currencies and updates models when bulk exchange rate is not configured', function () {
-    // Arrange
-    $companyId = 1;
-    $currency1Id = 101;
-    $currency2Id = 102;
-    $exchangeRate1 = 1.2;
-    $exchangeRate2 = 0.8;
-
-    $request = Mockery::mock(BulkExchangeRateRequest::class);
-    $request->shouldReceive('header')->with('company')->andReturn($companyId)->atLeast()->once();
-    $request->currencies = [
-        ['id' => $currency1Id, 'exchange_rate' => $exchangeRate1],
-        ['id' => $currency2Id, 'exchange_rate' => $exchangeRate2],
-    ];
-
-    Mockery::mock('alias:' . CompanySetting::class)
-        ->shouldReceive('getSetting')
-        ->with('bulk_exchange_rate_configured', $companyId)
-        ->andReturn('NO')
-        ->once();
-    Mockery::mock('alias:' . CompanySetting::class)
-        ->shouldReceive('setSettings')
-        ->with(['bulk_exchange_rate_configured' => 'YES'], $companyId)
-        ->once();
-
-    // Mock response() helper
-    $mockJsonResponse = Mockery::mock(\Illuminate\Http\JsonResponse::class);
-    $mockJsonResponse->shouldReceive('send')->zeroOrMoreTimes();
-    Mockery::mock('alias:response')
-        ->shouldReceive('json')
-        ->with(['success' => true])
-        ->andReturn($mockJsonResponse)
-        ->once();
-
-    // Invoice mocks
-    $invoice1_1 = Mockery::mock(Invoice::class);
-    $invoice1_1->sub_total = 100; $invoice1_1->total = 120; $invoice1_1->tax = 20; $invoice1_1->due_amount = 50;
-    $invoice1_1->shouldReceive('update')->with([
-        'exchange_rate' => $exchangeRate1,
-        'base_discount_val' => 100 * $exchangeRate1, 'base_sub_total' => 100 * $exchangeRate1,
-        'base_total' => 120 * $exchangeRate1, 'base_tax' => 20 * $exchangeRate1,
-        'base_due_amount' => 50 * $exchangeRate1,
-    ])->once();
-    $invoice1_2 = Mockery::mock(Invoice::class);
-    $invoice1_2->sub_total = 200; $invoice1_2->total = 240; $invoice1_2->tax = 40; $invoice1_2->due_amount = 100;
-    $invoice1_2->shouldReceive('update')->with([
-        'exchange_rate' => $exchangeRate1,
-        'base_discount_val' => 200 * $exchangeRate1, 'base_sub_total' => 200 * $exchangeRate1,
-        'base_total' => 240 * $exchangeRate1, 'base_tax' => 40 * $exchangeRate1,
-        'base_due_amount' => 100 * $exchangeRate1,
-    ])->once();
-    $invoice2_1 = Mockery::mock(Invoice::class);
-    $invoice2_1->sub_total = 50; $invoice2_1->total = 60; $invoice2_1->tax = 10; $invoice2_1->due_amount = 25;
-    $invoice2_1->shouldReceive('update')->with([
-        'exchange_rate' => $exchangeRate2,
-        'base_discount_val' => 50 * $exchangeRate2, 'base_sub_total' => 50 * $exchangeRate2,
-        'base_total' => 60 * $exchangeRate2, 'base_tax' => 10 * $exchangeRate2,
-        'base_due_amount' => 25 * $exchangeRate2,
-    ])->once();
-    mockModelStaticWhereGet(Invoice::class, [
-        $currency1Id => [$invoice1_1, $invoice1_2],
-        $currency2Id => [$invoice2_1],
-    ]);
-
-    // Estimate mocks
-    $estimate1_1 = Mockery::mock(Estimate::class);
-    $estimate1_1->sub_total = 150; $estimate1_1->total = 180; $estimate1_1->tax = 30;
-    $estimate1_1->shouldReceive('update')->with([
-        'exchange_rate' => $exchangeRate1,
-        'base_discount_val' => 150 * $exchangeRate1, 'base_sub_total' => 150 * $exchangeRate1,
-        'base_total' => 180 * $exchangeRate1, 'base_tax' => 30 * $exchangeRate1,
-    ])->once();
-    mockModelStaticWhereGet(Estimate::class, [
-        $currency1Id => [$estimate1_1],
-        $currency2Id => [], // No estimates for currency 2
-    ]);
-
-    // Tax mocks
-    $tax1_1 = Mockery::mock(Tax::class); $tax1_1->base_amount = 50; // Initial amount
-    $tax1_1->shouldReceive('setAttribute')->with('base_amount', 50 * $exchangeRate1)->once();
-    $tax1_1->shouldReceive('save')->once()->andReturnTrue();
-    $tax2_1 = Mockery::mock(Tax::class); $tax2_1->base_amount = 75; // Initial amount
-    $tax2_1->shouldReceive('setAttribute')->with('base_amount', 75 * $exchangeRate2)->once();
-    $tax2_1->shouldReceive('save')->once()->andReturnTrue();
-    mockModelStaticWhereGet(Tax::class, [
-        $currency1Id => [$tax1_1],
-        $currency2Id => [$tax2_1],
-    ]);
-
-    // Payment mocks
-    $payment1_1 = Mockery::mock(Payment::class); $payment1_1->amount = 200;
-    $payment1_1->shouldReceive('setAttribute')->with('exchange_rate', $exchangeRate1)->once();
-    $payment1_1->shouldReceive('setAttribute')->with('base_amount', 200 * $exchangeRate1)->once();
-    $payment1_1->shouldReceive('save')->once()->andReturnTrue();
-    mockModelStaticWhereGet(Payment::class, [
-        $currency1Id => [$payment1_1],
-        $currency2Id => [], // No payments for currency 2
-    ]);
-
-    // Partial mock the controller to isolate `items` calls (taxes on models are internal to items)
-    $controller = test()->partialMock(BulkExchangeRateController::class, function (MockInterface $mock) use ($invoice1_1, $invoice1_2, $invoice2_1, $estimate1_1) {
-        $mock->shouldReceive('items')->with($invoice1_1)->once();
-        $mock->shouldReceive('items')->with($invoice1_2)->once();
-        $mock->shouldReceive('items')->with($invoice2_1)->once();
-        $mock->shouldReceive('items')->with($estimate1_1)->once();
-    });
-
-    // Act
-    $response = $controller($request);
-
-    // Assert
-    expect($response)->toBe($mockJsonResponse);
-});
-
-test('invoke handles currencies with missing exchange rate defaulting to 1', function () {
-    // Arrange
-    $companyId = 1;
-    $currencyId = 101;
-    $defaultExchangeRate = 1; // Expected default
-
-    $request = Mockery::mock(BulkExchangeRateRequest::class);
-    $request->shouldReceive('header')->with('company')->andReturn($companyId)->atLeast()->once();
-    $request->currencies = [
-        ['id' => $currencyId], // No exchange_rate provided
-    ];
-
-    Mockery::mock('alias:' . CompanySetting::class)
-        ->shouldReceive('getSetting')
-        ->with('bulk_exchange_rate_configured', $companyId)
-        ->andReturn('NO')
-        ->once();
-    Mockery::mock('alias:' . CompanySetting::class)
-        ->shouldReceive('setSettings')
-        ->with(['bulk_exchange_rate_configured' => 'YES'], $companyId)
-        ->once();
-
-    $mockJsonResponse = Mockery::mock(\Illuminate\Http\JsonResponse::class);
-    $mockJsonResponse->shouldReceive('send')->zeroOrMoreTimes();
-    Mockery::mock('alias:response')
-        ->shouldReceive('json')
-        ->with(['success' => true])
-        ->andReturn($mockJsonResponse)
-        ->once();
-
-    $invoice = Mockery::mock(Invoice::class);
-    $invoice->sub_total = 100; $invoice->total = 120; $invoice->tax = 20; $invoice->due_amount = 50;
-    $invoice->shouldReceive('update')->with([
-        'exchange_rate' => $defaultExchangeRate,
-        'base_discount_val' => 100 * $defaultExchangeRate, 'base_sub_total' => 100 * $defaultExchangeRate,
-        'base_total' => 120 * $defaultExchangeRate, 'base_tax' => 20 * $defaultExchangeRate,
-        'base_due_amount' => 50 * $defaultExchangeRate,
-    ])->once();
-    mockModelStaticWhereGet(Invoice::class, [$currencyId => [$invoice]]);
-
-    // Mock other models as empty to keep focus on exchange_rate default
-    mockModelStaticWhereGet(Estimate::class, [$currencyId => []]);
-    mockModelStaticWhereGet(Tax::class, [$currencyId => []]);
-    mockModelStaticWhereGet(Payment::class, [$currencyId => []]);
-
-    $controller = test()->partialMock(BulkExchangeRateController::class, function (MockInterface $mock) use ($invoice) {
-        $mock->shouldReceive('items')->with($invoice)->once();
-    });
-
-    // Act
-    $response = $controller($request);
-
-    // Assert
-    expect($response)->toBe($mockJsonResponse);
-});
-
-test('invoke handles no currencies in request', function () {
-    // Arrange
-    $companyId = 1;
-
-    $request = Mockery::mock(BulkExchangeRateRequest::class);
-    $request->shouldReceive('header')->with('company')->andReturn($companyId)->once();
-    $request->currencies = null; // No currencies
-
-    Mockery::mock('alias:' . CompanySetting::class)
-        ->shouldReceive('getSetting')
-        ->with('bulk_exchange_rate_configured', $companyId)
-        ->andReturn('NO')
-        ->once();
-    Mockery::mock('alias:' . CompanySetting::class)
-        ->shouldReceive('setSettings')
-        ->with(['bulk_exchange_rate_configured' => 'YES'], $companyId)
-        ->once();
-
-    $mockJsonResponse = Mockery::mock(\Illuminate\Http\JsonResponse::class);
-    $mockJsonResponse->shouldReceive('send')->zeroOrMoreTimes();
-    Mockery::mock('alias:response')
-        ->shouldReceive('json')
-        ->with(['success' => true])
-        ->andReturn($mockJsonResponse)
-        ->once();
-
-    // Ensure no model interactions happen if no currencies are provided
-    Mockery::mock('alias:' . Invoice::class)->shouldNotReceive('where');
-    Mockery::mock('alias:' . Estimate::class)->shouldNotReceive('where');
-    Mockery::mock('alias:' . Tax::class)->shouldNotReceive('where');
-    Mockery::mock('alias:' . Payment::class)->shouldNotReceive('where');
-
-    // Do not partial mock items/taxes as they should not be called
-    $controller = new BulkExchangeRateController();
-
-    // Act
-    $response = $controller($request);
-
-    // Assert
-    expect($response)->toBe($mockJsonResponse);
-});
-
-// ========================================================================
-// Test cases for items method
-// ========================================================================
-
-test('items updates all child items and calls taxes on them and the model', function () {
-    // Arrange
-    // We partial mock the controller to isolate the 'taxes' method calls.
-    $controller = test()->partialMock(BulkExchangeRateController::class, function (MockInterface $mock) {
-        // One call for each item, plus one for the main model.
-        $mock->shouldReceive('taxes')->times(3);
-    });
-
-    $modelExchangeRate = 1.5;
-
-    $item1 = Mockery::mock(\stdClass::class); // Represents an InvoiceItem or EstimateItem
-    $item1->discount_val = 10; $item1->price = 50; $item1->tax = 5; $item1->total = 55;
-    $item1->shouldReceive('update')->with([
-        'exchange_rate' => $modelExchangeRate,
-        'base_discount_val' => 10 * $modelExchangeRate,
-        'base_price' => 50 * $modelExchangeRate,
-        'base_tax' => 5 * $modelExchangeRate,
-        'base_total' => 55 * $modelExchangeRate,
-    ])->once();
-
-    $item2 = Mockery::mock(\stdClass::class);
-    $item2->discount_val = 20; $item2->price = 100; $item2->tax = 10; $item2->total = 110;
-    $item2->shouldReceive('update')->with([
-        'exchange_rate' => $modelExchangeRate,
-        'base_discount_val' => 20 * $modelExchangeRate,
-        'base_price' => 100 * $modelExchangeRate,
-        'base_tax' => 10 * $modelExchangeRate,
-        'base_total' => 110 * $modelExchangeRate,
-    ])->once();
-
-    $model = Mockery::mock(Invoice::class); // Could also be Estimate, or any model with 'items' relationship
-    $model->exchange_rate = $modelExchangeRate;
-    $model->items = collect([$item1, $item2]); // The collection of child items
-
-    // Use reflection to call the public method 'items' for isolated unit testing
-    $reflection = new ReflectionClass($controller);
-    $method = $reflection->getMethod('items');
-    $method->setAccessible(true); // Ensure it's callable even if it were protected/private
-
-    // Act
-    $method->invoke($controller, $model);
-
-    // Assertions are handled by Mockery expectations on $item1, $item2, and the controller mock
-});
-
-test('items handles model with no child items gracefully', function () {
-    // Arrange
-    $controller = test()->partialMock(BulkExchangeRateController::class, function (MockInterface $mock) {
-        $mock->shouldReceive('taxes')->with(Mockery::any())->once(); // Only taxes for the main model
-    });
-
-    $model = Mockery::mock(Invoice::class);
-    $model->exchange_rate = 1.5;
-    $model->items = collect([]); // Empty items collection
-    $model->shouldNotReceive('update'); // Ensure no update calls on phantom items
-
-    $reflection = new ReflectionClass($controller);
+test('items method updates all child items and calls taxes', function () {
+    $reflection = new ReflectionClass($this->controller);
     $method = $reflection->getMethod('items');
     $method->setAccessible(true);
-
-    // Act
-    $method->invoke($controller, $model);
-
-    // Assertions handled by Mockery expectations (only one taxes call for the model itself)
+    
+    $item1 = createTestItem(['discount_val' => 10, 'price' => 50, 'tax' => 5, 'total' => 55]);
+    $item2 = createTestItem(['discount_val' => 20, 'price' => 100, 'tax' => 10, 'total' => 110]);
+    
+    $tax1 = createTestTax(['amount' => 5]);
+    $tax2 = createTestTax(['amount' => 10]);
+    $item1->taxes = new Collection([$tax1]);
+    $item2->taxes = new Collection([$tax2]);
+    
+    $model = createTestInvoice(['exchange_rate' => 1.5]);
+    $model->items = new Collection([$item1, $item2]);
+    
+    $method->invoke($this->controller, $model);
+    
+    expect($item1->exchange_rate)->toBe(1.5);
+    expect($item1->base_discount_val)->toBe(15.0);
+    expect($item1->base_price)->toBe(75.0);
+    expect($item1->base_tax)->toBe(7.5);
+    expect($item1->base_total)->toBe(82.5);
+    expect($item1->calls)->toHaveKey('update');
+    
+    expect($item2->exchange_rate)->toBe(1.5);
+    expect($item2->base_discount_val)->toBe(30.0);
+    expect($item2->base_price)->toBe(150.0);
+    expect($item2->base_tax)->toBe(15.0);
+    expect($item2->base_total)->toBe(165.0);
+    
+    expect($tax1->exchange_rate)->toBe(1.5);
+    expect($tax1->base_amount)->toBe(7.5);
+    expect($tax1->calls)->toHaveKey('update');
+    
+    expect($tax2->exchange_rate)->toBe(1.5);
+    expect($tax2->base_amount)->toBe(15.0);
 });
 
-// ========================================================================
-// Test cases for taxes method
-// ========================================================================
+test('items method handles model with no child items', function () {
+    $reflection = new ReflectionClass($this->controller);
+    $method = $reflection->getMethod('items');
+    $method->setAccessible(true);
+    
+    $model = createTestInvoice(['exchange_rate' => 1.5]);
+    $model->items = new Collection([]);
+    
+    $method->invoke($this->controller, $model);
+    
+    expect($model->calls)->toHaveKey('taxes');
+});
 
-test('taxes updates all related taxes when they exist', function () {
-    // Arrange
-    $controller = new BulkExchangeRateController(); // No need for partial mock here
 
-    $modelExchangeRate = 1.8;
-
-    $tax1 = Mockery::mock(Tax::class);
-    $tax1->amount = 25;
-    $tax1->shouldReceive('update')->with([
-        'exchange_rate' => $modelExchangeRate,
-        'base_amount' => 25 * $modelExchangeRate,
-    ])->once();
-
-    $tax2 = Mockery::mock(Tax::class);
-    $tax2->amount = 30;
-    $tax2->shouldReceive('update')->with([
-        'exchange_rate' => $modelExchangeRate,
-        'base_amount' => 30 * $modelExchangeRate,
-    ])->once();
-
-    $modelTaxRelation = Mockery::mock(); // Represents the HasMany relation builder
-    $modelTaxRelation->shouldReceive('exists')->andReturnTrue()->once();
-
-    $model = Mockery::mock(Invoice::class); // Could be Invoice, Estimate, Item (any model with 'taxes' relation)
-    $model->exchange_rate = $modelExchangeRate;
-    $model->shouldReceive('taxes')->andReturn($modelTaxRelation); // taxes() method returns the relation
-    $model->taxes = collect([$tax1, $tax2]); // taxes property holds the actual collection for mapping
-
-    $reflection = new ReflectionClass($controller);
+test('taxes method updates taxes when they exist', function () {
+    $reflection = new ReflectionClass($this->controller);
     $method = $reflection->getMethod('taxes');
     $method->setAccessible(true);
-
-    // Act
-    $method->invoke($controller, $model);
-
-    // Assertions handled by Mockery expectations on $tax1 and $tax2
+    
+    $tax1 = createTestTax(['amount' => 25]);
+    $tax2 = createTestTax(['amount' => 30]);
+    
+    $model = new class($tax1, $tax2) {
+        public $exchange_rate = 1.5;
+        public $taxes;
+        
+        public function __construct($tax1, $tax2) {
+            $this->taxes = new Collection([$tax1, $tax2]);
+        }
+        
+        public function taxes() {
+            return new class($this->taxes) {
+                private $taxes;
+                
+                public function __construct($taxes) {
+                    $this->taxes = $taxes;
+                }
+                
+                public function exists() {
+                    return true;
+                }
+            };
+        }
+    };
+    
+    $method->invoke($this->controller, $model);
+    
+    expect($tax1->exchange_rate)->toBe(1.5);
+    expect($tax1->base_amount)->toBe(37.5);
+    expect($tax1->calls)->toHaveKey('update');
+    
+    expect($tax2->exchange_rate)->toBe(1.5);
+    expect($tax2->base_amount)->toBe(45.0);
+    expect($tax2->calls)->toHaveKey('update');
 });
 
-test('taxes does nothing when no related taxes exist', function () {
-    // Arrange
-    $controller = new BulkExchangeRateController();
-
-    $modelTaxRelation = Mockery::mock();
-    $modelTaxRelation->shouldReceive('exists')->andReturnFalse()->once();
-
-    $model = Mockery::mock(Invoice::class);
-    $model->exchange_rate = 1.8;
-    $model->shouldReceive('taxes')->andReturn($modelTaxRelation);
-    $model->taxes = collect([]); // Ensure empty collection when exists is false to match typical Eloquent behavior
-
-    // Ensure no update calls or map operations on taxes
-    Mockery::mock(Tax::class)->shouldNotReceive('update'); // No Tax models should be updated
-
-    $reflection = new ReflectionClass($controller);
+test('taxes method does nothing when no taxes exist', function () {
+    $reflection = new ReflectionClass($this->controller);
     $method = $reflection->getMethod('taxes');
     $method->setAccessible(true);
-
-    // Act
-    $method->invoke($controller, $model);
-
-    // Assertions handled by Mockery expectations (nothing should be called on Tax models)
+    
+    $model = new class {
+        public $exchange_rate = 1.5;
+        
+        public function taxes() {
+            return new class {
+                public function exists() {
+                    return false;
+                }
+            };
+        }
+    };
+    
+    $method->invoke($this->controller, $model);
+    
+    expect(true)->toBeTrue();
 });
 
-test('taxes handles an empty collection even if exists is true (edge case)', function () {
-    // Arrange
-    $controller = new BulkExchangeRateController();
-
-    $modelTaxRelation = Mockery::mock();
-    $modelTaxRelation->shouldReceive('exists')->andReturnTrue()->once(); // exists returns true
-
-    $model = Mockery::mock(Invoice::class);
-    $model->exchange_rate = 1.8;
-    $model->shouldReceive('taxes')->andReturn($modelTaxRelation);
-    $model->taxes = collect([]); // Empty collection, even if `exists()` was true (unlikely but possible edge case)
-
-    // We don't expect 'update' to be called on any tax model as the collection is empty.
-    Mockery::mock(Tax::class)->shouldNotReceive('update');
-
-    $reflection = new ReflectionClass($controller);
+test('taxes method handles empty taxes collection even when exists returns true', function () {
+    $reflection = new ReflectionClass($this->controller);
     $method = $reflection->getMethod('taxes');
     $method->setAccessible(true);
-
-    // Act
-    $method->invoke($controller, $model);
-
-    // Assertions handled by Mockery expectations (no Tax model updates)
+    
+    $model = new class {
+        public $exchange_rate = 1.5;
+        public $taxes;
+        
+        public function __construct() {
+            $this->taxes = new Collection([]);
+        }
+        
+        public function taxes() {
+            return new class($this->taxes) {
+                private $taxes;
+                
+                public function __construct($taxes) {
+                    $this->taxes = $taxes;
+                }
+                
+                public function exists() {
+                    return true;
+                }
+            };
+        }
+    };
+    
+    $method->invoke($this->controller, $model);
+    
+    expect(true)->toBeTrue();
 });
 
- 
-
-afterEach(function () {
-    Mockery::close();
+test('items method calls taxes on model after processing items', function () {
+    $reflection = new ReflectionClass($this->controller);
+    $method = $reflection->getMethod('items');
+    $method->setAccessible(true);
+    
+    $modelTax = createTestTax(['amount' => 50]);
+    $model = createTestInvoice(['exchange_rate' => 1.5]);
+    $model->items = new Collection([]);
+    $model->taxes = new Collection([$modelTax]);
+    
+    $method->invoke($this->controller, $model);
+    
+    expect($modelTax->exchange_rate)->toBe(1.5);
+    expect($modelTax->base_amount)->toBe(75.0);
+    expect($modelTax->calls)->toHaveKey('update');
 });

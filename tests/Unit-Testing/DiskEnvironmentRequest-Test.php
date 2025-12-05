@@ -7,7 +7,6 @@ test('authorize method always returns true', function () {
 });
 
 test('rules method returns default rules when driver is not provided', function () {
-    // Create a partial mock to control the `get` method
     $request = Mockery::mock(DiskEnvironmentRequest::class)->makePartial();
     $request->shouldReceive('get')->with('driver')->andReturn(null);
 
@@ -16,8 +15,6 @@ test('rules method returns default rules when driver is not provided', function 
     expect($rules)->toHaveKeys(['name', 'driver']);
     expect($rules['name'])->toEqual(['required']);
     expect($rules['driver'])->toEqual(['required']);
-
-    // Ensure no driver-specific rules are present
     expect($rules)->not->toHaveKeys([
         'credentials.key',
         'credentials.secret',
@@ -31,7 +28,6 @@ test('rules method returns default rules when driver is not provided', function 
 });
 
 test('rules method returns default rules when driver is unknown', function () {
-    // Create a partial mock to control the `get` method
     $request = Mockery::mock(DiskEnvironmentRequest::class)->makePartial();
     $request->shouldReceive('get')->with('driver')->andReturn('unknown_driver');
 
@@ -40,8 +36,6 @@ test('rules method returns default rules when driver is unknown', function () {
     expect($rules)->toHaveKeys(['name', 'driver']);
     expect($rules['name'])->toEqual(['required']);
     expect($rules['driver'])->toEqual(['required']);
-
-    // Ensure no driver-specific rules are present
     expect($rules)->not->toHaveKeys([
         'credentials.key',
         'credentials.secret',
@@ -55,17 +49,13 @@ test('rules method returns default rules when driver is unknown', function () {
 });
 
 test('rules method returns s3 specific rules when driver is s3', function () {
-    // Create a partial mock to control the `get` method
     $request = Mockery::mock(DiskEnvironmentRequest::class)->makePartial();
     $request->shouldReceive('get')->with('driver')->andReturn('s3');
 
     $rules = $request->rules();
 
-    // Assert default rules are present
     expect($rules['name'])->toEqual(['required']);
     expect($rules['driver'])->toEqual(['required']);
-
-    // Assert S3 specific rules are present and correct
     expect($rules)->toHaveKeys([
         'credentials.key',
         'credentials.secret',
@@ -81,17 +71,13 @@ test('rules method returns s3 specific rules when driver is s3', function () {
 });
 
 test('rules method returns doSpaces specific rules when driver is doSpaces', function () {
-    // Create a partial mock to control the `get` method
     $request = Mockery::mock(DiskEnvironmentRequest::class)->makePartial();
     $request->shouldReceive('get')->with('driver')->andReturn('doSpaces');
 
     $rules = $request->rules();
 
-    // Assert default rules are present
     expect($rules['name'])->toEqual(['required']);
     expect($rules['driver'])->toEqual(['required']);
-
-    // Assert doSpaces specific rules are present and correct
     expect($rules)->toHaveKeys([
         'credentials.key',
         'credentials.secret',
@@ -109,17 +95,13 @@ test('rules method returns doSpaces specific rules when driver is doSpaces', fun
 });
 
 test('rules method returns dropbox specific rules when driver is dropbox', function () {
-    // Create a partial mock to control the `get` method
     $request = Mockery::mock(DiskEnvironmentRequest::class)->makePartial();
     $request->shouldReceive('get')->with('driver')->andReturn('dropbox');
 
     $rules = $request->rules();
 
-    // Assert default rules are present
     expect($rules['name'])->toEqual(['required']);
     expect($rules['driver'])->toEqual(['required']);
-
-    // Assert Dropbox specific rules are present and correct
     expect($rules)->toHaveKeys([
         'credentials.token',
         'credentials.key',
@@ -133,9 +115,6 @@ test('rules method returns dropbox specific rules when driver is dropbox', funct
     expect($rules['credentials.app'])->toEqual(['required', 'string']);
     expect($rules['credentials.root'])->toEqual(['required', 'string']);
 });
-
-
-
 
 afterEach(function () {
     Mockery::close();

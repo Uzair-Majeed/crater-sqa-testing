@@ -44,7 +44,7 @@ jobs:
         run: ./vendor/bin/php-cs-fixer fix -v --dry-run --using-cache=no --config=.php-cs-fixer.dist.php
 
       - name: Run Unit Tests
-        run: php -d memory_limit=2000M vendor/bin/pest tests/Unit
+        run: php -d memory_limit=2000M vendor/bin/pest tests/Unit-Testing
 
-      - name : Run Feature/Integration Tests
-        run: php -d memory_limit=2000M vendor/bin/pest tests/Feature
+      - name : Run Integration Tests
+        run: php -d memory_limit=2000M vendor/bin/pest tests/Integration-Testing

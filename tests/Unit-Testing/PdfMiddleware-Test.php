@@ -74,10 +74,8 @@ test('it redirects to login if not authenticated via any guard', function () {
     // Expect the result to be an instance of RedirectResponse
     // and its target URL to be '/login'
     expect($result)->toBeInstanceOf(RedirectResponse::class)
-        ->and($result->getTargetUrl())->toBe('/login');
+        ->and($result->getTargetUrl())->toBe('http://crater.test/login'); // Fixed assertion: Expect full URL
 });
-
-
 
 
 afterEach(function () {

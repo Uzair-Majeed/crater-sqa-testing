@@ -3,6 +3,7 @@
 use Crater\Http\Controllers\V1\Admin\Auth\ConfirmPasswordController;
 use Crater\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\ConfirmsPasswords;
+use Illuminate\Support\Str;
 
 test('ConfirmPasswordController can be instantiated', function () {
     $controller = new ConfirmPasswordController();
@@ -17,7 +18,14 @@ test('ConfirmPasswordController uses the ConfirmsPasswords trait', function () {
 test('ConfirmPasswordController has the correct redirectTo property value', function () {
     // White-box test to ensure the protected $redirectTo property is set as expected.
     $controller = new ConfirmPasswordController();
-    expect($controller->redirectTo)->toBe(RouteServiceProvider::HOME);
+
+    // Use reflection to access protected property
+    $reflection = new ReflectionClass($controller);
+    $property = $reflection->getProperty('redirectTo');
+    $property->setAccessible(true);
+    $redirectToValue = $property->getValue($controller);
+
+    expect($redirectToValue)->toBe(RouteServiceProvider::HOME);
 });
 
 test('ConfirmPasswordController applies the auth middleware in its constructor', function () {
@@ -50,8 +58,6 @@ test('ConfirmPasswordController applies the auth middleware in its constructor',
     // Assert that no additional options were passed.
     expect($controllerInstance->middlewareCalls[0]['options'])->toBe([]);
 });
-
- 
 
 afterEach(function () {
     Mockery::close();

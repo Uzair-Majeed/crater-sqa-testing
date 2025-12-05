@@ -145,8 +145,9 @@ test('middleware priority list is correctly defined', function () {
 });
 
 
-
-
 afterEach(function () {
+    // Mockery::close() is good practice for tests that use Mockery.
+    // While these specific tests don't use Mockery, leaving it ensures
+    // consistency if other tests in the file or future additions do.
     Mockery::close();
 });

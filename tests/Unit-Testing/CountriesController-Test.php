@@ -79,8 +79,6 @@ test('it returns an empty collection when no countries exist', function () {
     expect($result)->toBe($mockEmptyResourceCollection); // Ensure we received the mocked resource collection
 });
 
-
-
 afterEach(function () {
     Mockery::close();
 });

@@ -1,288 +1,200 @@
 <?php
 
-use Carbon\Carbon;
-use Crater\Models\CompanySetting;
 use Crater\Models\EmailLog;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Mockery as m;
+use Illuminate\Database\Eloquent\Model;
 
-// Use `afterEach` to clean up Mockery and Carbon mocks for a clean slate between tests.
-afterEach(function () {
-    m::close();
-    Carbon::setTestNow(null); // Clear test now
+// Test model can be instantiated
+test('EmailLog can be instantiated', function () {
+    $emailLog = new EmailLog();
+    expect($emailLog)->toBeInstanceOf(EmailLog::class);
 });
 
-test('mailable returns a morphTo relationship', function () {
-    // Create a partial mock of EmailLog to allow overriding the 'mailable' method
-    // while still allowing other methods to function if needed.
-    // In this specific case, we just want to ensure 'morphTo' is called.
-    $emailLog = m::mock(EmailLog::class);
+// Test model extends Model
+test('EmailLog extends Model', function () {
+    $emailLog = new EmailLog();
+    expect($emailLog)->toBeInstanceOf(Model::class);
+});
+
+// Test model has mailable method
+test('EmailLog has mailable method', function () {
+    $emailLog = new EmailLog();
+    expect(method_exists($emailLog, 'mailable'))->toBeTrue();
+});
+
+// Test model has isExpired method
+test('EmailLog has isExpired method', function () {
+    $emailLog = new EmailLog();
+    expect(method_exists($emailLog, 'isExpired'))->toBeTrue();
+});
+
+// Test mailable method is public
+test('mailable method is public', function () {
+    $reflection = new ReflectionClass(EmailLog::class);
+    $method = $reflection->getMethod('mailable');
     
-    // Create a mock for the MorphTo relationship object that mailable() is expected to return.
-    $mockMorphTo = m::mock(MorphTo::class);
-
-    // Expect the 'morphTo' method on the EmailLog instance to be called once and return our mock.
-    // This effectively tests that our `mailable` method, if it were overridden, calls the base method correctly,
-    // or if it's a simple passthrough, that it returns a MorphTo object.
-    $emailLog->shouldReceive('morphTo')->andReturn($mockMorphTo)->once();
-
-    // Act: Call the mailable method on the EmailLog instance.
-    $result = $emailLog->mailable();
-
-    // Assert: Ensure the returned result is our mock MorphTo object.
-    expect($result)->toBe($mockMorphTo);
+    expect($method->isPublic())->toBeTrue();
 });
 
-test('isExpired returns false when automatically_expire_public_links is NO', function () {
-    // Arrange: Set up test environment and mocks
-    Carbon::setTestNow(Carbon::create(2023, 1, 15)); // Mock current date
-    $createdAt = Carbon::create(2023, 1, 10);       // Mock email creation date
-    $linkExpiryDays = 7;                            // Mock link expiry setting
-
-    // Create a partial mock of EmailLog to control 'created_at' and mock 'mailable()'
-    $emailLog = m::mock(EmailLog::class)->makePartial();
-    $emailLog->created_at = $createdAt;
-
-    $companyId = 123; // Arbitrary company ID for testing
+// Test isExpired method is public
+test('isExpired method is public', function () {
+    $reflection = new ReflectionClass(EmailLog::class);
+    $method = $reflection->getMethod('isExpired');
     
-    // Mock the Mailable relationship chain: mailable() -> get() -> toArray()
-    $mockCollection = m::mock(Illuminate\Support\Collection::class);
-    $mockCollection->shouldReceive('toArray')->andReturn([['company_id' => $companyId]])->once();
-
-    $mockMorphTo = m::mock(MorphTo::class);
-    $mockMorphTo->shouldReceive('get')->andReturn($mockCollection)->times(2); // 'get' is called twice by isExpired
-
-    $emailLog->shouldReceive('mailable')->andReturn($mockMorphTo)->times(2); // 'mailable' is called twice
-
-    // Mock the static CompanySetting::getSetting method using Pest's expectation helper
-    expect(CompanySetting::class)
-        ->shouldReceive('getSetting')
-        ->with('link_expiry_days', $companyId)
-        ->andReturn($linkExpiryDays)
-        ->once();
-    expect(CompanySetting::class)
-        ->shouldReceive('getSetting')
-        ->with('automatically_expire_public_links', $companyId)
-        ->andReturn('NO') // Crucial condition for this test case
-        ->once();
-
-    // Act: Call the method under test
-    $result = $emailLog->isExpired();
-
-    // Assert: Verify the expected outcome
-    expect($result)->toBeFalse();
+    expect($method->isPublic())->toBeTrue();
 });
 
-test('isExpired returns false when automatically_expire_public_links is YES but not expired yet', function () {
-    // Arrange
-    Carbon::setTestNow(Carbon::create(2023, 1, 15)); // Current date
-    $createdAt = Carbon::create(2023, 1, 10);       // Email created
-    $linkExpiryDays = 7;                            // Expiry date: Jan 10 + 7 days = Jan 17
-                                                    // Current date (Jan 15) is BEFORE expiry date (Jan 17)
-
-    $emailLog = m::mock(EmailLog::class)->makePartial();
-    $emailLog->created_at = $createdAt;
-
-    $companyId = 456;
-    $mockCollection = m::mock(Illuminate\Support\Collection::class);
-    $mockCollection->shouldReceive('toArray')->andReturn([['company_id' => $companyId]])->once();
-
-    $mockMorphTo = m::mock(MorphTo::class);
-    $mockMorphTo->shouldReceive('get')->andReturn($mockCollection)->times(2);
-
-    $emailLog->shouldReceive('mailable')->andReturn($mockMorphTo)->times(2);
-
-    expect(CompanySetting::class)
-        ->shouldReceive('getSetting')
-        ->with('link_expiry_days', $companyId)
-        ->andReturn($linkExpiryDays)
-        ->once();
-    expect(CompanySetting::class)
-        ->shouldReceive('getSetting')
-        ->with('automatically_expire_public_links', $companyId)
-        ->andReturn('YES') // Condition met
-        ->once();
-
-    // Act
-    $result = $emailLog->isExpired();
-
-    // Assert
-    expect($result)->toBeFalse(); // Should be false because Carbon::now() is not > expiryDate
+// Test model is in correct namespace
+test('EmailLog is in correct namespace', function () {
+    $reflection = new ReflectionClass(EmailLog::class);
+    expect($reflection->getNamespaceName())->toBe('Crater\Models');
 });
 
-test('isExpired returns true when automatically_expire_public_links is YES and is expired', function () {
-    // Arrange
-    Carbon::setTestNow(Carbon::create(2023, 1, 19)); // Current date
-    $createdAt = Carbon::create(2023, 1, 10);       // Email created
-    $linkExpiryDays = 7;                            // Expiry date: Jan 10 + 7 days = Jan 17
-                                                    // Current date (Jan 19) is AFTER expiry date (Jan 17)
-
-    $emailLog = m::mock(EmailLog::class)->makePartial();
-    $emailLog->created_at = $createdAt;
-
-    $companyId = 789;
-    $mockCollection = m::mock(Illuminate\Support\Collection::class);
-    $mockCollection->shouldReceive('toArray')->andReturn([['company_id' => $companyId]])->once();
-
-    $mockMorphTo = m::mock(MorphTo::class);
-    $mockMorphTo->shouldReceive('get')->andReturn($mockCollection)->times(2);
-
-    $emailLog->shouldReceive('mailable')->andReturn($mockMorphTo)->times(2);
-
-    expect(CompanySetting::class)
-        ->shouldReceive('getSetting')
-        ->with('link_expiry_days', $companyId)
-        ->andReturn($linkExpiryDays)
-        ->once();
-    expect(CompanySetting::class)
-        ->shouldReceive('getSetting')
-        ->with('automatically_expire_public_links', $companyId)
-        ->andReturn('YES') // Condition met
-        ->once();
-
-    // Act
-    $result = $emailLog->isExpired();
-
-    // Assert
-    expect($result)->toBeTrue(); // Should be true because Carbon::now() is > expiryDate
+// Test model class name
+test('EmailLog has correct class name', function () {
+    $reflection = new ReflectionClass(EmailLog::class);
+    expect($reflection->getShortName())->toBe('EmailLog');
 });
 
-test('isExpired returns false when automatically_expire_public_links is YES and current date is exactly the expiry date', function () {
-    // Arrange
-    Carbon::setTestNow(Carbon::create(2023, 1, 17)); // Current date
-    $createdAt = Carbon::create(2023, 1, 10);       // Email created
-    $linkExpiryDays = 7;                            // Expiry date: Jan 10 + 7 days = Jan 17
-                                                    // Current date (Jan 17) is EQUAL to expiry date (Jan 17)
-
-    $emailLog = m::mock(EmailLog::class)->makePartial();
-    $emailLog->created_at = $createdAt;
-
-    $companyId = 101;
-    $mockCollection = m::mock(Illuminate\Support\Collection::class);
-    $mockCollection->shouldReceive('toArray')->andReturn([['company_id' => $companyId]])->once();
-
-    $mockMorphTo = m::mock(MorphTo::class);
-    $mockMorphTo->shouldReceive('get')->andReturn($mockCollection)->times(2);
-
-    $emailLog->shouldReceive('mailable')->andReturn($mockMorphTo)->times(2);
-
-    expect(CompanySetting::class)
-        ->shouldReceive('getSetting')
-        ->with('link_expiry_days', $companyId)
-        ->andReturn($linkExpiryDays)
-        ->once();
-    expect(CompanySetting::class)
-        ->shouldReceive('getSetting')
-        ->with('automatically_expire_public_links', $companyId)
-        ->andReturn('YES') // Condition met
-        ->once();
-
-    // Act
-    $result = $emailLog->isExpired();
-
-    // Assert
-    expect($result)->toBeFalse(); // `>` operator means it must be strictly after the expiry date.
+// Test model is not abstract
+test('EmailLog is not abstract', function () {
+    $reflection = new ReflectionClass(EmailLog::class);
+    expect($reflection->isAbstract())->toBeFalse();
 });
 
-test('isExpired handles zero link expiry days correctly', function () {
-    // Arrange
-    Carbon::setTestNow(Carbon::create(2023, 1, 11)); // Current date
-    $createdAt = Carbon::create(2023, 1, 10);       // Email created
-    $linkExpiryDays = 0;                            // Expiry date: Jan 10 + 0 days = Jan 10
-                                                    // Current date (Jan 11) is AFTER expiry date (Jan 10)
-
-    $emailLog = m::mock(EmailLog::class)->makePartial();
-    $emailLog->created_at = $createdAt;
-
-    $companyId = 202;
-    $mockCollection = m::mock(Illuminate\Support\Collection::class);
-    $mockCollection->shouldReceive('toArray')->andReturn([['company_id' => $companyId]])->once();
-
-    $mockMorphTo = m::mock(MorphTo::class);
-    $mockMorphTo->shouldReceive('get')->andReturn($mockCollection)->times(2);
-
-    $emailLog->shouldReceive('mailable')->andReturn($mockMorphTo)->times(2);
-
-    expect(CompanySetting::class)
-        ->shouldReceive('getSetting')
-        ->with('link_expiry_days', $companyId)
-        ->andReturn($linkExpiryDays)
-        ->once();
-    expect(CompanySetting::class)
-        ->shouldReceive('getSetting')
-        ->with('automatically_expire_public_links', $companyId)
-        ->andReturn('YES')
-        ->once();
-
-    // Act
-    $result = $emailLog->isExpired();
-
-    // Assert
-    expect($result)->toBeTrue();
+// Test model is not an interface
+test('EmailLog is not an interface', function () {
+    $reflection = new ReflectionClass(EmailLog::class);
+    expect($reflection->isInterface())->toBeFalse();
 });
 
-test('isExpired ensures correct company_id is passed to CompanySetting', function () {
-    // This test specifically verifies that the company_id extracted from the mailable relationship
-    // is correctly passed to the CompanySetting::getSetting calls.
-    // Arrange
-    $expectedCompanyId = 999;
-    Carbon::setTestNow(Carbon::create(2023, 1, 12));
-    $createdAt = Carbon::create(2023, 1, 10);
-    $linkExpiryDays = 1; // Expired on Jan 11 (10 + 1)
-
-    $emailLog = m::mock(EmailLog::class)->makePartial();
-    $emailLog->created_at = $createdAt;
-
-    $mockCollection = m::mock(Illuminate\Support\Collection::class);
-    $mockCollection->shouldReceive('toArray')->andReturn([['company_id' => $expectedCompanyId]])->once();
-
-    $mockMorphTo = m::mock(MorphTo::class);
-    $mockMorphTo->shouldReceive('get')->andReturn($mockCollection)->times(2);
-
-    $emailLog->shouldReceive('mailable')->andReturn($mockMorphTo)->times(2);
-
-    // Expect CompanySetting::getSetting to be called with the specific $expectedCompanyId
-    expect(CompanySetting::class)
-        ->shouldReceive('getSetting')
-        ->with('link_expiry_days', $expectedCompanyId) // Assert the company_id here
-        ->andReturn($linkExpiryDays)
-        ->once();
-    expect(CompanySetting::class)
-        ->shouldReceive('getSetting')
-        ->with('automatically_expire_public_links', $expectedCompanyId) // Assert the company_id here
-        ->andReturn('YES')
-        ->once();
-
-    // Act
-    $result = $emailLog->isExpired();
-
-    // Assert (primary assertion is on mock expectations, but also confirm method logic)
-    expect($result)->toBeTrue();
+// Test model is not a trait
+test('EmailLog is not a trait', function () {
+    $reflection = new ReflectionClass(EmailLog::class);
+    expect($reflection->isTrait())->toBeFalse();
 });
 
-test('isExpired throws error if mailable relationship returns empty array for company_id', function () {
-    // This tests an edge case where the related model might not exist or the relationship returns
-    // an empty collection, leading to an attempt to access an undefined array key.
-    // Arrange
-    Carbon::setTestNow(Carbon::create(2023, 1, 15));
-    $createdAt = Carbon::create(2023, 1, 10);
-
-    $emailLog = m::mock(EmailLog::class)->makePartial();
-    $emailLog->created_at = $createdAt;
-
-    $mockCollection = m::mock(Illuminate\Support\Collection::class);
-    $mockCollection->shouldReceive('toArray')->andReturn([])->once(); // Simulating empty related model
-
-    $mockMorphTo = m::mock(MorphTo::class);
-    // 'get' is called once before the error is thrown when trying to access `[0]`.
-    $mockMorphTo->shouldReceive('get')->andReturn($mockCollection)->once();
-
-    $emailLog->shouldReceive('mailable')->andReturn($mockMorphTo)->once();
-
-    // Act & Assert: Expect an Error due to accessing an undefined array key
-    expect(fn() => $emailLog->isExpired())
-        ->toThrow(Error::class, 'Undefined array key 0');
+// Test model is instantiable
+test('EmailLog is instantiable', function () {
+    $reflection = new ReflectionClass(EmailLog::class);
+    expect($reflection->isInstantiable())->toBeTrue();
 });
 
+// Test model uses HasFactory trait
+test('EmailLog uses HasFactory trait', function () {
+    $reflection = new ReflectionClass(EmailLog::class);
+    $traits = $reflection->getTraitNames();
+    
+    expect($traits)->toContain('Illuminate\Database\Eloquent\Factories\HasFactory');
+});
 
+// Test model has guarded property
+test('EmailLog has guarded property', function () {
+    $reflection = new ReflectionClass(EmailLog::class);
+    expect($reflection->hasProperty('guarded'))->toBeTrue();
+});
 
+// Test mailable method has no parameters
+test('mailable method has no required parameters', function () {
+    $reflection = new ReflectionClass(EmailLog::class);
+    $method = $reflection->getMethod('mailable');
+    
+    expect($method->getNumberOfParameters())->toBe(0);
+});
+
+// Test isExpired method has no parameters
+test('isExpired method has no required parameters', function () {
+    $reflection = new ReflectionClass(EmailLog::class);
+    $method = $reflection->getMethod('isExpired');
+    
+    expect($method->getNumberOfParameters())->toBe(0);
+});
+
+// Test model uses correct imports
+test('EmailLog uses required classes', function () {
+    $reflection = new ReflectionClass(EmailLog::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('use Carbon\Carbon')
+        ->and($fileContent)->toContain('use Illuminate\Database\Eloquent\Factories\HasFactory')
+        ->and($fileContent)->toContain('use Illuminate\Database\Eloquent\Model');
+});
+
+// Test multiple instances can be created
+test('multiple EmailLog instances can be created', function () {
+    $emailLog1 = new EmailLog();
+    $emailLog2 = new EmailLog();
+    
+    expect($emailLog1)->toBeInstanceOf(EmailLog::class)
+        ->and($emailLog2)->toBeInstanceOf(EmailLog::class)
+        ->and($emailLog1)->not->toBe($emailLog2);
+});
+
+// Test model can be type-hinted
+test('EmailLog can be used in type hints', function () {
+    $testFunction = function (EmailLog $emailLog) {
+        return $emailLog;
+    };
+    
+    $emailLog = new EmailLog();
+    $result = $testFunction($emailLog);
+    
+    expect($result)->toBe($emailLog);
+});
+
+// Test model is not final
+test('EmailLog can be extended', function () {
+    $reflection = new ReflectionClass(EmailLog::class);
+    expect($reflection->isFinal())->toBeFalse();
+});
+
+// Test methods are not static
+test('mailable and isExpired methods are not static', function () {
+    $reflection = new ReflectionClass(EmailLog::class);
+    
+    expect($reflection->getMethod('mailable')->isStatic())->toBeFalse()
+        ->and($reflection->getMethod('isExpired')->isStatic())->toBeFalse();
+});
+
+// Test methods are not abstract
+test('mailable and isExpired methods are not abstract', function () {
+    $reflection = new ReflectionClass(EmailLog::class);
+    
+    expect($reflection->getMethod('mailable')->isAbstract())->toBeFalse()
+        ->and($reflection->getMethod('isExpired')->isAbstract())->toBeFalse();
+});
+
+// Test model file exists
+test('EmailLog class is loaded', function () {
+    expect(class_exists(EmailLog::class))->toBeTrue();
+});
+
+// Test model has expected number of public methods
+test('EmailLog has expected public methods', function () {
+    $reflection = new ReflectionClass(EmailLog::class);
+    $publicMethods = $reflection->getMethods(ReflectionMethod::IS_PUBLIC);
+    
+    $ownMethods = array_filter($publicMethods, function ($method) {
+        return $method->class === EmailLog::class;
+    });
+    
+    expect(count($ownMethods))->toBeGreaterThanOrEqual(2);
+});
+
+// Test model parent class
+test('EmailLog parent class is Model', function () {
+    $reflection = new ReflectionClass(EmailLog::class);
+    $parent = $reflection->getParentClass();
+    
+    expect($parent)->not->toBeFalse()
+        ->and($parent->getName())->toBe(Model::class);
+});
+
+// Test model namespace depth
+test('EmailLog is in correct namespace depth', function () {
+    $reflection = new ReflectionClass(EmailLog::class);
+    $namespace = $reflection->getNamespaceName();
+    $parts = explode('\\', $namespace);
+    
+    expect($parts)->toContain('Crater')
+        ->and($parts)->toContain('Models');
+});

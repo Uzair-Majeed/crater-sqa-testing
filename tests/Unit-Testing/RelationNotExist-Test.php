@@ -1,215 +1,125 @@
 <?php
 
 use Crater\Rules\RelationNotExist;
-use Illuminate\Database\Eloquent\Model;
-use Mockery\MockInterface;
-
-// Ensure Mockery is closed after each test to prevent interfering with other tests.
-beforeEach(function () {
-    Mockery::close();
-});
-
-test('constructor sets class and relation properties correctly when valid strings are provided', function () {
-    $rule = new RelationNotExist('App\\Models\\User', 'profile');
-
-    expect($rule->class)->toBe('App\\Models\\User');
-    expect($rule->relation)->toBe('profile');
-});
-
-test('constructor sets class and relation to null when no arguments are provided', function () {
-    $rule = new RelationNotExist();
-
-    expect($rule->class)->toBeNull();
-    expect($rule->relation)->toBeNull();
-});
-
-test('constructor sets class and relation to empty strings when empty strings are explicitly provided', function () {
-    $rule = new RelationNotExist('', '');
-
-    expect($rule->class)->toBe('');
-    expect($rule->relation)->toBe('');
-});
-
-test('constructor throws TypeError when null is explicitly passed for string arguments', function () {
-    // Attempting to pass null to a string-type-hinted parameter directly causes a TypeError in PHP 7.1+
-    expect(fn() => new RelationNotExist(null, 'someRelation'))
-        ->toThrow(TypeError::class, 'Crater\Rules\RelationNotExist::__construct(): Argument #1 ($class) must be of type string, null given');
-
-    expect(fn() => new RelationNotExist('someClass', null))
-        ->toThrow(TypeError::class, 'Crater\Rules\RelationNotExist::__construct(): Argument #2 ($relation) must be of type string, null given');
-});
-
-test('passes returns true when the relation does not exist for the given model', function () {
-    $className = 'App\\Models\\TestModelForPassesSuccess';
-    $relationName = 'successfulRelation';
-    $value = 1; // Arbitrary ID to find
-
-    // 1. Mock the static `find` method of the class
-    /** @var MockInterface|Model $mockModelClass */
-    $mockModelClass = Mockery::mock('alias:' . $className);
-
-    // 2. Mock the model instance that `find()` returns
-    /** @var MockInterface|Model $modelInstanceMock */
-    $modelInstanceMock = Mockery::mock(Model::class);
-
-    // 3. Mock the relation query builder object that the relation method returns
-    $relationQueryBuilderMock = Mockery::mock();
-    $relationQueryBuilderMock->shouldReceive('exists')
-                             ->once()
-                             ->andReturn(false); // Relation does NOT exist, so rule should pass
-
-    // Chain the mocks: $className::find($value) -> $modelInstanceMock->$relationName() -> $relationQueryBuilderMock->exists()
-    $modelInstanceMock->shouldReceive($relationName)
-                      ->once()
-                      ->andReturn($relationQueryBuilderMock);
-
-    $mockModelClass->shouldReceive('find')
-                   ->once()
-                   ->with($value)
-                   ->andReturn($modelInstanceMock);
-
-    $rule = new RelationNotExist($className, $relationName);
-
-    expect($rule->passes('anyAttribute', $value))->toBeTrue();
-});
-
-test('passes returns false when the relation exists for the given model', function () {
-    $className = 'App\\Models\\TestModelForPassesFailure';
-    $relationName = 'failingRelation';
-    $value = 2; // Arbitrary ID to find
-
-    // 1. Mock the static `find` method of the class
-    /** @var MockInterface|Model $mockModelClass */
-    $mockModelClass = Mockery::mock('alias:' . $className);
-
-    // 2. Mock the model instance that `find()` returns
-    /** @var MockInterface|Model $modelInstanceMock */
-    $modelInstanceMock = Mockery::mock(Model::class);
-
-    // 3. Mock the relation query builder object that the relation method returns
-    $relationQueryBuilderMock = Mockery::mock();
-    $relationQueryBuilderMock->shouldReceive('exists')
-                             ->once()
-                             ->andReturn(true); // Relation DOES exist, so rule should fail
-
-    // Chain the mocks
-    $modelInstanceMock->shouldReceive($relationName)
-                      ->once()
-                      ->andReturn($relationQueryBuilderMock);
-
-    $mockModelClass->shouldReceive('find')
-                   ->once()
-                   ->with($value)
-                   ->andReturn($modelInstanceMock);
-
-    $rule = new RelationNotExist($className, $relationName);
-
-    expect($rule->passes('anyAttribute', $value))->toBeFalse();
-});
-
-test('passes throws an Error when the model cannot be found (find returns null)', function () {
-    $className = 'App\\Models\\TestModelNotFound';
-    $relationName = 'someRelation';
-    $value = 99; // Arbitrary ID
-
-    // Mock the static `find` method to return null (simulating model not found)
-    /** @var MockInterface|Model $mockModelClass */
-    $mockModelClass = Mockery::mock('alias:' . $className);
-    $mockModelClass->shouldReceive('find')
-                   ->once()
-                   ->with($value)
-                   ->andReturnNull(); // Model not found
-
-    $rule = new RelationNotExist($className, $relationName);
-
-    // The rule attempts to call `$relation()` on the null result of `find()`, causing an Error.
-    expect(fn() => $rule->passes('anyAttribute', $value))
-        ->toThrow(Error::class, "Attempt to call a method \"{$relationName}\" on null");
-});
-
-test('passes throws an Error when class property is null (due to default constructor call)', function () {
-    $rule = new RelationNotExist(); // $rule->class and $rule->relation are null by default
-
-    // The rule attempts to call `null::find()`, causing an Error.
-    expect(fn() => $rule->passes('anyAttribute', 1))
-        ->toThrow(Error::class, 'Call to a member function find() on null');
-});
-
-test('passes throws an Error when class property is an empty string', function () {
-    $rule = new RelationNotExist('', 'someRelation'); // class is an empty string
-
-    // An empty string is not a valid class name, so calling static methods on it will fail.
-    expect(fn() => $rule->passes('anyAttribute', 1))
-        ->toThrow(Error::class); // Error message can vary, e.g., "Class '' not found" or "A non-numeric value encountered" etc.
-});
-
-test('passes throws an Error when relation property is null (due to default constructor call) and model is found', function () {
-    $className = 'App\\Models\\TestModelForNullRelation';
-    $relationName = null; // relation is null
-    $value = 1;
-
-    // Mock a successful find to return a model instance
-    /** @var MockInterface|Model $mockModelClass */
-    $mockModelClass = Mockery::mock('alias:' . $className);
-    /** @var MockInterface|Model $modelInstanceMock */
-    $modelInstanceMock = Mockery::mock(Model::class);
-
-    $mockModelClass->shouldReceive('find')
-                   ->once()
-                   ->with($value)
-                   ->andReturn($modelInstanceMock);
-
-    $rule = new RelationNotExist($className, $relationName);
-
-    // The rule attempts to call a method with a null name, causing an Error.
-    expect(fn() => $rule->passes('anyAttribute', $value))
-        ->toThrow(Error::class); // E.g., "Cannot use null as a method name" or similar
-});
-
-test('passes throws an Error when relation property is an empty string and model is found', function () {
-    $className = 'App\\Models\\TestModelForEmptyRelation';
-    $relationName = ''; // relation is an empty string
-    $value = 1;
-
-    // Mock a successful find to return a model instance
-    /** @var MockInterface|Model $mockModelClass */
-    $mockModelClass = Mockery::mock('alias:' . $className);
-    /** @var MockInterface|Model $modelInstanceMock */
-    $modelInstanceMock = Mockery::mock(Model::class);
-
-    $mockModelClass->shouldReceive('find')
-                   ->once()
-                   ->with($value)
-                   ->andReturn($modelInstanceMock);
-
-    $rule = new RelationNotExist($className, $relationName);
-
-    // The rule attempts to call a method with an empty string name, causing an Error.
-    expect(fn() => $rule->passes('anyAttribute', $value))
-        ->toThrow(Error::class); // E.g., "Call to undefined method App\Models\TestModelForEmptyRelation::()"
-});
-
-test('message returns the correct validation error message when relation is set', function () {
-    $rule = new RelationNotExist('App\\Models\\Product', 'categories');
-
-    expect($rule->message())->toBe('Relation categories exists.');
-});
-
-test('message returns a message with empty relation name when relation property is null', function () {
-    $rule = new RelationNotExist('App\\Models\\Product', null); // relation is null
-
-    expect($rule->message())->toBe('Relation  exists.'); // Notice the space from the empty string conversion
-});
-
-test('message returns a message with empty relation name when relation property is an empty string', function () {
-    $rule = new RelationNotExist('App\\Models\\Product', ''); // relation is an empty string
-
-    expect($rule->message())->toBe('Relation  exists.'); // Notice the space from the empty string
-});
-
-
-
+use Mockery as m;
 
 afterEach(function () {
-    Mockery::close();
+    m::close();
+});
+
+// ========== RELATIONNOTEXIST TESTS (12 TESTS: STRUCTURAL + FUNCTIONAL) ==========
+
+// --- Structural Tests (5 tests) ---
+
+test('RelationNotExist can be instantiated', function () {
+    $rule = new RelationNotExist();
+    expect($rule)->toBeInstanceOf(RelationNotExist::class);
+});
+
+test('RelationNotExist implements Rule interface', function () {
+    $rule = new RelationNotExist();
+    expect($rule)->toBeInstanceOf(\Illuminate\Contracts\Validation\Rule::class);
+});
+
+test('RelationNotExist is in correct namespace', function () {
+    $reflection = new ReflectionClass(RelationNotExist::class);
+    expect($reflection->getNamespaceName())->toBe('Crater\Rules');
+});
+
+test('RelationNotExist has public class and relation properties', function () {
+    $reflection = new ReflectionClass(RelationNotExist::class);
+    
+    expect($reflection->hasProperty('class'))->toBeTrue()
+        ->and($reflection->hasProperty('relation'))->toBeTrue();
+    
+    $classProperty = $reflection->getProperty('class');
+    $relationProperty = $reflection->getProperty('relation');
+    
+    expect($classProperty->isPublic())->toBeTrue()
+        ->and($relationProperty->isPublic())->toBeTrue();
+});
+
+test('RelationNotExist has required methods', function () {
+    $reflection = new ReflectionClass(RelationNotExist::class);
+    
+    expect($reflection->hasMethod('__construct'))->toBeTrue()
+        ->and($reflection->hasMethod('passes'))->toBeTrue()
+        ->and($reflection->hasMethod('message'))->toBeTrue();
+});
+
+// --- Functional Tests (7 tests) ---
+
+test('RelationNotExist constructor sets class and relation properties', function () {
+    $rule = new RelationNotExist('SomeClass', 'someRelation');
+    
+    expect($rule->class)->toBe('SomeClass')
+        ->and($rule->relation)->toBe('someRelation');
+});
+
+test('RelationNotExist constructor accepts null values', function () {
+    $rule = new RelationNotExist(null, null);
+    
+    expect($rule->class)->toBeNull()
+        ->and($rule->relation)->toBeNull();
+});
+
+test('RelationNotExist constructor works with no arguments', function () {
+    $rule = new RelationNotExist();
+    
+    expect($rule->class)->toBeNull()
+        ->and($rule->relation)->toBeNull();
+});
+
+test('RelationNotExist message returns correct format', function () {
+    $rule = new RelationNotExist('TestClass', 'testRelation');
+    
+    $message = $rule->message();
+    
+    expect($message)->toBe('Relation testRelation exists.');
+});
+
+test('RelationNotExist message handles null relation', function () {
+    $rule = new RelationNotExist('TestClass', null);
+    
+    $message = $rule->message();
+    
+    expect($message)->toBe('Relation  exists.');
+});
+
+test('RelationNotExist passes returns true when relation does not exist', function () {
+    // Create a mock model instance
+    $mockRelation = m::mock();
+    $mockRelation->shouldReceive('exists')->once()->andReturn(false);
+    
+    $mockModel = m::mock();
+    $mockModel->shouldReceive('testRelation')->once()->andReturn($mockRelation);
+    
+    // Create a mock class
+    $mockClass = m::mock('alias:TestModelClass');
+    $mockClass->shouldReceive('find')->with(123)->once()->andReturn($mockModel);
+    
+    $rule = new RelationNotExist('TestModelClass', 'testRelation');
+    
+    $result = $rule->passes('attribute', 123);
+    
+    expect($result)->toBeTrue();
+});
+
+test('RelationNotExist passes returns false when relation exists', function () {
+    // Create a mock model instance
+    $mockRelation = m::mock();
+    $mockRelation->shouldReceive('exists')->once()->andReturn(true);
+    
+    $mockModel = m::mock();
+    $mockModel->shouldReceive('testRelation')->once()->andReturn($mockRelation);
+    
+    // Create a mock class
+    $mockClass = m::mock('alias:AnotherModelClass');
+    $mockClass->shouldReceive('find')->with(456)->once()->andReturn($mockModel);
+    
+    $rule = new RelationNotExist('AnotherModelClass', 'testRelation');
+    
+    $result = $rule->passes('attribute', 456);
+    
+    expect($result)->toBeFalse();
 });

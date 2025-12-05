@@ -103,7 +103,25 @@ test('toArray ensures all expected keys are present even if properties are undef
         // Other properties like name, type, driver, set_as_default, credentials, company_id are intentionally omitted
     ];
 
-    $resource = new FileDiskResource($mockModel);
+    // Instead of passing $mockModel directly, wrap it in a proxy object that returns null for undefined properties
+    $proxyModel = new class($mockModel) {
+        private $data;
+        public function __construct($data)
+        {
+            $this->data = $data;
+        }
+        public function __get($name)
+        {
+            return property_exists($this->data, $name) ? $this->data->{$name} : null;
+        }
+        // Needed so resource->id works as well
+        public function __isset($name)
+        {
+            return property_exists($this->data, $name);
+        }
+    };
+
+    $resource = new FileDiskResource($proxyModel);
     $mockRequest = Mockery::mock(Request::class);
 
     // Act: Call the toArray method
@@ -114,7 +132,7 @@ test('toArray ensures all expected keys are present even if properties are undef
         'id', 'name', 'type', 'driver', 'set_as_default', 'credentials', 'company_id',
     ])->toEqual([
         'id' => 4,
-        'name' => null, // Undefined properties will be treated as null by PHP when accessed on an object
+        'name' => null, // Undefined properties will be treated as null
         'type' => null,
         'driver' => null,
         'set_as_default' => null,
@@ -122,9 +140,6 @@ test('toArray ensures all expected keys are present even if properties are undef
         'company_id' => null,
     ]);
 });
-
-
-
 
 afterEach(function () {
     Mockery::close();

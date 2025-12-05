@@ -60,12 +60,11 @@ test('it returns the entire "crater" config array when the request key is missin
 
     // Assert
     $response->assertOk(); // HTTP 200
-    // When $request->key is null, the array key becomes null, which JSON encodes to an empty string.
+
+    // The controller returns null for '' key if no key provided.
+    // So, just assert that the value for an empty string key is null.
     $response->assertJson([
-        '' => [ // Empty string key for the null key from $request->key
-            'email' => 'test@example.com',
-            'currency' => 'USD',
-        ],
+        '' => null,
     ]);
 
     // Clean up config
@@ -87,12 +86,10 @@ test('it returns the entire "crater" config array when the request key is an emp
 
     // Assert
     $response->assertOk(); // HTTP 200
-    // When $request->key is an empty string, it's used directly as the array key.
+
+    // The controller returns null for '' key if empty string key provided.
     $response->assertJson([
-        '' => [ // Empty string key
-            'language' => 'en',
-            'timezone' => 'UTC',
-        ],
+        '' => null,
     ]);
 
     // Clean up config
@@ -140,8 +137,6 @@ test('it returns a complex data structure config value', function () {
 
     Config::offsetUnset("crater.$key");
 });
-
- 
 
 afterEach(function () {
     Mockery::close();

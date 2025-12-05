@@ -67,8 +67,7 @@ test('TestMail build method configures the mailable correctly with valid inputs'
     // Verify that the build method returns the instance itself, enabling fluent interface.
     expect($result)->toBe($mailMock);
 
-    // Ensure all mock expectations were satisfied.
-    Mockery::close();
+    // Explicit Mockery::close() is not needed here as it's handled by the afterEach hook.
 });
 
 test('TestMail build method works correctly with empty subject and message', function () {
@@ -96,7 +95,7 @@ test('TestMail build method works correctly with empty subject and message', fun
 
     expect($result)->toBe($mailMock);
 
-    Mockery::close();
+    // Explicit Mockery::close() is not needed here as it's handled by the afterEach hook.
 });
 
 test('TestMail build method uses correct view name regardless of input content', function () {
@@ -112,14 +111,18 @@ test('TestMail build method uses correct view name regardless of input content',
              ->andReturn($mailMock);
     $mailMock->shouldReceive('with')->andReturn($mailMock);
 
-    $mailMock->build();
+    $result = $mailMock->build();
 
-    Mockery::close();
+    // Add an explicit assertion to satisfy Pest's requirement for at least one assertion.
+    // The primary check for 'emails.test' being called once with the correct argument
+    // is already handled by Mockery's `shouldReceive()->once()->with()`.
+    // We assert that the build method returns the instance itself, confirming the fluent interface.
+    expect($result)->toBe($mailMock);
+
+    // Explicit Mockery::close() is not needed here as it's handled by the afterEach hook.
 });
 
-
-
-
 afterEach(function () {
+    // Ensure Mockery expectations are verified and mocks are closed after each test.
     Mockery::close();
 });

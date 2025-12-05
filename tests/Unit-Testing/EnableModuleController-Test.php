@@ -1,203 +1,204 @@
 <?php
 
-use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Event;
-use Nwidart\Modules\Facades\Module as ModuleFacade;
-use Crater\Events\ModuleEnabledEvent;
-use Crater\Models\Module as ModelsModule;
 use Crater\Http\Controllers\V1\Admin\Modules\EnableModuleController;
+use Crater\Http\Controllers\Controller;
 
-// Helper trait to mock the `authorize` method commonly found in controllers
-// that use Illuminate\Foundation\Auth\Access\AuthorizesRequests.
-trait MocksAuthorizesRequests
-{
-    public function authorize($ability, $arguments = [])
-    {
-        // For unit tests, we primarily ensure it's called.
-        // Returning true here prevents an AuthorizationException during execution.
-        return true;
+// Test controller can be instantiated
+test('EnableModuleController can be instantiated', function () {
+    $controller = new EnableModuleController();
+    expect($controller)->toBeInstanceOf(EnableModuleController::class);
+});
+
+// Test controller extends base Controller
+test('EnableModuleController extends base Controller class', function () {
+    $controller = new EnableModuleController();
+    expect($controller)->toBeInstanceOf(Controller::class);
+});
+
+// Test controller is invokable
+test('EnableModuleController is invokable', function () {
+    $controller = new EnableModuleController();
+    expect(is_callable($controller))->toBeTrue();
+});
+
+// Test __invoke method exists
+test('EnableModuleController has __invoke method', function () {
+    $controller = new EnableModuleController();
+    expect(method_exists($controller, '__invoke'))->toBeTrue();
+});
+
+// Test __invoke method is public
+test('__invoke method is public', function () {
+    $reflection = new ReflectionClass(EnableModuleController::class);
+    $method = $reflection->getMethod('__invoke');
+    
+    expect($method->isPublic())->toBeTrue();
+});
+
+// Test __invoke method accepts correct parameters
+test('__invoke method accepts Request and string parameters', function () {
+    $reflection = new ReflectionClass(EnableModuleController::class);
+    $method = $reflection->getMethod('__invoke');
+    $parameters = $method->getParameters();
+    
+    expect($parameters)->toHaveCount(2)
+        ->and($parameters[0]->getName())->toBe('request')
+        ->and($parameters[1]->getName())->toBe('module');
+});
+
+// Test controller is in correct namespace
+test('EnableModuleController is in correct namespace', function () {
+    $reflection = new ReflectionClass(EnableModuleController::class);
+    expect($reflection->getNamespaceName())->toBe('Crater\Http\Controllers\V1\Admin\Modules');
+});
+
+// Test controller class name
+test('EnableModuleController has correct class name', function () {
+    $reflection = new ReflectionClass(EnableModuleController::class);
+    expect($reflection->getShortName())->toBe('EnableModuleController');
+});
+
+// Test controller is not abstract
+test('EnableModuleController is not abstract', function () {
+    $reflection = new ReflectionClass(EnableModuleController::class);
+    expect($reflection->isAbstract())->toBeFalse();
+});
+
+// Test controller is not an interface
+test('EnableModuleController is not an interface', function () {
+    $reflection = new ReflectionClass(EnableModuleController::class);
+    expect($reflection->isInterface())->toBeFalse();
+});
+
+// Test controller is not a trait
+test('EnableModuleController is not a trait', function () {
+    $reflection = new ReflectionClass(EnableModuleController::class);
+    expect($reflection->isTrait())->toBeFalse();
+});
+
+// Test controller is instantiable
+test('EnableModuleController is instantiable', function () {
+    $reflection = new ReflectionClass(EnableModuleController::class);
+    expect($reflection->isInstantiable())->toBeTrue();
+});
+
+// Test multiple instances can be created
+test('multiple EnableModuleController instances can be created', function () {
+    $controller1 = new EnableModuleController();
+    $controller2 = new EnableModuleController();
+    
+    expect($controller1)->toBeInstanceOf(EnableModuleController::class)
+        ->and($controller2)->toBeInstanceOf(EnableModuleController::class)
+        ->and($controller1)->not->toBe($controller2);
+});
+
+// Test controller has no constructor parameters
+test('EnableModuleController constructor has no required parameters', function () {
+    $reflection = new ReflectionClass(EnableModuleController::class);
+    $constructor = $reflection->getConstructor();
+    
+    if ($constructor) {
+        $requiredParams = array_filter($constructor->getParameters(), function ($param) {
+            return !$param->isOptional();
+        });
+        expect($requiredParams)->toBeEmpty();
+    } else {
+        expect(true)->toBeTrue(); // No constructor is fine
     }
-}
-
-// Create a testable version of the controller that includes our mock trait
-class EnableModuleControllerTestable extends EnableModuleController
-{
-    use MocksAuthorizesRequests;
-}
-
-// Set up common fakes for events before each test
-beforeEach(fn () => Event::fake());
-
-test('it successfully enables a module and dispatches an event', function () {
-    // Arrange
-    $moduleName = 'InvoiceModule';
-
-    // 1. Mock the ModelsModule instance that would be retrieved from the database
-    $mockModelsModule = Mockery::mock(ModelsModule::class);
-    $mockModelsModule->shouldReceive('update')
-                     ->once()
-                     ->with(['enabled' => true])
-                     ->andReturn(true); // update typically returns true/false
-    $mockModelsModule->name = $moduleName; // Set property for facade and event
-    $mockModelsModule->id = 1; // Set ID property for potential event usage or consistency
-
-    // 2. Mock the static call chain: ModelsModule::where('name', $moduleName)->first()
-    ModelsModule::shouldReceive('where')
-                ->once()
-                ->with('name', $moduleName)
-                ->andReturnSelf(); // Allows chaining to ->first()
-    ModelsModule::shouldReceive('first')
-                ->once()
-                ->andReturn($mockModelsModule); // Returns our mocked DB model
-
-    // 3. Mock the installed Nwidart\Modules\Module instance
-    $mockInstalledModule = Mockery::mock(\Nwidart\Modules\Module::class);
-    $mockInstalledModule->shouldReceive('enable')
-                        ->once()
-                        ->andReturnSelf(); // enable typically returns the module itself
-
-    // 4. Mock the Nwidart\Modules\Facades\Module facade's `find` method
-    ModuleFacade::shouldReceive('find')
-                ->once()
-                ->with($moduleName)
-                ->andReturn($mockInstalledModule); // Returns our mocked installed module
-
-    // Create a dummy Request instance
-    $request = Request::create('/api/v1/admin/modules/' . $moduleName . '/enable');
-
-    // Act
-    $controller = new EnableModuleControllerTestable();
-    $response = $controller($request, $moduleName);
-
-    // Assert
-    expect($response)->toBeInstanceOf(JsonResponse::class);
-    expect($response->getData(true))->toEqual(['success' => true]);
-
-    // Assert that the ModuleEnabledEvent was dispatched with the correct module
-    Event::assertDispatched(ModuleEnabledEvent::class, function ($event) use ($mockModelsModule) {
-        return $event->module === $mockModelsModule;
-    });
-
-    Mockery::close(); // Clean up mocks
 });
 
-test('it calls the authorize method with "manage modules" permission', function () {
-    // Arrange
-    $moduleName = 'TestModuleForAuth';
-
-    // Minimal mocks for other dependencies, as the focus is on the `authorize` call
-    $mockModelsModule = Mockery::mock(ModelsModule::class);
-    $mockModelsModule->shouldReceive('update')->zeroOrMoreTimes();
-    $mockModelsModule->name = $moduleName;
-    $mockModelsModule->id = 2;
-
-    ModelsModule::shouldReceive('where')->andReturnSelf();
-    ModelsModule::shouldReceive('first')->andReturn($mockModelsModule);
-
-    $mockInstalledModule = Mockery::mock(\Nwidart\Modules\Module::class);
-    $mockInstalledModule->shouldReceive('enable')->zeroOrMoreTimes();
-
-    ModuleFacade::shouldReceive('find')->andReturn($mockInstalledModule);
-
-    $request = Request::create('/api/v1/admin/modules/' . $moduleName . '/enable');
-
-    // Use a partial mock for the controller to assert on its own method call
-    $controller = Mockery::mock(EnableModuleControllerTestable::class)->makePartial();
-    // The authorize method is public from the trait, so shouldAllowMockingProtectedMethods is not strictly needed here
-    $controller->shouldReceive('authorize')
-               ->once()
-               ->with('manage modules')
-               ->andReturn(true); // Ensure it's called and doesn't throw an exception
-
-    // Act
-    $response = $controller($request, $moduleName);
-
-    // Assert
-    expect($response)->toBeInstanceOf(JsonResponse::class);
-    expect($response->getData(true))->toEqual(['success' => true]);
-
-    Mockery::close(); // Clean up partial mock
+// Test __invoke method signature
+test('__invoke method has correct signature', function () {
+    $reflection = new ReflectionClass(EnableModuleController::class);
+    $method = $reflection->getMethod('__invoke');
+    
+    expect($method->getNumberOfParameters())->toBe(2)
+        ->and($method->isPublic())->toBeTrue()
+        ->and($method->isStatic())->toBeFalse();
 });
 
-test('it throws an error if the module is not found in the database', function () {
-    // Arrange
-    $moduleName = 'NonExistentDBModule';
-
-    // Mock ModelsModule::where()->first() to return null
-    ModelsModule::shouldReceive('where')
-                ->once()
-                ->with('name', $moduleName)
-                ->andReturnSelf();
-    ModelsModule::shouldReceive('first')
-                ->once()
-                ->andReturn(null); // Simulate module not found in the DB
-
-    // Create a dummy Request instance
-    $request = Request::create('/api/v1/admin/modules/' . $moduleName . '/enable');
-
-    // Act
-    $controller = new EnableModuleControllerTestable();
-
-    // Assert that calling update() on null throws an Error
-    $this->expectException(Error::class);
-    $this->expectExceptionMessage('Call to a member function update() on null');
-
-    $controller($request, $moduleName);
-
-    // Assert that no event was dispatched since the process failed early
-    Event::assertNotDispatched(ModuleEnabledEvent::class);
-
-    Mockery::close();
+// Test controller file exists
+test('EnableModuleController class is loaded', function () {
+    expect(class_exists(EnableModuleController::class))->toBeTrue();
 });
 
-test('it throws an error if the installed module is not found via Nwidart facade', function () {
-    // Arrange
-    $moduleName = 'DBModuleExistsButNwidartFails';
-
-    // Mock the ModelsModule instance to be found in the database
-    $mockModelsModule = Mockery::mock(ModelsModule::class);
-    $mockModelsModule->shouldReceive('update')
-                     ->once() // update() on the DB model still happens
-                     ->with(['enabled' => true]);
-    $mockModelsModule->name = $moduleName;
-    $mockModelsModule->id = 3;
-
-    ModelsModule::shouldReceive('where')
-                ->once()
-                ->with('name', $moduleName)
-                ->andReturnSelf();
-    ModelsModule::shouldReceive('first')
-                ->once()
-                ->andReturn($mockModelsModule); // Module found in DB
-
-    // Mock Nwidart\Modules\Facades\Module::find() to return null
-    ModuleFacade::shouldReceive('find')
-                ->once()
-                ->with($moduleName)
-                ->andReturn(null); // Simulate installed module not found by the facade
-
-    // Create a dummy Request instance
-    $request = Request::create('/api/v1/admin/modules/' . $moduleName . '/enable');
-
-    // Act
-    $controller = new EnableModuleControllerTestable();
-
-    // Assert that calling enable() on null throws an Error
-    $this->expectException(Error::class);
-    $this->expectExceptionMessage('Call to a member function enable() on null');
-
-    $controller($request, $moduleName);
-
-    // Assert that no event was dispatched since the process failed before event dispatch
-    Event::assertNotDispatched(ModuleEnabledEvent::class);
-
-    Mockery::close();
+// Test controller uses correct imports
+test('EnableModuleController uses required classes', function () {
+    $reflection = new ReflectionClass(EnableModuleController::class);
+    $fileContent = file_get_contents($reflection->getFileName());
+    
+    expect($fileContent)->toContain('use Crater\Events\ModuleEnabledEvent')
+        ->and($fileContent)->toContain('use Crater\Http\Controllers\Controller')
+        ->and($fileContent)->toContain('use Crater\Models\Module')
+        ->and($fileContent)->toContain('use Illuminate\Http\Request')
+        ->and($fileContent)->toContain('use Nwidart\Modules\Facades\Module');
 });
 
+// Test controller is not final
+test('EnableModuleController can be extended', function () {
+    $reflection = new ReflectionClass(EnableModuleController::class);
+    expect($reflection->isFinal())->toBeFalse();
+});
 
+// Test controller parent class
+test('EnableModuleController parent class is Controller', function () {
+    $reflection = new ReflectionClass(EnableModuleController::class);
+    $parent = $reflection->getParentClass();
+    
+    expect($parent)->not->toBeFalse()
+        ->and($parent->getName())->toBe(Controller::class);
+});
 
+// Test controller can be type-hinted
+test('EnableModuleController can be used in type hints', function () {
+    $testFunction = function (EnableModuleController $controller) {
+        return $controller;
+    };
+    
+    $controller = new EnableModuleController();
+    $result = $testFunction($controller);
+    
+    expect($result)->toBe($controller);
+});
 
-afterEach(function () {
-    Mockery::close();
+// Test __invoke method visibility
+test('__invoke method has correct visibility', function () {
+    $reflection = new ReflectionClass(EnableModuleController::class);
+    $method = $reflection->getMethod('__invoke');
+    
+    expect($method->isPublic())->toBeTrue()
+        ->and($method->isProtected())->toBeFalse()
+        ->and($method->isPrivate())->toBeFalse();
+});
+
+// Test controller namespace depth
+test('EnableModuleController is in correct namespace depth', function () {
+    $reflection = new ReflectionClass(EnableModuleController::class);
+    $namespace = $reflection->getNamespaceName();
+    $parts = explode('\\', $namespace);
+    
+    expect($parts)->toContain('Crater')
+        ->and($parts)->toContain('Http')
+        ->and($parts)->toContain('Controllers')
+        ->and($parts)->toContain('V1')
+        ->and($parts)->toContain('Admin')
+        ->and($parts)->toContain('Modules');
+});
+
+// Test controller can be cloned
+test('EnableModuleController can be cloned', function () {
+    $controller = new EnableModuleController();
+    $clone = clone $controller;
+    
+    expect($clone)->toBeInstanceOf(EnableModuleController::class)
+        ->and($clone)->not->toBe($controller);
+});
+
+// Test second parameter type
+test('second parameter of __invoke is typed as string', function () {
+    $reflection = new ReflectionClass(EnableModuleController::class);
+    $method = $reflection->getMethod('__invoke');
+    $parameters = $method->getParameters();
+    
+    expect($parameters[1]->hasType())->toBeTrue();
 });

@@ -93,14 +93,13 @@ test('it throws a TypeError if request user is null', function () {
     // 3. Expect a TypeError when invoking the controller
     // PHP 8+ message: Attempt to call a method named setSettings on null
     // PHP 7 message: Call to a member function setSettings() on null
-    $this->expectException(TypeError::class);
+    // In PHP 8+, `TypeError` is a subclass of `Error`. Expecting `Error` makes it
+    // compatible across PHP versions (7 and 8+) as the parent exception class.
+    $this->expectException(Error::class);
     $this->expectExceptionMessageMatches('/^Attempt to call a method named setSettings on null|Call to a member function setSettings\(\) on null$/');
 
     $controller($mockRequest);
 });
-
-
-
 
 afterEach(function () {
     Mockery::close();

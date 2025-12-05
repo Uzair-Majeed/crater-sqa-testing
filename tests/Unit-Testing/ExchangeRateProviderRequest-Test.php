@@ -24,8 +24,6 @@ test('rules method returns the correct validation rules', function () {
 });
 
 test('getExchangeRateProviderPayload returns the correct payload with company_id from header', function () {
-    // Create a partial mock of ExchangeRateProviderRequest to mock `validated()` and `header()`
-    // while allowing `getExchangeRateProviderPayload()` to execute its actual logic.
     $mockRequest = m::mock(ExchangeRateProviderRequest::class)
         ->makePartial();
 
@@ -49,15 +47,13 @@ test('getExchangeRateProviderPayload returns the correct payload with company_id
     $expectedPayload = array_merge($validatedData, ['company_id' => $companyId]);
 
     expect($mockRequest->getExchangeRateProviderPayload())->toEqual($expectedPayload);
-
-    m::close(); // Clean up Mockery expectations
 });
 
 test('getExchangeRateProviderPayload handles empty validated data gracefully', function () {
     $mockRequest = m::mock(ExchangeRateProviderRequest::class)
         ->makePartial();
 
-    $validatedData = []; // Simulate no validated data
+    $validatedData = [];
     $companyId = 456;
 
     $mockRequest->shouldReceive('validated')
@@ -69,11 +65,9 @@ test('getExchangeRateProviderPayload handles empty validated data gracefully', f
         ->once()
         ->andReturn($companyId);
 
-    $expectedPayload = ['company_id' => $companyId]; // Only company_id should be present
+    $expectedPayload = ['company_id' => $companyId];
 
     expect($mockRequest->getExchangeRateProviderPayload())->toEqual($expectedPayload);
-
-    m::close();
 });
 
 test('getExchangeRateProviderPayload handles null company_id from header', function () {
@@ -84,7 +78,7 @@ test('getExchangeRateProviderPayload handles null company_id from header', funct
         'driver' => 'another_driver',
         'key' => 'another_key',
     ];
-    $companyId = null; // Simulate header not present or returning null
+    $companyId = null;
 
     $mockRequest->shouldReceive('validated')
         ->once()
@@ -98,8 +92,6 @@ test('getExchangeRateProviderPayload handles null company_id from header', funct
     $expectedPayload = array_merge($validatedData, ['company_id' => $companyId]);
 
     expect($mockRequest->getExchangeRateProviderPayload())->toEqual($expectedPayload);
-
-    m::close();
 });
 
 test('getExchangeRateProviderPayload handles complete validated data and null company_id', function () {
@@ -127,13 +119,8 @@ test('getExchangeRateProviderPayload handles complete validated data and null co
     $expectedPayload = array_merge($validatedData, ['company_id' => $companyId]);
 
     expect($mockRequest->getExchangeRateProviderPayload())->toEqual($expectedPayload);
-
-    m::close();
 });
 
-
-
-
 afterEach(function () {
-    Mockery::close();
+    m::close();
 });

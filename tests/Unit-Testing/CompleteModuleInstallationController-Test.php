@@ -7,6 +7,18 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Auth\Access\AuthorizationException;
 
+/**
+ * Helper to swap actual Gate with a mock, restoring after.
+ */
+function mockGateFacade()
+{
+    // Mock Gate contract and bind to the container.
+    $gateMock = m::mock(\Illuminate\Contracts\Auth\Access\Gate::class);
+    app()->instance(\Illuminate\Contracts\Auth\Access\Gate::class, $gateMock);
+
+    return $gateMock;
+}
+
 beforeEach(function () {
     m::close();
 });
@@ -16,9 +28,11 @@ test('it authorizes module management', function () {
     $request->module = 'test_module';
     $request->version = '1.0.0';
 
-    Gate::shouldReceive('authorize')
+    // Swap Gate contract in the container.
+    $gateMock = mockGateFacade();
+    $gateMock->shouldReceive('authorize')
         ->once()
-        ->with('manage modules')
+        ->with('manage modules', [])
         ->andReturn(true);
 
     m::mock('alias:' . ModuleInstaller::class)
@@ -40,9 +54,10 @@ test('it calls ModuleInstaller::complete with correct arguments and returns succ
     $request->module = 'my-awesome-module';
     $request->version = '2.5.1';
 
-    Gate::shouldReceive('authorize')
+    $gateMock = mockGateFacade();
+    $gateMock->shouldReceive('authorize')
         ->once()
-        ->with('manage modules')
+        ->with('manage modules', [])
         ->andReturn(true);
 
     m::mock('alias:' . ModuleInstaller::class)
@@ -64,9 +79,10 @@ test('it calls ModuleInstaller::complete with correct arguments and returns succ
     $request->module = 'failing-module';
     $request->version = '1.0.0';
 
-    Gate::shouldReceive('authorize')
+    $gateMock = mockGateFacade();
+    $gateMock->shouldReceive('authorize')
         ->once()
-        ->with('manage modules')
+        ->with('manage modules', [])
         ->andReturn(true);
 
     m::mock('alias:' . ModuleInstaller::class)
@@ -88,9 +104,10 @@ test('it handles null or empty module and version gracefully', function () {
     $request->module = null;
     $request->version = '';
 
-    Gate::shouldReceive('authorize')
+    $gateMock = mockGateFacade();
+    $gateMock->shouldReceive('authorize')
         ->once()
-        ->with('manage modules')
+        ->with('manage modules', [])
         ->andReturn(true);
 
     m::mock('alias:' . ModuleInstaller::class)
@@ -112,9 +129,10 @@ test('it throws AuthorizationException if gate authorization fails', function ()
     $request->module = 'any-module';
     $request->version = 'any-version';
 
-    Gate::shouldReceive('authorize')
+    $gateMock = mockGateFacade();
+    $gateMock->shouldReceive('authorize')
         ->once()
-        ->with('manage modules')
+        ->with('manage modules', [])
         ->andThrow(new AuthorizationException('User not authorized.'));
 
     m::mock('alias:' . ModuleInstaller::class)
@@ -122,14 +140,9 @@ test('it throws AuthorizationException if gate authorization fails', function ()
 
     $controller = new CompleteModuleInstallationController();
 
-    $this->expectException(AuthorizationException::class);
-    $this->expectExceptionMessage('User not authorized.');
-
-    $controller($request);
+    expect(fn() => $controller($request))->toThrow(AuthorizationException::class, 'User not authorized.');
 });
 
- 
-
 afterEach(function () {
-    Mockery::close();
+    m::close();
 });

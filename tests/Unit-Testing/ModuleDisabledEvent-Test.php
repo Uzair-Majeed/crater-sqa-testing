@@ -48,5 +48,7 @@ test('ModuleDisabledEvent public module property is accessible after constructio
 
 
 afterEach(function () {
+    // This is good practice if Mockery was used.
+    // In this specific file, Mockery is not used, but keeping it doesn't harm.
     Mockery::close();
 });

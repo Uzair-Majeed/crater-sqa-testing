@@ -142,5 +142,9 @@ test('isListenerFired handles empty version strings (static::VERSION not empty, 
 
 
 afterEach(function () {
+    // Mockery::close() is typically used when you explicitly create mocks using Mockery::mock().
+    // In these tests, we are using anonymous classes and `(object)` for simple event mocks,
+    // so Mockery is not actually used here. Keeping it doesn't harm, but it's not strictly necessary.
+    // However, it's good practice to have it if any tests in the file might introduce Mockery.
     Mockery::close();
 });

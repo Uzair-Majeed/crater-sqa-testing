@@ -50,7 +50,7 @@ test('rules method fails validation when the key is not a string (integer)', fun
     $validator = Validator::make($data, $request->rules());
     expect($validator->fails())->toBeTrue();
     expect($validator->errors()->has('key'))->toBeTrue();
-    expect($validator->errors()->first('key'))->toBe('The key field must be a string.');
+    expect($validator->errors()->first('key'))->toBe('The key must be a string.'); // Fixed: Removed "field"
 });
 
 test('rules method fails validation when the key is not a string (boolean)', function () {
@@ -59,7 +59,7 @@ test('rules method fails validation when the key is not a string (boolean)', fun
     $validator = Validator::make($data, $request->rules());
     expect($validator->fails())->toBeTrue();
     expect($validator->errors()->has('key'))->toBeTrue();
-    expect($validator->errors()->first('key'))->toBe('The key field must be a string.');
+    expect($validator->errors()->first('key'))->toBe('The key must be a string.'); // Fixed: Removed "field"
 });
 
 test('rules method fails validation when the key is not a string (array)', function () {
@@ -68,7 +68,7 @@ test('rules method fails validation when the key is not a string (array)', funct
     $validator = Validator::make($data, $request->rules());
     expect($validator->fails())->toBeTrue();
     expect($validator->errors()->has('key'))->toBeTrue();
-    expect($validator->errors()->first('key'))->toBe('The key field must be a string.');
+    expect($validator->errors()->first('key'))->toBe('The key must be a string.'); // Fixed: Removed "field"
 });
 
 test('rules method fails validation when the key is not a string (null)', function () {
@@ -80,8 +80,6 @@ test('rules method fails validation when the key is not a string (null)', functi
     // Laravel's required rule often treats null as missing
     expect($validator->errors()->first('key'))->toBe('The key field is required.');
 });
-
-
 
 
 afterEach(function () {
