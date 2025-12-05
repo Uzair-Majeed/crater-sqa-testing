@@ -9,25 +9,18 @@ on:
 jobs:
   build-test:
     runs-on: ubuntu-latest
-    
-    strategy:
-      fail-fast: false
-      matrix:
-        php: ['8.0', '8.1']
-
-    name: PHP ${{ matrix.php }} - Build & Test
+    name: PHP 8.1 - Build & Test
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Set up PHP
+      - name: Set up PHP 8.1 with extensions
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ matrix.php }}
-          extensions: exif, fileinfo, zip, mbstring, pdo_mysql, sqlite3, bcmath, gd
+          php-version: 8.1
+          extensions: exif, fileinfo, zip, mbstring, pdo_mysql, sqlite3, bcmath, gd, xdebug
           ini-values: post_max_size=256M, upload_max_filesize=256M, memory_limit=2000M
-          coverage: none
 
       - name: Copy environment file
         run: cp .env.workflow .env
@@ -49,21 +42,25 @@ jobs:
       - name: Seed demo data
         run: php artisan db:seed --class=DemoSeeder --force
 
-      - name: Run Unit Tests
-        run: php -d memory_limit=2000M vendor/bin/pest tests/Unit-Testing
 
       - name: Run Integration Tests
         run: php -d memory_limit=2000M vendor/bin/pest tests/Integration-Testing
 
-      - name: Generate test coverage report for unit tests
-        if: matrix.php == '8.1'
-        run: php -d memory_limit=2000M vendor/bin/pest tests/Unit-Testing --coverage --min=50
+      - name: Run Unit test and Generate code coverage report 
+        run: php -d memory_limit=2000M vendor/bin/pest tests/Unit-Testing --coverage --coverage-html coverage --min=50
 
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-results-php-${{ matrix.php }}
+          name: test-results
           path: |
             storage/logs/
             tests/results/
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/
