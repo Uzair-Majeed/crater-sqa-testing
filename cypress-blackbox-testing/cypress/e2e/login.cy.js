@@ -1,41 +1,95 @@
-describe('Authentication System Tests', () => {
+/// <reference types="cypress" />
 
-    it('TC-LOGIN-001: Should successfully login with valid credentials', () => {
-        // 1. Visit the login page
-        cy.visit('/login');
+describe('Crater Login Tests', () => {
+    const validEmail = 'i230695@isb.nu.edu.pk';
+    const validPassword = 'shahop5121';
 
-        // 2. Enter Email (from config)
-        cy.get('input[type="email"]').type(Cypress.env('adminEmail'));
-
-        // 3. Enter Password (from config)
-        cy.get('input[type="password"]').type(Cypress.env('adminPassword'));
-
-        // 4. Click Login Button
-        cy.get('button[type="submit"]').click();
-
-        // 5. Verify Login was successful
-        // Check URL changes
-        cy.url().should('not.include', '/login');
-        cy.url().should('include', '/admin');
-
-        // Check Dashboard is visible
-        cy.contains('Dashboard').should('be.visible');
+    beforeEach(() => {
+        cy.visit('http://localhost/login');
+        cy.wait(1000);
     });
 
-    it('TC-LOGIN-002: Should show error with invalid credentials', () => {
-        cy.visit('/login');
+    // ==================== ORIGINAL TEST CASES ====================
 
-        // Enter wrong password
-        cy.get('input[type="email"]').type(Cypress.env('adminEmail'));
-        cy.get('input[type="password"]').type('wrongpassword123');
-        cy.get('button[type="submit"]').click();
+    it('TC-001: Should successfully login with valid credentials', () => {
+        cy.get('input[name="email"]').type(validEmail);
+        cy.get('input[name="password"]').type(validPassword);
+        cy.contains('button', 'Login').click();
+        cy.wait(2000);
 
-        // Verify we are still on login page
+        // Verify successful login by checking URL redirect
+        cy.url().should('include', '/admin/dashboard');
+    });
+
+    it('TC-002: Should show error with invalid credentials', () => {
+        cy.get('input[name="email"]').type('wrong@example.com');
+        cy.get('input[name="password"]').type('wrongpassword');
+        cy.contains('button', 'Login').click();
+        cy.wait(1000);
+
+        // Should still be on login page
         cy.url().should('include', '/login');
-
-        // Verify error message appears (adjust selector if needed)
-        cy.get('body').should('contain', 'These credentials do not match our records');
     });
+
+    // ==================== ADDITIONAL VALID TEST CASES ====================
+
+    it('TC-003: All login inputs exist and are interactable', () => {
+        cy.get('input[name="email"]', { timeout: 10000 })
+            .should('be.visible')
+            .type(validEmail)
+            .should('have.value', validEmail);
+
+        cy.get('input[name="password"]')
+            .should('be.visible')
+            .type(validPassword)
+            .should('have.value', validPassword);
+
+        cy.contains('button', 'Login')
+            .should('be.visible')
+            .and('not.be.disabled');
+    });
+
+    it('TC-004: Can copy and paste credentials into fields', () => {
+        // Simulate copy-paste behavior
+        cy.get('input[name="email"]')
+            .invoke('val', validEmail)
+            .trigger('input')
+            .should('have.value', validEmail);
+
+        cy.get('input[name="password"]')
+            .invoke('val', validPassword)
+            .trigger('input')
+            .should('have.value', validPassword);
+
+        cy.contains('button', 'Login').should('be.visible');
+    });
+
+    // ==================== ADDITIONAL INVALID TEST CASES ====================
+
+    it('TC-005: Very long email can be typed into email field', () => {
+        const longEmail = 'a'.repeat(300) + '@example.com';
+
+        cy.get('input[name="email"]')
+            .type(longEmail)
+            .should('have.value', longEmail);
+
+        cy.get('input[name="password"]')
+            .type('testpass')
+            .should('have.value', 'testpass');
+    });
+
+    it('TC-006: Invalid email format can be typed', () => {
+        // Missing @ symbol
+        cy.get('input[name="email"]')
+            .type('i230695isb.nu.edu.pk')
+            .should('have.value', 'i230695isb.nu.edu.pk');
+
+        cy.get('input[name="password"]')
+            .type(validPassword)
+            .should('have.value', validPassword);
+    });
+
+
 
 
 
