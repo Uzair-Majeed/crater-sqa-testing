@@ -31,6 +31,12 @@ jobs:
       - name: Generate application key
         run: php artisan key:generate
 
+      - name: Ensure test folders exist
+        run: |
+          mkdir -p storage/logs
+          mkdir -p tests/results
+          mkdir -p coverage
+
       - name: Set up SQLite database
         run: |
           touch database/database.sqlite
@@ -42,25 +48,34 @@ jobs:
       - name: Seed demo data
         run: php artisan db:seed --class=DemoSeeder --force
 
-
       - name: Run Integration Tests
         run: php -d memory_limit=2000M vendor/bin/pest tests/Integration-Testing
 
-      - name: Run Unit test and Generate code coverage report 
+      - name: Run Unit Tests and Generate Coverage Report
         run: php -d memory_limit=2000M vendor/bin/pest tests/Unit-Testing --coverage --coverage-html coverage
 
-      - name: Upload test results
+      - name: Upload Test Results
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: test-results
           path: |
-            storage/logs/
-            tests/results/
+            storage/logs/**/*
+            tests/results/**/*
 
-      - name: Upload coverage report
+      - name: Upload Coverage Report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
-          path: coverage/
+          path: coverage/**/*
+          
+      - name: Deploy Coverage to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./coverage
+          publish_branch: gh-pages
+
+      - name: Run Cypress Tests
+        run: echo "Cypress tests would run here"
