@@ -3,6 +3,9 @@ pipeline {
 
     environment {
         GITHUB_CREDENTIALS = 'Jenkins-Token'
+        PHP_MEMORY_LIMIT = '2000M'
+        APP_ENV_FILE = '.env.workflow'
+        DB_FILE = 'database\\database.sqlite'
     }
 
     stages {
@@ -15,8 +18,7 @@ pipeline {
 
         stage('Install PHP & Composer Dependencies') {
             steps {
-                echo "Setting up PHP 8.1 with required extensions..."
-                // Assuming PHP 8.1 is installed on the Jenkins agent
+                echo "Setting up PHP 8.1 and Composer dependencies..."
                 bat 'php -v'
                 bat 'composer install --no-interaction --no-progress --prefer-dist --optimize-autoloader'
             }
@@ -24,10 +26,20 @@ pipeline {
 
         stage('Prepare Environment & Database') {
             steps {
-                echo "Copying environment file and preparing SQLite DB..."
-                bat 'copy .env.workflow .env'
-                bat 'type nul > database\\database.sqlite'
+                echo "Setting up .env and SQLite database..."
+                // Copy workflow env file
+                bat "copy ${APP_ENV_FILE} .env"
+
+                // Ensure database folder exists
+                bat 'if not exist database mkdir database'
+
+                // Create SQLite database file if not exists
+                bat "if not exist ${DB_FILE} type nul > ${DB_FILE}"
+
+                // Clear config cache
                 bat 'php artisan config:clear'
+
+                // Run migrations & seed demo data
                 bat 'php artisan migrate --force --seed'
                 bat 'php artisan db:seed --class=DemoSeeder --force'
             }
@@ -36,14 +48,14 @@ pipeline {
         stage('Run Integration Tests') {
             steps {
                 echo "Running integration tests..."
-                bat 'php -d memory_limit=2000M vendor\\bin\\pest.bat tests\\Integration-Testing'
+                bat "php -d memory_limit=${PHP_MEMORY_LIMIT} vendor\\bin\\pest.bat tests\\Integration-Testing"
             }
         }
 
         stage('Run Unit Tests & Generate Coverage') {
             steps {
-                echo "Running unit tests and generating coverage report..."
-                bat 'php -d memory_limit=2000M vendor\\bin\\pest.bat tests\\Unit-Testing --coverage --coverage-html=build\\coverage --coverage-xml=build\\test-results'
+                echo "Running unit tests and generating coverage..."
+                bat "php -d memory_limit=${PHP_MEMORY_LIMIT} vendor\\bin\\pest.bat tests\\Unit-Testing --coverage --coverage-html=build\\coverage --coverage-xml=build\\test-results"
             }
             post {
                 always {
