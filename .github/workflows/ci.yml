@@ -128,8 +128,14 @@ jobs:
 
       - name: Start Laravel application
         run: |
-          php artisan serve --host=127.0.0.1 --port=8000 &
-          timeout 30 bash -c 'until curl -s http://127.0.0.1:8000 >/dev/null; do sleep 1; done'
+          php artisan storage:link
+          php artisan config:clear
+          php artisan cache:clear
+          php artisan view:clear
+          php artisan serve --host=127.0.0.1 --port=8000 > /dev/null 2>&1 &
+          sleep 5
+          timeout 30 bash -c 'until curl -f -s http://127.0.0.1:8000/login > /dev/null; do echo "Waiting for server..."; sleep 2; done'
+          echo "Server is ready!"
         env:
           APP_ENV: testing
 

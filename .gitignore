@@ -8,6 +8,7 @@
 Homestead.json
 Homestead.yaml
 .env
+.env.*
 .phpunit.result.cache
 .rnd
 /.expo
@@ -18,7 +19,11 @@ Homestead.yaml
 /.scribe
 !storage/fonts/.gitkeep
 .DS_Store
-.env.uzair
 
 # Docker database initialization marker
 storage/.db_initialized
+
+# Testing artifacts
+tests/Non-Functional-Testing/*.html
+tests/Non-Functional-Testing/*.json
+tests/Non-Functional-Testing/*.xml
