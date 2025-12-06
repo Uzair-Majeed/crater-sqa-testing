@@ -7,7 +7,7 @@ on:
     branches: [ main, master ]
 
 jobs:
-  build-test:
+  php-tests:
     runs-on: ubuntu-latest
     name: PHP 8.1 - Build & Test
 
@@ -40,13 +40,12 @@ jobs:
       - name: Set up SQLite database
         run: |
           touch database/database.sqlite
-          php artisan config:clear
+          php artisan config:cache
 
-      - name: Run database migrations
-        run: php artisan migrate --force --seed
-
-      - name: Seed demo data
-        run: php artisan db:seed --class=DemoSeeder --force
+      - name: Run database migrations and seed demo data
+        run: |
+          php artisan migrate --force --seed
+          php artisan db:seed --class=DemoSeeder --force
 
       - name: Run Integration Tests
         run: php -d memory_limit=2000M vendor/bin/pest tests/Integration-Testing
@@ -69,7 +68,7 @@ jobs:
         with:
           name: coverage-report
           path: coverage/**/*
-          
+
       - name: Deploy Coverage to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
@@ -77,5 +76,101 @@ jobs:
           publish_dir: ./coverage/
           publish_branch: gh-pages
 
-      - name: Run Cypress Tests
-        run: echo "Cypress tests would run here"
+  cypress-e2e:
+    runs-on: ubuntu-latest
+    needs: php-tests
+    name: Cypress E2E Tests
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up PHP 8.1 with extensions
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.1
+          extensions: exif, fileinfo, zip, mbstring, pdo_mysql, sqlite3, bcmath, gd
+          ini-values: post_max_size=256M, upload_max_filesize=256M, memory_limit=2000M
+
+      - name: Copy environment file
+        run: cp .env.workflow .env
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --no-progress --prefer-dist --optimize-autoloader
+
+      - name: Generate application key
+        run: php artisan key:generate
+
+      - name: Set up SQLite database
+        run: |
+          touch database/database.sqlite
+          php artisan config:cache
+
+      - name: Run database migrations and seed demo data
+        run: |
+          php artisan migrate --force --seed
+          php artisan db:seed --class=DemoSeeder --force
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install Cypress dependencies for main suite
+        working-directory: ./cypress
+        run: |
+          npm install cypress@latest --save-dev
+          npx cypress install
+
+      - name: Install Cypress dependencies for blackbox suite
+        working-directory: ./cypress-blackbox-testing
+        run: npm install
+
+      - name: Start Laravel application
+        run: |
+          php artisan serve --host=127.0.0.1 --port=8000 &
+          timeout 30 bash -c 'until curl -s http://127.0.0.1:8000 >/dev/null; do sleep 1; done'
+        env:
+          APP_ENV: testing
+
+      - name: Run Cypress E2E Tests (Main Suite)
+        working-directory: ./cypress
+        run: npx cypress run --headless --config baseUrl=http://127.0.0.1:8000 --config-file cypress.config.js
+        continue-on-error: true
+
+      - name: Run Cypress E2E Tests (Blackbox Suite)
+        working-directory: ./cypress-blackbox-testing
+        run: npx cypress run --headless --config baseUrl=http://127.0.0.1:8000 --config-file cypress.config.js
+        continue-on-error: true
+
+      - name: Upload Cypress Videos (Main Suite)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-videos-main
+          path: cypress/cypress/videos/**/*
+          if-no-files-found: ignore
+
+      - name: Upload Cypress Screenshots (Main Suite)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-screenshots-main
+          path: cypress/cypress/screenshots/**/*
+          if-no-files-found: ignore
+
+      - name: Upload Cypress Videos (Blackbox Suite)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-videos-blackbox
+          path: cypress-blackbox-testing/cypress/videos/**/*
+          if-no-files-found: ignore
+
+      - name: Upload Cypress Screenshots (Blackbox Suite)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-screenshots-blackbox
+          path: cypress-blackbox-testing/cypress/screenshots/**/*
+          if-no-files-found: ignore
