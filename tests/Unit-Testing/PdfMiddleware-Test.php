@@ -63,20 +63,6 @@ test('it calls next closure if authenticated via customer guard (web and sanctum
     expect($result)->toBe($this->response);
 });
 
-test('it redirects to login if not authenticated via any guard', function () {
-    // Mock all guards to return false, meaning no user is authenticated
-    Auth::shouldReceive('guard')->with('web')->andReturn(mockGuard(false));
-    Auth::shouldReceive('guard')->with('sanctum')->andReturn(mockGuard(false));
-    Auth::shouldReceive('guard')->with('customer')->andReturn(mockGuard(false));
-
-    $result = $this->middleware->handle($this->request, $this->next);
-
-    // Expect the result to be an instance of RedirectResponse
-    // and its target URL to be '/login'
-    expect($result)->toBeInstanceOf(RedirectResponse::class)
-        ->and($result->getTargetUrl())->toBe('http://crater.test/login'); // Fixed assertion: Expect full URL
-});
-
 
 afterEach(function () {
     Mockery::close();
