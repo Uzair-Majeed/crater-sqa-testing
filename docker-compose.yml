@@ -12,6 +12,11 @@ services:
     volumes:
       - ./:/var/www
       - ./docker-compose/php/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini:rw,delegated
+    environment:
+      - DB_HOST=db
+      - DB_DATABASE=crater
+      - DB_USERNAME=crater
+      - DB_PASSWORD=crater
     networks:
       - crater
 

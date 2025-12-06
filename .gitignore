@@ -19,3 +19,6 @@ Homestead.yaml
 !storage/fonts/.gitkeep
 .DS_Store
 .env.uzair
+
+# Docker database initialization marker
+storage/.db_initialized
