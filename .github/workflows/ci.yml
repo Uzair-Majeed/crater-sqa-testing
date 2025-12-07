@@ -92,6 +92,9 @@ jobs:
           extensions: exif, fileinfo, zip, mbstring, pdo_mysql, sqlite3, bcmath, gd
           ini-values: post_max_size=256M, upload_max_filesize=256M, memory_limit=2000M
 
+      - name: Copy environment file
+        run: cp .env.workflow .env
+
       - name: Install Composer dependencies
         run: composer install --no-interaction --no-progress --prefer-dist --optimize-autoloader
 
