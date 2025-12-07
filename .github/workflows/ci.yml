@@ -92,9 +92,6 @@ jobs:
           extensions: exif, fileinfo, zip, mbstring, pdo_mysql, sqlite3, bcmath, gd
           ini-values: post_max_size=256M, upload_max_filesize=256M, memory_limit=2000M
 
-      - name: Copy environment file
-        run: cp .env.workflow .env
-
       - name: Install Composer dependencies
         run: composer install --no-interaction --no-progress --prefer-dist --optimize-autoloader
 
@@ -138,6 +135,14 @@ jobs:
           echo "Server is ready!"
         env:
           APP_ENV: testing
+
+      - name: Copy Cypress CI config for main suite
+        working-directory: ./cypress
+        run: cp cypress.config.ci.js cypress.config.js
+
+      - name: Copy Cypress CI config for blackbox suite
+        working-directory: ./cypress-blackbox-testing
+        run: cp cypress.config.ci.js cypress.config.js
 
       - name: Run Cypress E2E Tests (Main Suite)
         working-directory: ./cypress

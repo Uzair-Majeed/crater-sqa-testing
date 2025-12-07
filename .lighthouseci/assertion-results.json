@@ -1,0 +1,40 @@
+[
+  {
+    "name": "minScore",
+    "expected": 0.7,
+    "actual": 0.37,
+    "values": [
+      0.36,
+      0.37,
+      0.35,
+      0.34,
+      0.36,
+      0.35
+    ],
+    "operator": ">=",
+    "passed": false,
+    "auditProperty": "performance",
+    "auditId": "categories",
+    "level": "warn",
+    "url": "https://crater-sqa-testing-production.up.railway.app/login"
+  },
+  {
+    "name": "minScore",
+    "expected": 0.9,
+    "actual": 0.82,
+    "values": [
+      0.82,
+      0.82,
+      0.82,
+      0.82,
+      0.82,
+      0.82
+    ],
+    "operator": ">=",
+    "passed": false,
+    "auditProperty": "accessibility",
+    "auditId": "categories",
+    "level": "error",
+    "url": "https://crater-sqa-testing-production.up.railway.app/login"
+  }
+]
